@@ -23,11 +23,11 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release
-        working-directory: ./SiyafundaApplication
+        # No need for working-directory here
 
       - name: dotnet publish
         run: dotnet publish ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release --output ${{env.DOTNET_ROOT}}/myapp
-        working-directory: ./SiyafundaApplication
+        # No need for working-directory here
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -42,7 +42,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
