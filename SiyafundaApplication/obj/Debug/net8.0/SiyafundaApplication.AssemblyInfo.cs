@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SiyafundaApplication")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4f19b82d137b77cea159676e52be91472d5cb31")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce5a26a1536abc4d00bf7b957b244e304e9afdf3")]
 [assembly: System.Reflection.AssemblyProductAttribute("SiyafundaApplication")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SiyafundaApplication")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
