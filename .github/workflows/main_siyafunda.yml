@@ -22,11 +22,11 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release --project ./SiyafundaApplication/SiyafundaApplication.csproj
+        run: dotnet build ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release
         working-directory: ./SiyafundaApplication
 
       - name: dotnet publish
-        run: dotnet publish --configuration Release --output ${{env.DOTNET_ROOT}}/myapp --project ./SiyafundaApplication/SiyafundaApplication.csproj
+        run: dotnet publish ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release --output ${{env.DOTNET_ROOT}}/myapp
         working-directory: ./SiyafundaApplication
 
       - name: Upload artifact for deployment job
@@ -34,7 +34,6 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-
   deploy:
     runs-on: windows-latest
     needs: build
