@@ -1,29 +1,78 @@
-name: .NET Framework Build and Test
+name: Build and Deploy ASP.NET Framework App to Azure Web App - Siyafunda
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest  # Ensure the runner is Windows
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Restore dependencies
-        run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln
+      - name: Restore NuGet packages
+        run: nuget restore "SiyafundaApplication\SiyafundaApplication.csproj" -SolutionDirectory "SiyafundaApplication"
 
-      - name: Build project
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
+      - name: Check MSBuild path
+        run: |
+          echo "MSBuild Path: $env:MSBUILD_EXE_PATH"
 
-      - name: Run tests
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /t:Test /p:Configuration=Release
+      - name: Build the project
+        run: |
+          if (Test-Path $env:MSBUILD_EXE_PATH) {
+            & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          } else {
+            & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          }
+
+      - name: Publish the project
+        run: |
+          if (Test-Path $env:MSBUILD_EXE_PATH) {
+            & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
+          } else {
+            & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
+          }
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: "D:/a/Siyafunda/publish-output/**"
+
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # This is required for requesting the JWT
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5467E329587E45D4AA7E4B67C923D7F0 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F83CD1A0206840AABB0640B489651D77 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DD4ED051E0EE4A739FA6A08C79DA7DBC }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'Siyafunda'
+          slot-name: 'Production'
+          package: 'D:/a/Siyafunda/publish-output/**'
