@@ -23,7 +23,8 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Restore NuGet packages
-        run: nuget restore "SiyafundaApplication\SiyafundaApplication.csproj"
+        run: nuget restore "SiyafundaApplication\SiyafundaApplication.csproj" -SolutionDirectory "SiyafundaApplication"
+
 
       - name: Build the project
         run: |
