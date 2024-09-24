@@ -17,7 +17,7 @@ jobs:
       - name: List files in directory (debugging)
         run: |
           dir
-          dir Siyafunda
+          dir SiyafundaApplication
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
