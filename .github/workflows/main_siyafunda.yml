@@ -24,11 +24,11 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Restore NuGet packages
-        run: nuget restore "Siyafunda/SiyafundaApplication/SiyafundaApplication.sln"
+        run: nuget restore "Siyafunda\SiyafundaApplication\SiyafundaApplication.sln"
 
       - name: Build the project
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "Siyafunda\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "Siyafunda\SiyafundaApplication\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Publish the project
         run: |
