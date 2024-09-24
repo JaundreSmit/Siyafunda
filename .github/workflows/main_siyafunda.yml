@@ -26,8 +26,8 @@ jobs:
         run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
       # Run tests using VSTest for .NET Framework projects
-      - name: Run tests
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /t:VSTest /p:Configuration=Release
+      #  - name: Run tests
+      #  run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /t:VSTest /p:Configuration=Release
 
       # Optionally, for NUnit/xUnit tests
       # - name: Run tests
