@@ -1,4 +1,4 @@
-name: Build and deploy ASP.NET Framework app to Azure Web App - Siyafunda
+name: Build and Deploy ASP.NET Framework App to Azure Web App - Siyafunda
 
 on:
   push:
@@ -11,24 +11,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Build solution
-        run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "D:\a\Siyafunda\Siyafunda\SiyafundaApplication\SiyafundaApplication.sln" /p:Configuration=Release
+      - name: Restore NuGet packages
+        run: nuget restore "SiyafundaApplication.sln"
 
-      - name: Publish
+      - name: Build the project
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "D:\a\Siyafunda\Siyafunda\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:OutputPath="D:\a\Siyafunda\Siyafunda\publish-output" /t:Publish
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "Siyafunda\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Publish the project
+        run: |
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "Siyafunda\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: "D:\\a\\Siyafunda\\Siyafunda\\publish-output\\**"  # Use double backslashes and wildcard to include all files
+          path: "D:/a/Siyafunda/publish-output/**"
 
   deploy:
     runs-on: windows-latest
@@ -58,4 +62,4 @@ jobs:
         with:
           app-name: 'Siyafunda'
           slot-name: 'Production'
-          package: 'D:\\a\\Siyafunda\\Siyafunda\\publish-output\\**'  # Ensure this points to the published output
+          package: 'D:/a/Siyafunda/publish-output/**'
