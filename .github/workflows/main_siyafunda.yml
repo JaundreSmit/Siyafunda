@@ -16,15 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup .NET Framework SDK
-        run: |
-          echo "No additional setup required for .NET Framework as it's included in Windows images."
-
       - name: Restore dependencies
         run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln  # Use NuGet for .NET Framework projects
 
       - name: Build project
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
+        run: |
+          & 'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe' ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
       - name: Run tests
         run: dotnet test ./SiyafundaApplication/SiyafundaApplication.sln --configuration Release
