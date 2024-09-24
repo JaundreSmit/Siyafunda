@@ -1,4 +1,7 @@
-name: Build and Deploy ASP.NET Framework App to Azure Web App - Siyafunda
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - Siyafunda
 
 on:
   push:
@@ -11,41 +14,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '4.8.1'
 
-      - name: Restore NuGet packages
-        run: nuget restore "SiyafundaApplication\SiyafundaApplication.csproj" -SolutionDirectory "SiyafundaApplication"
+      - name: Build with dotnet
+        run: dotnet build ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release
 
-      - name: Check MSBuild path
-        run: |
-          echo "MSBuild Path: $env:MSBUILD_EXE_PATH"
-
-      - name: Build the project
-        run: |
-          if (Test-Path $env:MSBUILD_EXE_PATH) {
-            & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
-          } else {
-            & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
-          }
-
-      - name: Publish the project
-        run: |
-          if (Test-Path $env:MSBUILD_EXE_PATH) {
-            & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
-          } else {
-            & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
-          }
+      - name: dotnet publish
+        run: dotnet publish ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release --output "C:\\Program Files\\dotnet\\myapp"
+        # Escaped backslashes
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: "D:/a/Siyafunda/publish-output/**"
-
+          path: "C:\\Program Files\\dotnet\\myapp"  # Escaped backslashes
 
   deploy:
     runs-on: windows-latest
@@ -75,4 +62,4 @@ jobs:
         with:
           app-name: 'Siyafunda'
           slot-name: 'Production'
-          package: 'D:/a/Siyafunda/publish-output/**'
+          package: .
