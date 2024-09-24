@@ -18,11 +18,11 @@ jobs:
 
       - name: Build solution
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "./SiyafundaApplication/SiyafundaApplication.sln" /p:Configuration=Release
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "D:\a\Siyafunda\Siyafunda\SiyafundaApplication\SiyafundaApplication.sln" /p:Configuration=Release
 
       - name: Publish
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "./SiyafundaApplication/SiyafundaApplication.csproj" /p:Configuration=Release /p:OutputPath="C:\Program Files\dotnet\myapp"
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "D:\a\Siyafunda\Siyafunda\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:OutputPath="D:\a\Siyafunda\Siyafunda\publish-output" /t:Publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
