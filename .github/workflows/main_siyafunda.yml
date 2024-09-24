@@ -19,19 +19,15 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln
 
-      - name: Build with MSBuild
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
-
-      - name: Publish the application
+      - name: Build and Publish the application
         run: |
-          msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
-        # Make sure that "FolderProfile" exists in your project (or replace with your actual publish profile)
-      
+          msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:DeployOnBuild=true /p:OutputPath=./publish-output
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./SiyafundaApplication/bin/Release  # Adjust based on the build output location
+          path: ./publish-output  # Adjust based on the build output location
 
   deploy:
     runs-on: windows-latest
