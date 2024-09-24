@@ -20,19 +20,32 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore "SiyafundaApplication\SiyafundaApplication.csproj" -SolutionDirectory "SiyafundaApplication"
 
+      - name: Check MSBuild path
+        run: |
+          echo "MSBuild Path: $env:MSBUILD_EXE_PATH"
+
       - name: Build the project
         run: |
-          & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          if (Test-Path $env:MSBUILD_EXE_PATH) {
+            & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          } else {
+            & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          }
 
       - name: Publish the project
         run: |
-          & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
+          if (Test-Path $env:MSBUILD_EXE_PATH) {
+            & "$env:MSBUILD_EXE_PATH" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
+          } else {
+            & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
+          }
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: "D:/a/Siyafunda/publish-output/**"
+
 
   deploy:
     runs-on: windows-latest
