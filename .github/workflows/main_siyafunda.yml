@@ -1,65 +1,30 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - Siyafunda
+name: .NET Build
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest  # Use Windows for .NET Framework
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
+      - name: Setup .NET Framework SDK
+        run: |
+          echo "No additional setup required for .NET Framework as it's included in Windows images."
 
-      - name: Build with dotnet
-        run: dotnet build ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release
+      - name: Restore dependencies
+        run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln  # Use NuGet for .NET Framework projects
 
-      - name: dotnet publish
-        run: dotnet publish ./SiyafundaApplication/SiyafundaApplication.csproj --configuration Release --output "C:\\Program Files\\dotnet\\myapp"
-        # Escaped backslashes
+      - name: Build project
+        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: "C:\\Program Files\\dotnet\\myapp"  # Escaped backslashes
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write # This is required for requesting the JWT
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5467E329587E45D4AA7E4B67C923D7F0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F83CD1A0206840AABB0640B489651D77 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DD4ED051E0EE4A739FA6A08C79DA7DBC }}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'Siyafunda'
-          slot-name: 'Production'
-          package: .
+      - name: Run tests
+        run: dotnet test ./SiyafundaApplication/SiyafundaApplication.sln --configuration Release
