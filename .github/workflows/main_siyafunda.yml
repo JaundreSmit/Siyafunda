@@ -1,4 +1,7 @@
-name: Build and Deploy ASP.NET Framework App to Azure Web App - Siyafunda
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.NET Framework app to Azure Web App - Siyafunda
 
 on:
   push:
@@ -11,32 +14,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+      - name: Set up .NET Framework
+        run: |
+          choco install dotnetfx --version=4.8.1 --params "'/InstallDir:C:\Program Files\dotnetfx'"
 
-      - name: Restore dependencies
-        run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln
+      - name: Build solution
+        run: |
+          "C:\Program Files\dotnetfx\MSBuild\14.0\Bin\MSBuild.exe" ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
-      - name: Build project
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
-
-      - name: Create output directory
-        run: mkdir -p ./publish-output  # Create the directory
-
-      - name: Publish project
-        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:OutputPath=./publish-output /t:Publish
-
-      - name: List published files
-        run: dir ./publish-output
+      - name: Publish
+        run: |
+          "C:\Program Files\dotnetfx\MSBuild\14.0\Bin\MSBuild.exe" ./SiyafundaApplication/SiyafundaApplication/SiyafundaApplication.csproj /p:Configuration=Release /p:OutputPath="C:\Program Files\dotnet\myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./publish-output  # Path to the published files
+          path: "C:\\Program Files\\dotnet\\myapp"  # Escaped backslashes
 
   deploy:
     runs-on: windows-latest
@@ -66,4 +62,4 @@ jobs:
         with:
           app-name: 'Siyafunda'
           slot-name: 'Production'
-          package: './publish-output'  # Specify the path to the published files
+          package: .  # Ensure this points to the published output
