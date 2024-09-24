@@ -1,4 +1,4 @@
-name: Build and deploy .NET Framework app to Azure Web App - Siyafunda
+name: Build and Deploy ASP.NET Framework App to Azure Web App - Siyafunda
 
 on:
   push:
@@ -11,29 +11,32 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Restore NuGet packages
+      - name: Restore dependencies
         run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln
 
-      - name: Build and Publish the application
-        run: |
-          mkdir -p ./publish-output  # Create the directory
-          msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:OutputPath=./publish-output /t:Publish
+      - name: Build project
+        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
-      - name: Verify output files
-        run: |
-          echo "Listing files in publish-output:"
-          ls ./publish-output  # List the files in the output directory for verification
+      - name: Create output directory
+        run: mkdir -p ./publish-output  # Create the directory
+
+      - name: Publish project
+        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:OutputPath=./publish-output /t:Publish
+
+      - name: List published files
+        run: dir ./publish-output
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./publish-output  # Adjust based on the build output location
+          path: ./publish-output  # Path to the published files
 
   deploy:
     runs-on: windows-latest
@@ -49,7 +52,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -63,4 +66,4 @@ jobs:
         with:
           app-name: 'Siyafunda'
           slot-name: 'Production'
-          package: .
+          package: './publish-output'  # Specify the path to the published files
