@@ -14,11 +14,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: List files in directory (debugging)
+        run: |
+          dir
+          dir Siyafunda
+          dir Siyafunda\SiyafundaApplication
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
       - name: Restore NuGet packages
-        run: nuget restore "Siyafunda\SiyafundaApplication\SiyafundaApplication.sln"
+        run: nuget restore "Siyafunda/SiyafundaApplication/SiyafundaApplication.sln"
 
       - name: Build the project
         run: |
