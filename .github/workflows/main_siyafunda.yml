@@ -23,15 +23,15 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Restore NuGet packages
-        run: nuget restore "Siyafunda\SiyafundaApplication\SiyafundaApplication.sln"
+        run: nuget restore "SiyafundaApplication\SiyafundaApplication.csproj"
 
       - name: Build the project
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "Siyafunda\SiyafundaApplication\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Publish the project
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "Siyafunda\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:OutputPath="D:/a/Siyafunda/publish-output"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
