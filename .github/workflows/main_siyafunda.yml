@@ -20,8 +20,7 @@ jobs:
         run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln  # Use NuGet for .NET Framework projects
 
       - name: Build project
-        run: |
-          & 'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe' ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
+        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
       - name: Run tests
         run: dotnet test ./SiyafundaApplication/SiyafundaApplication.sln --configuration Release
