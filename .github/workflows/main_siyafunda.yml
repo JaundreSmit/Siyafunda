@@ -22,10 +22,12 @@ jobs:
       - name: Build and Publish the application
         run: |
           mkdir -p ./publish-output  # Create the directory
-          msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:DeployOnBuild=true /p:OutputPath=./publish-output
+          msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release /p:OutputPath=./publish-output /t:Publish
 
       - name: Verify output files
-        run: ls ./publish-output  # List the files in the output directory for verification
+        run: |
+          echo "Listing files in publish-output:"
+          ls ./publish-output  # List the files in the output directory for verification
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
