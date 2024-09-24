@@ -1,4 +1,4 @@
-name: .NET Build
+name: .NET Framework Build and Test
 
 on:
   push:
@@ -10,20 +10,20 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest  # Use Windows for .NET Framework
+    runs-on: windows-latest  # Ensure the runner is Windows
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Restore dependencies
-        run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln  # Use NuGet for .NET Framework projects
-
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
+
+      - name: Restore dependencies
+        run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln
 
       - name: Build project
         run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
       - name: Run tests
-        run: dotnet test ./SiyafundaApplication/SiyafundaApplication.sln --configuration Release
+        run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /t:Test /p:Configuration=Release
