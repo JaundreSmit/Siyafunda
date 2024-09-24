@@ -16,17 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Framework
-        run: |
-          choco install dotnetfx --version=4.8.1 --params "'/InstallDir:C:\Program Files\dotnetfx'"
-
       - name: Build solution
         run: |
-          "C:\Program Files\dotnetfx\MSBuild\14.0\Bin\MSBuild.exe" ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
       - name: Publish
         run: |
-          "C:\Program Files\dotnetfx\MSBuild\14.0\Bin\MSBuild.exe" ./SiyafundaApplication/SiyafundaApplication/SiyafundaApplication.csproj /p:Configuration=Release /p:OutputPath="C:\Program Files\dotnet\myapp"
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" ./SiyafundaApplication/SiyafundaApplication/SiyafundaApplication.csproj /p:Configuration=Release /p:OutputPath="C:\Program Files\dotnet\myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
