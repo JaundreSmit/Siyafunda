@@ -19,6 +19,9 @@ jobs:
       - name: Restore dependencies
         run: nuget restore ./SiyafundaApplication/SiyafundaApplication.sln  # Use NuGet for .NET Framework projects
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
       - name: Build project
         run: msbuild ./SiyafundaApplication/SiyafundaApplication.sln /p:Configuration=Release
 
