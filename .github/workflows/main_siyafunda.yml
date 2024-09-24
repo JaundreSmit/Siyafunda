@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: "C:\\Program Files\\dotnet\\myapp"  # Escaped backslashes
+          path: "D:\\a\\Siyafunda\\Siyafunda\\publish-output\\**"  # Use double backslashes and wildcard to include all files
 
   deploy:
     runs-on: windows-latest
@@ -58,4 +58,4 @@ jobs:
         with:
           app-name: 'Siyafunda'
           slot-name: 'Production'
-          package: .  # Ensure this points to the published output
+          package: 'D:\\a\\Siyafunda\\Siyafunda\\publish-output\\**'  # Ensure this points to the published output
