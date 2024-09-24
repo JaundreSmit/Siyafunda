@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.NET Framework app to Azure Web App - Siyafunda
 
 on:
@@ -18,10 +15,12 @@ jobs:
 
       - name: Build solution
         run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat"
           & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "C:\path\to\SiyafundaApplication\SiyafundaApplication.sln" /p:Configuration=Release
 
       - name: Publish
         run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat"
           & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "C:\path\to\SiyafundaApplication\SiyafundaApplication\SiyafundaApplication.csproj" /p:Configuration=Release /p:OutputPath="C:\Program Files\dotnet\myapp"
 
       - name: Upload artifact for deployment job
