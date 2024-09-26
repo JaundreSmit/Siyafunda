@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.UI;
-using WebGrease.Activities;
 
 namespace SiyafundaApplication
 {
@@ -32,13 +31,13 @@ namespace SiyafundaApplication
             // Basic validation
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                lblError.Text = "Please enter both username and password.";
+                lblError.Text = "Please enter both username/email and password.";
                 lblError.Visible = true;
                 return;
             }
 
             // Query to validate user credentials
-            string query = "SELECT user_id, Role_id FROM [dbo].[Users] WHERE Username = @Username AND Password = @Password";
+            string query = "SELECT user_id, Role_id FROM [dbo].[Users] WHERE (Username = @Username OR Email = @Username) AND Password = @Password";
 
             try
             {
@@ -62,7 +61,7 @@ namespace SiyafundaApplication
                         Session["RoleID"] = roleId;
 
                         // Redirect to another page upon successful login (e.g., dashboard)
-                        Response.Redirect("Dashboard.aspx");
+                        Response.Redirect("frmDashboard.aspx");
                     }
                     else
                     {
@@ -82,6 +81,11 @@ namespace SiyafundaApplication
             {
                 Con.Close();
             }
+        }
+
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("frmLandingPage.aspx");
         }
     }
 }

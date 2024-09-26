@@ -24,15 +24,6 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// UsernameLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label UsernameLabel;
-
-        /// <summary>
         /// UsernameTextBox control.
         /// </summary>
         /// <remarks>
@@ -51,13 +42,22 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.RequiredFieldValidator UsernameRequired;
 
         /// <summary>
-        /// EmailLabel control.
+        /// txtName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label EmailLabel;
+        protected global::System.Web.UI.WebControls.TextBox txtName;
+
+        /// <summary>
+        /// txtSurname control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtSurname;
 
         /// <summary>
         /// EmailTextBox control.
@@ -87,15 +87,6 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.RegularExpressionValidator EmailValidator;
 
         /// <summary>
-        /// PasswordLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PasswordLabel;
-
-        /// <summary>
         /// PasswordTextBox control.
         /// </summary>
         /// <remarks>
@@ -112,15 +103,6 @@ namespace SiyafundaApplication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator PasswordRequired;
-
-        /// <summary>
-        /// ConfirmPasswordLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConfirmPasswordLabel;
 
         /// <summary>
         /// ConfirmPasswordTextBox control.
@@ -150,6 +132,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.CompareValidator PasswordCompareValidator;
 
         /// <summary>
+        /// lblError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
+
+        /// <summary>
         /// SignUpButton control.
         /// </summary>
         /// <remarks>
@@ -159,12 +150,12 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.Button SignUpButton;
 
         /// <summary>
-        /// lblError control.
+        /// btnBack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblError;
+        protected global::System.Web.UI.WebControls.Button btnBack;
     }
 }

@@ -27,7 +27,12 @@ namespace SiyafundaApplication
             lblError.Visible = false;
             UploadButton.Enabled = true;
 
-            if (!IsPostBack)
+            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7) //Only users with higher than student status can  upload files
+            {
+                int userId = Convert.ToInt32(Session["UserID"]);
+            }
+
+                if (!IsPostBack)
             {
                 BindModules();
             }
