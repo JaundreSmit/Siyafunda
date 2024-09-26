@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\JaundreSmit\\Siyafunda\\",
+  "WorkspaceRootPath": "C:\\Users\\renie\\source\\repos\\Siyafunda\\",
   "Documents": [],
   "DocumentGroupContainers": [
     {
@@ -14,6 +14,10 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }
