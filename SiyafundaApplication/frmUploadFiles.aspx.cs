@@ -9,38 +9,76 @@ namespace SiyafundaApplication
 {
     public partial class frmUploadFiles : System.Web.UI.Page
     {
+        // Define connection string method
+        protected string getConnectionString()
+        {
+            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
+        }
+        int UserID=0; //TODO auto get user Id from session
+        //UserID = Convert.ToInt32(Session["UserID"]); // Ensure you have set UserID in session after login
+
+        // Declare connection variable
+        private SqlConnection Con;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Initialize connection using getConnectionString method
+            Con = new SqlConnection(getConnectionString());
+            lblError.Visible = false;
+
             if (!IsPostBack)
             {
                 BindModules();
             }
         }
 
+        // Populate the module dropdown list
         private void BindModules()
         {
-            using (SqlConnection conn = new SqlConnection("your-connection-string"))
+            // Use existing connection
+            using (Con)
             {
-                string query = "SELECT module_id, title FROM [dbo].[Modules]";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
+                try
+                {
+                    // Adjust the query to filter modules based on the UserID
+                    string query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
 
-                SqlDataReader reader = cmd.ExecuteReader();
-                ModuleDropDown.DataSource = reader;
-                ModuleDropDown.DataBind();
+                    SqlCommand cmd = new SqlCommand(query, Con);
+                    cmd.Parameters.AddWithValue("@UserID", UserID); // Use parameterized query to prevent SQL injection
 
-                // add a default item
-                ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
+                    Con.Open();
 
-                conn.Close();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    ModuleDropDown.DataSource = reader;
+                    ModuleDropDown.DataTextField = "title";   // Display module title
+                    ModuleDropDown.DataValueField = "module_id"; // Store module_id as value
+                    ModuleDropDown.DataBind();
+
+                    // Add a default item
+                    ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
+
+                    Con.Close();
+                }
+                catch (Exception ex)
+                {
+                    // Error handling
+                    lblError.Text = ex.Message;
+                    lblError.Visible = true;
+                }
+                finally
+                {
+                    Con.Close();
+                }
             }
         }
 
+
+        // Handle file upload process
         protected void UploadButton_Click(object sender, EventArgs e)
         {
             if (FileUploadControl.HasFile)
             {
-                //Get the selected module_id from the dropdown
+                // Get the selected module_id from the dropdown
                 int moduleId = int.Parse(ModuleDropDown.SelectedValue);
                 if (moduleId == 0)
                 {
@@ -48,7 +86,7 @@ namespace SiyafundaApplication
                     return; // Exit if no valid module is selected
                 }
 
-                //Create the path to the UploadedFiles directory for the specific module
+                // Create the path to the UploadedFiles directory for the specific module
                 string moduleDirectory = Server.MapPath($"~/UploadedFiles/{moduleId}/");
 
                 // Ensure the module directory exists
@@ -67,15 +105,15 @@ namespace SiyafundaApplication
                     // Save the uploaded file to the specified path
                     FileUploadControl.SaveAs(filePath);
 
-                    // Sync file upload with DB
-                    using (SqlConnection conn = new SqlConnection("your-connection-string"))
+                    // Sync file upload with DB using the existing connection
+                    using (Con)
                     {
                         string query = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
                                          VALUES (@resource_id, @file_path, @file_type, @file_size)";
 
-                        SqlCommand cmd = new SqlCommand(query, conn);
+                        SqlCommand cmd = new SqlCommand(query, Con);
 
-                        // Assuming you get resource_id from another source
+                        // Assuming you get resource_id from another source (e.g., query string)
                         int resourceId;
                         if (!int.TryParse(Request.QueryString["resource_id"], out resourceId))
                         {
@@ -83,14 +121,16 @@ namespace SiyafundaApplication
                             return; // Exit if resource_id is invalid
                         }
 
+                        // Add parameters
                         cmd.Parameters.AddWithValue("@resource_id", resourceId);
                         cmd.Parameters.AddWithValue("@file_path", filePath);
                         cmd.Parameters.AddWithValue("@file_type", fileType);
                         cmd.Parameters.AddWithValue("@file_size", fileSize);
 
-                        conn.Open();
+                        // Open the connection, execute query, and close the connection
+                        Con.Open();
                         cmd.ExecuteNonQuery();
-                        conn.Close();
+                        Con.Close();
                     }
 
                     // Success
@@ -98,7 +138,10 @@ namespace SiyafundaApplication
                 }
                 catch (Exception ex)
                 {
-                    Response.Write("Error occurred: " + ex.Message);
+                    // Error handling
+                    lblError.Text = ex.Message;
+                    lblError.Visible = true;
+
                 }
             }
             else
