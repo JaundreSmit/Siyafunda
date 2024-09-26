@@ -11,61 +11,79 @@ namespace SiyafundaApplication
 {
 
 
-    public partial class frmUploadFiles
+    public partial class frmTimeTableAddClass
     {
 
         /// <summary>
-        /// form2 control.
+        /// form1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form2;
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// ModuleLabel control.
+        /// ddlModule control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ModuleLabel;
+        protected global::System.Web.UI.WebControls.DropDownList ddlModule;
 
         /// <summary>
-        /// ModuleDropDown control.
+        /// ddlDayOfWeek control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ModuleDropDown;
+        protected global::System.Web.UI.WebControls.DropDownList ddlDayOfWeek;
 
         /// <summary>
-        /// FileUploadControl control.
+        /// txtStartTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload FileUploadControl;
+        protected global::System.Web.UI.WebControls.TextBox txtStartTime;
 
         /// <summary>
-        /// UploadButton control.
+        /// txtEndTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button UploadButton;
+        protected global::System.Web.UI.WebControls.TextBox txtEndTime;
 
         /// <summary>
-        /// lblError control.
+        /// btnAddClass control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblError;
+        protected global::System.Web.UI.WebControls.Button btnAddClass;
+
+        /// <summary>
+        /// btnBack control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBack;
+
+        /// <summary>
+        /// lblResult control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblResult;
     }
 }
