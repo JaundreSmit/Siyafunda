@@ -14,7 +14,7 @@ namespace SiyafundaApplication
         {
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
-        int UserID=0; //TODO auto get user Id from session
+        int UserID = 0; //TODO auto get user Id from session
         //UserID = Convert.ToInt32(Session["UserID"]); // Ensure you have set UserID in session after login
 
         // Declare connection variable
@@ -25,6 +25,7 @@ namespace SiyafundaApplication
             // Initialize connection using getConnectionString method
             Con = new SqlConnection(getConnectionString());
             lblError.Visible = false;
+            UploadButton.Enabled = true;
 
             if (!IsPostBack)
             {
@@ -49,20 +50,33 @@ namespace SiyafundaApplication
                     Con.Open();
 
                     SqlDataReader reader = cmd.ExecuteReader();
-                    ModuleDropDown.DataSource = reader;
-                    ModuleDropDown.DataTextField = "title";   // Display module title
-                    ModuleDropDown.DataValueField = "module_id"; // Store module_id as value
-                    ModuleDropDown.DataBind();
 
-                    // Add a default item
-                    ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
+                    // Check if the reader has rows
+                    if (reader.HasRows)
+                    {
+                        ModuleDropDown.DataSource = reader;
+                        ModuleDropDown.DataTextField = "title";   // Display module title
+                        ModuleDropDown.DataValueField = "module_id"; // Store module_id as value
+                        ModuleDropDown.DataBind();
 
-                    Con.Close();
+                        // Add a default item
+                        ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
+                    }
+                    else
+                    {
+                        // No modules found; display an error message
+                        lblError.Text = "No modules found for the specified user.";
+                        lblError.Visible = true;
+                        UploadButton.Enabled = false;
+
+                        // Optionally, you can clear the dropdown
+                        ModuleDropDown.Items.Clear();
+                    }
                 }
                 catch (Exception ex)
                 {
                     // Error handling
-                    lblError.Text = ex.Message;
+                    lblError.Text = "Error retrieving modules: " + ex.Message;
                     lblError.Visible = true;
                 }
                 finally
@@ -71,6 +85,7 @@ namespace SiyafundaApplication
                 }
             }
         }
+
 
 
         // Handle file upload process

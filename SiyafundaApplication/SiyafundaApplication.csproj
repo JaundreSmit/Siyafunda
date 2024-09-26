@@ -175,6 +175,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
+    <Content Include="frmTimeTableAddClass.aspx" />
     <Content Include="frmTimeTableView.aspx" />
     <Content Include="frmUploadFiles.aspx" />
     <Content Include="Global.asax" />
@@ -265,6 +266,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frmTimeTableAddClass.aspx.cs">
+      <DependentUpon>frmTimeTableAddClass.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmTimeTableAddClass.aspx.designer.cs">
+      <DependentUpon>frmTimeTableAddClass.aspx</DependentUpon>
     </Compile>
     <Compile Include="frmTimeTableView.aspx.cs">
       <DependentUpon>frmTimeTableView.aspx</DependentUpon>
