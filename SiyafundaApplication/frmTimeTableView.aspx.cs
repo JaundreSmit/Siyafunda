@@ -8,28 +8,30 @@ namespace SiyafundaApplication
     public partial class frmTimeTableView : Page
     {
         private SqlConnection Con;
+
         private string getConnectionString()
         {
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
+
         // Temporary user ID
-        int UserID = 0; // TODO: auto get user Id from session
+        private int UserID = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             // Initialize connection
             Con = new SqlConnection(getConnectionString());
             lblErrors.Visible = false;
+            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) != 7) //Only students can create time tables
+            {
+                UserID = Convert.ToInt32(Session["UserID"]);
+            }
 
             if (!IsPostBack)
             {
                 DisplayTimeTable(UserID);
             }
-
-            
         }
-
-        
 
         protected void DisplayTimeTable(int userId)
         {
@@ -61,7 +63,6 @@ namespace SiyafundaApplication
                 Con.Close();
             }
         }
-
 
         protected void btnAddClass_Click(object sender, EventArgs e)
         {
