@@ -1,15 +1,15 @@
 # Siyafunda
 
 ## Introduction
-Siyafunda is an online centralized platform designed for educators and learners to facilitate resource sharing and enhance accessibility. The platform enables institutions and educators to register and create an online space where students can access educational resources, tests, assignments, and communication tools. Educators and institutions can customize their experience by selecting only the services they need.
+Siyafunda is an online centralized platform designed for educators and learners to facilitate resource sharing and enhance accessibility. The platform enables institutions and educators to register and create an online space where students can access educational resources, tests, assignments, and communication tools.
 
 ## Operating Environment
-The system is web-based and accessible through any modern web browser on both mobile and desktop platforms. Additionally, a lightweight mobile version may be developed for Android and iOS devices.
+The system is web-based and accessible through any modern web browser on both mobile and desktop platforms.
 
 ## User Roles
-- **System Admin**: Has unrestricted access to all parts of the system and can manage users and business-related functions if monetized.
-- **System Developer**: Maintains system functionality and adds new features.
-- **Moderator**: Assigned to an institution to manage site users, access, and resources.
+- **System Admin**: Has unrestricted access to all parts of the system and can manage users and business-related functions.
+- **System Developer**: Maintains system functionality and available modules.
+- **Moderator**: Assigned to manage files that are uploaded and moderate activity on the site.
 - **Educator**: Manages the resources, files, tests, and grading within their allocated section.
 - **Student**: Accesses resources, assignments, and communication tools provided by their educators.
 
@@ -83,4 +83,8 @@ Example Integration
 In the ASP.NET backend, the watermarking process is handled in the UploadFileAsync method, which manages file uploads and interacts with the QuickChart Watermark API.
 
 For instance, the following code demonstrates how the API is called: ```csharp string mainImageUrl = $"/{relativeFilePath}"; string watermarkUrl = $"/Assets/SiyafundaLogo.png"; // Your logo path on the server watermarkedImageUrl = await AddWatermark(mainImageUrl, watermarkUrl, 0.25); ```
+
+
+# Conclusion
+Feel free to reach out with any questions regarding the site!
 
