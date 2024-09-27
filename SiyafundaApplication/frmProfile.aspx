@@ -24,22 +24,22 @@
         <div>
             <h2>User Profile</h2>
             <!-- User Information -->
-            <asp:Label ID="RoleLabel" runat="server" Text="Role: "></asp:Label><br />
-            <asp:Label ID="NameLabel" runat="server" Text="Name: "></asp:Label><br />
-            <asp:Label ID="SurnameLabel" runat="server" Text="Surname: "></asp:Label><br />
-            <asp:Label ID="EmailLabel" runat="server" Text="Email: "></asp:Label><br />
-
-            <!-- User Editable Fields -->
             <h3>Edit Profile</h3>
             <table style="width:100%;">
                 <tr>
-                    <td class="auto-style3">
-            <asp:Label ID="NameTextLabel" runat="server" Text="Name: "></asp:Label>
-                    </td>
+                    <td>Role:</td>
                     <td>
-            <asp:TextBox ID="NameTextBox" runat="server"></asp:TextBox></td>
+            <asp:Label ID="RoleLabel" runat="server" Text="Role: "></asp:Label></td>
                     <td>&nbsp;</td>
                 </tr>
+                    <tr>
+        <td class="auto-style3">
+<asp:Label ID="Label1" runat="server" Text="Name: "></asp:Label>
+        </td>
+        <td>
+<asp:TextBox ID="NameTextBox" runat="server"></asp:TextBox></td>
+        <td>&nbsp;</td>
+    </tr>
                 <tr>
                     <td class="auto-style3">
             <asp:Label ID="SurnameTextLabel" runat="server" Text="Surname: "></asp:Label>
@@ -56,27 +56,34 @@
             <asp:TextBox ID="EmailTextBox" runat="server"></asp:TextBox></td>
                     <td>&nbsp;</td>
                 </tr>
-            </table>
-            <table style="width:100%;">
                 <tr>
                     <td class="auto-style5">
             <asp:Label ID="PasswordLabel" runat="server" Text="Password: "></asp:Label>
                     </td>
                     <td>
-            <asp:TextBox ID="PasswordTextBox" TextMode="Password" runat="server"></asp:TextBox></td>
+            <asp:TextBox ID="PasswordTextBox" runat="server"></asp:TextBox></td>
                     <td>&nbsp;</td>
                 </tr>
-            </table>
-            <table style="width:100%;">
                 <tr>
                     <td class="auto-style4">
 
-            <asp:Button ID="SaveButton" runat="server" Text="Save" OnClick="SaveButton_Click" />
+            <asp:Button ID="SaveButton" runat="server" Text="Save" OnClick="SaveButton_Click" Width="83px" />
 
                     </td>
-                    <td class="auto-style4"></td>
+                    <td class="auto-style4">
+                        <asp:Label ID="lblErrors" runat="server" Text="[Edit Errors]"></asp:Label>
+                    </td>
                     <td class="auto-style4"></td>
                 </tr>
+                    <tr>
+        <td class="auto-style4">
+
+            <asp:Button ID="btnBack" runat="server" Text="Back" OnClick="btnBack_Click" Width="83px" />
+
+        </td>
+        <td class="auto-style4">&nbsp;</td>
+        <td class="auto-style4"></td>
+    </tr>
             </table>
             <br />
             <br />

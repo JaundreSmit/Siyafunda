@@ -51,6 +51,24 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.FileUpload FileUploadControl;
 
         /// <summary>
+        /// txtTitle control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtTitle;
+
+        /// <summary>
+        /// txtDesc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDesc;
+
+        /// <summary>
         /// UploadButton control.
         /// </summary>
         /// <remarks>

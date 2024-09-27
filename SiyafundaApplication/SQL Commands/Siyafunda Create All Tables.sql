@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[Users]
 
 CREATE TABLE [dbo].[Resources]
 (
-    [resource_id] INT NOT NULL PRIMARY KEY,
+    [resource_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [user_id] INT NOT NULL,
     [module_id] INT NOT NULL,
     [title] NVARCHAR(100) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE [dbo].[Resources]
 
 CREATE TABLE [dbo].[Files]
 (
-    [file_id] INT NOT NULL PRIMARY KEY,
+    [file_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [resource_id] INT NOT NULL,
     [file_path] NVARCHAR(500) NOT NULL,
     [file_type] NVARCHAR(20) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[Files]
 
 CREATE TABLE [dbo].[Reviews]
 (
-    [review_id] INT NOT NULL PRIMARY KEY,
+    [review_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [resource_id] INT NOT NULL,
     [user_id] INT NOT NULL,
     [rating] INT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE [dbo].[Reviews]
 
 CREATE TABLE [dbo].[Announcements]
 (
-    [announcement_id] INT NOT NULL PRIMARY KEY,
+    [announcement_id] INT   IDENTITY (1, 1) NOT NULL,
     [user_id] INT NOT NULL,
     [module_id] INT NOT NULL,
     [title] NVARCHAR(100) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE [dbo].[Modules]
 
 CREATE TABLE [dbo].[Gradebook]
 (
-    [gradebook_id] INT NOT NULL PRIMARY KEY,
+    [gradebook_id]INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [module_id] INT NOT NULL,
     [user_id] INT NOT NULL,
     [grade] FLOAT NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE [dbo].[Gradebook]
 
 CREATE TABLE [dbo].[Quizzes]
 (
-    [quiz_id] INT NOT NULL PRIMARY KEY,
+    [quiz_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [module_id] INT NOT NULL,
     [duration] INT NOT NULL,
     [title] NVARCHAR(50) NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE [dbo].[Quizzes]
 
 CREATE TABLE [dbo].[QuizQuestions]
 (
-    [question_id] INT NOT NULL PRIMARY KEY,
+    [question_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [quiz_id] INT NOT NULL,
     [question_text] NVARCHAR(MAX) NOT NULL,
     [correct_answer] NVARCHAR(100) NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[QuizQuestions]
 
 CREATE TABLE [dbo].[QuizResponses]
 (
-    [response_id] INT NOT NULL PRIMARY KEY,
+    [response_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [user_id] INT NOT NULL,
     [question_id] INT NOT NULL,
     [selected_answer] NVARCHAR(255) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE [dbo].[QuizResponses]
 
 CREATE TABLE [dbo].[UserSessions]
 (
-    [session_id] INT NOT NULL PRIMARY KEY,
+    [session_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [user_id] INT NOT NULL,
     [session_token] NVARCHAR(255) NOT NULL,
     [created_at] DATETIME NOT NULL,

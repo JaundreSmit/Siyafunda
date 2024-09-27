@@ -33,40 +33,13 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.Label RoleLabel;
 
         /// <summary>
-        /// NameLabel control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label NameLabel;
-
-        /// <summary>
-        /// SurnameLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label SurnameLabel;
-
-        /// <summary>
-        /// EmailLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label EmailLabel;
-
-        /// <summary>
-        /// NameTextLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label NameTextLabel;
+        protected global::System.Web.UI.WebControls.Label Label1;
 
         /// <summary>
         /// NameTextBox control.
@@ -139,6 +112,24 @@ namespace SiyafundaApplication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button SaveButton;
+
+        /// <summary>
+        /// lblErrors control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblErrors;
+
+        /// <summary>
+        /// btnBack control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBack;
 
         /// <summary>
         /// ModulesGridView control.
