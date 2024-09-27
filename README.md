@@ -5,6 +5,7 @@ Siyafunda is an online centralized platform designed for educators and learners 
 
 ## Operating Environment
 The system is web-based and accessible through any modern web browser on both mobile and desktop platforms.
+It is being hosted on Azure through the url ```https://siyafunda.azurewebsites.net/```
 
 ## User Roles
 - **System Admin**: Has unrestricted access to all parts of the system and can manage users and business-related functions.
