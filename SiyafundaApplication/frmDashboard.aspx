@@ -25,11 +25,7 @@
             width: 1006px;
             height: 23px;
         }
-        .auto-style11 {
-            width: 112px;
-            height: 23px;
-        }
-    </style>
+        </style>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -45,6 +41,8 @@
                 </td>
                 <td class="auto-style5">
                     <asp:Button ID="btnProfile" runat="server" OnClick="btnProfile_Click" Text="Profile" />
+                &nbsp;&nbsp;
+        <asp:Button ID="btnLogOut" runat="server" OnClick="btnLogOut_Click" Text="Log Out" />
                 </td>
             </tr>
             <tr>
@@ -73,8 +71,7 @@
 </tr>
             <tr>
     <td class="auto-style8">
-        <asp:Button ID="btnLogOut" runat="server" OnClick="btnLogOut_Click" Text="Log Out" />
-                </td>
+        &nbsp;</td>
     <td class="auto-style2">&nbsp;</td>
     <td class="auto-style5">&nbsp;</td>
 </tr>
