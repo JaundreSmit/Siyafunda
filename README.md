@@ -60,7 +60,7 @@ The platform is hosted on Microsoft Azure, ensuring scalability and reliability.
 
 ### Cloning the Repository
 Clone the repository using:
-  git clone https://github.com/yourusername/Siyafunda.git
+  ```git clone https://github.com/yourusername/Siyafunda.git```
 
 ### Backend Setup
 1. Open the SiyafundaApplication.sln (solution file) in visual studio 2022
@@ -82,5 +82,5 @@ To apply a watermark during the file upload process, the application makes an HT
 Example Integration
 In the ASP.NET backend, the watermarking process is handled in the UploadFileAsync method, which manages file uploads and interacts with the QuickChart Watermark API.
 
-For instance, the following code demonstrates how the API is called: !@#csharp string mainImageUrl = $"/{relativeFilePath}"; string watermarkUrl = $"/Assets/SiyafundaLogo.png"; // Your logo path on the server watermarkedImageUrl = await AddWatermark(mainImageUrl, watermarkUrl, 0.25); !@#
+For instance, the following code demonstrates how the API is called: ```csharp string mainImageUrl = $"/{relativeFilePath}"; string watermarkUrl = $"/Assets/SiyafundaLogo.png"; // Your logo path on the server watermarkedImageUrl = await AddWatermark(mainImageUrl, watermarkUrl, 0.25); ```
 
