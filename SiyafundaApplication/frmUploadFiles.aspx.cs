@@ -135,8 +135,10 @@ namespace SiyafundaApplication
                 }
 
                 // Combine the directory path with the uploaded file name
-                string filePath = Path.Combine(moduleDirectory, FileUploadControl.FileName);
-                string fileType = Path.GetExtension(FileUploadControl.FileName);
+                string fileName = FileUploadControl.FileName;
+                string filePath = Path.Combine(moduleDirectory, fileName); // Full path to save the file
+                string relativeFilePath = $"UploadedFiles/{moduleId}/{fileName}"; // Relative path for the database
+                string fileType = Path.GetExtension(fileName);
                 int fileSize = FileUploadControl.PostedFile.ContentLength;
 
                 try
@@ -169,7 +171,7 @@ namespace SiyafundaApplication
 
                         SqlCommand fileCmd = new SqlCommand(fileQuery, Con);
                         fileCmd.Parameters.AddWithValue("@resource_id", resourceId);
-                        fileCmd.Parameters.AddWithValue("@file_path", filePath);
+                        fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath); // Use relative file path
                         fileCmd.Parameters.AddWithValue("@file_type", fileType);
                         fileCmd.Parameters.AddWithValue("@file_size", fileSize);
 
@@ -178,7 +180,7 @@ namespace SiyafundaApplication
                     }
 
                     // Success
-                    Response.Write("File uploaded successfully! Path: " + filePath);
+                    Response.Write("File uploaded successfully! Path: " + relativeFilePath); // Display relative path
                 }
                 catch (Exception ex)
                 {
@@ -193,6 +195,5 @@ namespace SiyafundaApplication
                 Response.Write("No file selected.");
             }
         }
-
     }
 }

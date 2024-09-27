@@ -40,7 +40,7 @@ namespace SiyafundaApplication
             if (!IsPostBack)
             {
                 // Populate the RadioButtonList
-                // PopulateStudentFilter();
+                PopulateStudentFilter();
             }
         }
 
@@ -205,6 +205,9 @@ namespace SiyafundaApplication
 
         private void LoadStudentsForModule(string moduleTitle, string filter = null)
         {
+            // Clear the existing data
+            dgvStudents.DataSource = null; // Clear existing data source
+            dgvStudents.DataBind(); // Rebind to refresh the display
             try
             {
                 // Include filter condition if provided
@@ -225,7 +228,6 @@ namespace SiyafundaApplication
                                     Modules m ON stm.module_id = m.module_id
                                 WHERE
                                     m.title = @ModuleTitle
-                                    AND m.educator_id = @EducatorId
                                     AND u.role_id = 7 {filterCondition}";
 
                 using (SqlConnection con = new SqlConnection(getConnectionString()))
@@ -367,6 +369,11 @@ namespace SiyafundaApplication
         protected void dgvStudents_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedRow = dgvStudents.SelectedRow.RowIndex;
+        }
+
+        protected void btnAddFaq_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("frmAddFAQ.aspx");
         }
     }
 }

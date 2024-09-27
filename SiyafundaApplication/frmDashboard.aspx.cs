@@ -116,58 +116,58 @@ namespace SiyafundaApplication
             {
                 // For roles below Moderator, show only resources with status_id = 3 (in progress)
                 query = @"
-                        SELECT
-                        m.title AS ModuleName,
-                        r.title AS ResourceTitle,
-                        r.description AS ResourceDescription,
-                        r.upload_date AS UploadDate,
-                        f.file_size AS FileSize,
-                        ds.status_name AS StatusName,
-                        AVG(rv.rating) AS AvgRating
-                        FROM
-                        Resources r
-                        INNER JOIN
-                        Modules m ON r.module_id = m.module_id
-                        INNER JOIN
-                        Files f ON r.resource_id = f.resource_id
-                        INNER JOIN
-                        Res_to_status rst ON r.resource_id = rst.resource_id
-                        INNER JOIN
-                        DocStatuses ds ON rst.status_id = ds.status_id
-                        LEFT JOIN
-                        Reviews rv ON r.resource_id = rv.resource_id
-                        WHERE
-                        rst.status_id = 3";  // Only show resources with status_id = 3 (in progress)
+                SELECT
+                m.title AS ModuleName,
+                r.title AS ResourceTitle,
+                r.description AS ResourceDescription,
+                r.upload_date AS UploadDate,
+                f.file_size AS FileSize,
+                ds.status_name AS StatusName,
+                AVG(rv.rating) AS AvgRating
+                FROM
+                Resources r
+                INNER JOIN
+                Modules m ON r.module_id = m.module_id
+                INNER JOIN
+                Files f ON r.resource_id = f.resource_id
+                INNER JOIN
+                Res_to_status rst ON r.resource_id = rst.resource_id
+                INNER JOIN
+                DocStatuses ds ON rst.status_id = ds.status_id
+                LEFT JOIN
+                Reviews rv ON r.resource_id = rv.resource_id
+                WHERE
+                rst.status_id = 3";  // Only show resources with status_id = 3 (in progress)
 
                 // Add GROUP BY for all non-aggregated columns
                 query += @"
-                        GROUP BY
-                        m.title, r.title, r.description, r.upload_date, f.file_size, ds.status_name";
+                GROUP BY
+                m.title, r.title, r.description, r.upload_date, f.file_size, ds.status_name";
             }
             else
             {
-                // For Module Moderators, Educators, and Students: Show only resources with status_id = 3
+                // For Module Moderators, Educators, and Students: Show only resources with status_id = 2
                 query = @"
-                        SELECT
-                        m.title AS ModuleName,
-                        r.title AS ResourceTitle,
-                        r.description AS ResourceDescription,
-                        r.upload_date AS UploadDate,
-                        f.file_size AS FileSize
-                        FROM
-                        Resources r
-                        INNER JOIN
-                        Modules m ON r.module_id = m.module_id
-                        INNER JOIN
-                        Files f ON r.resource_id = f.resource_id
-                        INNER JOIN
-                        Res_to_status rst ON r.resource_id = rst.resource_id
-                        INNER JOIN
-                        DocStatuses ds ON rst.status_id = ds.status_id
-                        INNER JOIN
-                        Stu_To_Module stm ON m.module_id = stm.module_id
-                        WHERE
-                        rst.status_id = 2 AND (stm.user_id = @UserId OR m.educator_id = @UserId)";  // Only show Approved resources
+                SELECT
+                m.title AS ModuleName,
+                r.title AS ResourceTitle,
+                r.description AS ResourceDescription,
+                r.upload_date AS UploadDate,
+                f.file_size AS FileSize
+                FROM
+                Resources r
+                INNER JOIN
+                Modules m ON r.module_id = m.module_id
+                INNER JOIN
+                Files f ON r.resource_id = f.resource_id
+                INNER JOIN
+                Res_to_status rst ON r.resource_id = rst.resource_id
+                INNER JOIN
+                DocStatuses ds ON rst.status_id = ds.status_id
+                INNER JOIN
+                Stu_To_Module stm ON m.module_id = stm.module_id
+                WHERE
+                rst.status_id = 2 AND (stm.user_id = @UserId OR m.educator_id = @UserId)";  // Only show Approved resources
             }
 
             // If a filter is provided, add it to the query
@@ -183,7 +183,7 @@ namespace SiyafundaApplication
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         // Add parameters for user filtering, if applicable
-                        if (Convert.ToInt32(Session["RoleID"]) >= 6)
+                        if (Convert.ToInt32(Session["RoleID"]) >= 4)
                         {
                             cmd.Parameters.AddWithValue("@UserId", UserID);
                         }
