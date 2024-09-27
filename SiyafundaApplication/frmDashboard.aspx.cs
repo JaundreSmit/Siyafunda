@@ -26,6 +26,7 @@ namespace SiyafundaApplication
             lblError.Visible = false;
             lblRole.Visible = false;
             lblWelcome.Visible = false;
+            btnProfile.Visible = false;
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
@@ -91,6 +92,9 @@ namespace SiyafundaApplication
 
                     lblWelcome.Text = $"Welcome, {name} {surname}";
                     lblRole.Text = $"Signed in as: {roleName}";
+                    lblWelcome.Visible = true;
+                    lblRole.Visible = true;
+                    btnProfile.Visible = true;
                 }
                 else
                 {
@@ -110,60 +114,60 @@ namespace SiyafundaApplication
             // Determine the user's role and construct the appropriate SQL query
             if (Convert.ToInt32(Session["RoleID"]) < 4)
             {
-                // For roles below Moderator, show all approved resources
+                // For roles below Moderator, show only resources with status_id = 3 (in progress)
                 query = @"
-            SELECT
-                m.title AS ModuleName,
-                r.title AS ResourceTitle,
-                r.description AS ResourceDescription,
-                r.upload_date AS UploadDate,
-                f.file_size AS FileSize,
-                ds.status_name AS StatusName,
-                AVG(rv.rating) AS AvgRating
-            FROM
-                Resources r
-            INNER JOIN
-                Modules m ON r.module_id = m.module_id
-            INNER JOIN
-                Files f ON r.resource_id = f.resource_id
-            INNER JOIN
-                Res_to_status rst ON r.resource_id = rst.resource_id
-            INNER JOIN
-                DocStatuses ds ON rst.status_id = ds.status_id
-            LEFT JOIN
-                Reviews rv ON r.resource_id = rv.resource_id
-            WHERE
-                ds.status_name = 'Approved'";
+                        SELECT
+                        m.title AS ModuleName,
+                        r.title AS ResourceTitle,
+                        r.description AS ResourceDescription,
+                        r.upload_date AS UploadDate,
+                        f.file_size AS FileSize,
+                        ds.status_name AS StatusName,
+                        AVG(rv.rating) AS AvgRating
+                        FROM
+                        Resources r
+                        INNER JOIN
+                        Modules m ON r.module_id = m.module_id
+                        INNER JOIN
+                        Files f ON r.resource_id = f.resource_id
+                        INNER JOIN
+                        Res_to_status rst ON r.resource_id = rst.resource_id
+                        INNER JOIN
+                        DocStatuses ds ON rst.status_id = ds.status_id
+                        LEFT JOIN
+                        Reviews rv ON r.resource_id = rv.resource_id
+                        WHERE
+                        rst.status_id = 3";  // Only show resources with status_id = 3 (in progress)
 
                 // Add GROUP BY for all non-aggregated columns
                 query += @"
-            GROUP BY
-                m.title, r.title, r.description, r.upload_date, f.file_size, ds.status_name";
+                        GROUP BY
+                        m.title, r.title, r.description, r.upload_date, f.file_size, ds.status_name";
             }
             else
             {
-                // For Module Moderators, Educators and Students: Only show resources for modules they are part of
+                // For Module Moderators, Educators, and Students: Show only resources with status_id = 3
                 query = @"
-            SELECT
-                m.title AS ModuleName,
-                r.title AS ResourceTitle,
-                r.description AS ResourceDescription,
-                r.upload_date AS UploadDate,
-                f.file_size AS FileSize
-            FROM
-                Resources r
-            INNER JOIN
-                Modules m ON r.module_id = m.module_id
-            INNER JOIN
-                Files f ON r.resource_id = f.resource_id
-            INNER JOIN
-                Res_to_status rst ON r.resource_id = rst.resource_id
-            INNER JOIN
-                DocStatuses ds ON rst.status_id = ds.status_id
-            INNER JOIN
-                Stu_To_Module stm ON m.module_id = stm.module_id
-            WHERE
-                ds.status_name = 'Approved' AND (stm.user_id = @UserId OR m.educator_id = @UserId)";
+                        SELECT
+                        m.title AS ModuleName,
+                        r.title AS ResourceTitle,
+                        r.description AS ResourceDescription,
+                        r.upload_date AS UploadDate,
+                        f.file_size AS FileSize
+                        FROM
+                        Resources r
+                        INNER JOIN
+                        Modules m ON r.module_id = m.module_id
+                        INNER JOIN
+                        Files f ON r.resource_id = f.resource_id
+                        INNER JOIN
+                        Res_to_status rst ON r.resource_id = rst.resource_id
+                        INNER JOIN
+                        DocStatuses ds ON rst.status_id = ds.status_id
+                        INNER JOIN
+                        Stu_To_Module stm ON m.module_id = stm.module_id
+                        WHERE
+                        rst.status_id = 2 AND (stm.user_id = @UserId OR m.educator_id = @UserId)";  // Only show Approved resources
             }
 
             // If a filter is provided, add it to the query
@@ -200,7 +204,7 @@ namespace SiyafundaApplication
 
                         if (dt.Rows.Count == 0)
                         {
-                            lblError.Text = "No resources found.";
+                            lblError.Text = "No resources in progress found.";
                             lblError.Visible = true;
                         }
                         else

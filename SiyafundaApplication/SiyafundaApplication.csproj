@@ -173,6 +173,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="frmAddAnnouncement.aspx" />
     <Content Include="frmDashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
@@ -268,6 +269,13 @@
     </Compile>
     <Compile Include="Contact.aspx.designer.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frmAddAnnouncement.aspx.cs">
+      <DependentUpon>frmAddAnnouncement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmAddAnnouncement.aspx.designer.cs">
+      <DependentUpon>frmAddAnnouncement.aspx</DependentUpon>
     </Compile>
     <Compile Include="frmDashboard.aspx.cs">
       <DependentUpon>frmDashboard.aspx</DependentUpon>
