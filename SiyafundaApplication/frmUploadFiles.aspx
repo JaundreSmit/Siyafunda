@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmUploadFiles.aspx.cs" Inherits="SiyafundaApplication.frmUploadFiles" %>
+﻿<%@ Page Async="true" Language="C#" AutoEventWireup="true" CodeBehind="frmUploadFiles.aspx.cs" Inherits="SiyafundaApplication.frmUploadFiles" %>
 
 <!DOCTYPE html>
 
@@ -35,14 +35,14 @@
                 <td>&nbsp;</td>
             </tr>
                 <tr>
-    <td>Title:</td>
+    <td class="auto-style1">Title:</td>
     <td>
         <asp:TextBox ID="txtTitle" runat="server"></asp:TextBox>
                     </td>
     <td>&nbsp;</td>
 </tr>
                 <tr>
-    <td>Description:</td>
+    <td class="auto-style1">Description:</td>
     <td>
         <asp:TextBox ID="txtDesc" runat="server" Height="54px" TextMode="MultiLine" Width="261px"></asp:TextBox>
                     </td>
@@ -50,7 +50,7 @@
 </tr>
             <tr>
                 <td class="auto-style1">
-                    <asp:Button ID="UploadButton" runat="server" OnClick="UploadButton_Click" Text="Upload" />
+                    <asp:Button ID="UploadButton" runat="server" OnClickAsync="UploadButton_Click" Text="Upload" OnClick="UploadButton_Click1" />
                 </td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

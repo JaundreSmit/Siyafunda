@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -9,25 +11,21 @@ namespace SiyafundaApplication
 {
     public partial class frmUploadFiles : System.Web.UI.Page
     {
-        // Define connection string method
         protected string getConnectionString()
         {
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
 
         private int UserID = 0;
-
-        // Declare connection variable
         private SqlConnection Con;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Initialize connection using getConnectionString method
             Con = new SqlConnection(getConnectionString());
             lblError.Visible = false;
             UploadButton.Enabled = true;
 
-            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7) //Only users with higher than student status can  upload files
+            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
             }
@@ -42,65 +40,50 @@ namespace SiyafundaApplication
             }
         }
 
-        // Populate the module dropdown list
         private void BindModules()
         {
-            // Use existing connection
             using (Con)
             {
                 try
                 {
                     string query;
-
-                    // Check the user's role and adjust the query accordingly
                     if (Convert.ToInt32(Session["RoleID"]) < 4)
                     {
-                        // For roles less than 4, show all modules
                         query = "SELECT module_id, title FROM [dbo].[Modules]";
                     }
                     else
                     {
-                        // For roles 4 and above, filter modules based on the UserID
                         query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
                     }
 
                     SqlCommand cmd = new SqlCommand(query, Con);
 
-                    // Add parameter only if the role is 4 or higher
                     if (Convert.ToInt32(Session["RoleID"]) >= 4)
                     {
-                        cmd.Parameters.AddWithValue("@UserID", UserID); // Use parameterized query to prevent SQL injection
+                        cmd.Parameters.AddWithValue("@UserID", UserID);
                     }
 
                     Con.Open();
-
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    // Check if the reader has rows
                     if (reader.HasRows)
                     {
                         ModuleDropDown.DataSource = reader;
-                        ModuleDropDown.DataTextField = "title";   // Display module title
-                        ModuleDropDown.DataValueField = "module_id"; // Store module_id as value
+                        ModuleDropDown.DataTextField = "title";
+                        ModuleDropDown.DataValueField = "module_id";
                         ModuleDropDown.DataBind();
-
-                        // Add a default item
                         ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
                     }
                     else
                     {
-                        // No modules found; display an error message
                         lblError.Text = "No modules found for the specified user.";
                         lblError.Visible = true;
                         UploadButton.Enabled = false;
-
-                        // Optionally, you can clear the dropdown
                         ModuleDropDown.Items.Clear();
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Error handling
                     lblError.Text = "Error retrieving modules: " + ex.Message;
                     lblError.Visible = true;
                 }
@@ -111,89 +94,171 @@ namespace SiyafundaApplication
             }
         }
 
+        // Watermark service class to call the API
+        private async Task<string> AddWatermark(string mainImageUrl, string watermarkImageUrl, double markRatio)
+        {
+            // Create the JSON payload
+            var payload = new
+            {
+                mainImageUrl,
+                markImageUrl = watermarkImageUrl,
+                markRatio
+            };
+
+            string jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+            using (HttpClient client = new HttpClient())
+            {
+                var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("https://quickchart.io/watermark", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string watermarkedImageUrl = await response.Content.ReadAsStringAsync();
+                    return watermarkedImageUrl; // The URL of the watermarked image
+                }
+                else
+                {
+                    throw new Exception("Failed to apply watermark: " + response.ReasonPhrase);
+                }
+            }
+        }
+
         // Handle file upload process
-        protected void UploadButton_Click(object sender, EventArgs e)
+        private async Task UploadFileAsync()
         {
             if (FileUploadControl.HasFile)
             {
-                // Get the selected module_id from the dropdown
                 int moduleId = int.Parse(ModuleDropDown.SelectedValue);
                 if (moduleId == 0)
                 {
                     lblError.Text = "Please select a valid module.";
                     lblError.Visible = true;
-                    return; // Exit if no valid module is selected
+                    return;
                 }
-
-                // Create the path to the UploadedFiles directory for the specific module
+                lblError.Visible = true;
                 string moduleDirectory = Server.MapPath($"~/UploadedFiles/{moduleId}/");
-
-                // Ensure the module directory exists
                 if (!Directory.Exists(moduleDirectory))
                 {
                     Directory.CreateDirectory(moduleDirectory);
                 }
 
-                // Combine the directory path with the uploaded file name
                 string fileName = FileUploadControl.FileName;
-                string filePath = Path.Combine(moduleDirectory, fileName); // Full path to save the file
-                string relativeFilePath = $"UploadedFiles/{moduleId}/{fileName}"; // Relative path for the database
-                string fileType = Path.GetExtension(fileName);
+                string filePath = Path.Combine(moduleDirectory, fileName);
+                string relativeFilePath = $"UploadedFiles/{moduleId}/{fileName}";
+                string fileType = Path.GetExtension(fileName).ToLower();
                 int fileSize = FileUploadControl.PostedFile.ContentLength;
 
                 try
                 {
-                    // Save the uploaded file to the specified path
-                    FileUploadControl.SaveAs(filePath);
+                    FileUploadControl.SaveAs(filePath); // Save the uploaded file
 
-                    // Sync file upload with DB using the existing connection
+                    if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png" || fileType == ".gif")
+                    {
+                        if (fileSize < 1048576) // Check if file size is less than 1 MB
+                        {
+                            string mainImageUrl = $"{Request.Url.GetLeftPart(UriPartial.Path)}/{relativeFilePath}";
+                            string watermarkUrl = $"{Request.Url.GetLeftPart(UriPartial.Path)}/Assets/SiyafundaLogo.png"; //logo path
+
+                            // Ensure that both image URLs are valid
+                            if (await IsImageAccessible(mainImageUrl) && await IsImageAccessible(watermarkUrl))
+                            {
+                                string watermarkedImageUrl = await AddWatermark(mainImageUrl, watermarkUrl, 0.25);
+
+                                // Download and save the watermarked image
+                                using (HttpClient client = new HttpClient())
+                                {
+                                    HttpResponseMessage response = await client.GetAsync(watermarkedImageUrl);
+                                    if (response.IsSuccessStatusCode)
+                                    {
+                                        byte[] watermarkedImageBytes = await response.Content.ReadAsByteArrayAsync();
+                                        File.WriteAllBytes(filePath, watermarkedImageBytes); // Overwrite the original file
+                                        lblError.Text = "File uploaded and watermarked successfully!";
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Failed to download the watermarked image: " + response.ReasonPhrase);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                lblError.Text = "Both image files must be accessible.";
+                            }
+                        }
+                        else
+                        {
+                            lblError.Text = "Uploaded file is too large";
+                        }
+                    }
+
                     using (Con)
                     {
-                        // Step 1: Insert a new record into the Resources table
                         string resourceQuery = @"INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
                                          VALUES (@user_id, @module_id, @title, @description, @upload_date);
-                                         SELECT SCOPE_IDENTITY();"; // Get the newly inserted resource_id
+                                         SELECT SCOPE_IDENTITY();";
 
                         SqlCommand resourceCmd = new SqlCommand(resourceQuery, Con);
-                        resourceCmd.Parameters.AddWithValue("@user_id", UserID); // User who uploaded the file
+                        resourceCmd.Parameters.AddWithValue("@user_id", UserID);
                         resourceCmd.Parameters.AddWithValue("@module_id", moduleId);
-                        resourceCmd.Parameters.AddWithValue("@title", txtTitle.Text); // Assuming txtTitle is a TextBox for the title
-                        resourceCmd.Parameters.AddWithValue("@description", txtDesc.Text); // Assuming txtDesc is a TextBox for the description
+                        resourceCmd.Parameters.AddWithValue("@title", txtTitle.Text);
+                        resourceCmd.Parameters.AddWithValue("@description", txtDesc.Text);
                         resourceCmd.Parameters.AddWithValue("@upload_date", DateTime.Now);
 
-                        // Open the connection, execute query, and get the resource_id
                         Con.Open();
-                        int resourceId = Convert.ToInt32(resourceCmd.ExecuteScalar()); // Get the newly inserted resource_id
+                        int resourceId = Convert.ToInt32(resourceCmd.ExecuteScalar());
 
-                        // Step 2: Insert the file record using the new resource_id
                         string fileQuery = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
                                      VALUES (@resource_id, @file_path, @file_type, @file_size)";
 
                         SqlCommand fileCmd = new SqlCommand(fileQuery, Con);
                         fileCmd.Parameters.AddWithValue("@resource_id", resourceId);
-                        fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath); // Use relative file path
+                        fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath);
                         fileCmd.Parameters.AddWithValue("@file_type", fileType);
                         fileCmd.Parameters.AddWithValue("@file_size", fileSize);
 
-                        // Execute the file insert command
-                        fileCmd.ExecuteNonQuery();
+                        // Execute the command and check if successful
+                        int rowsAffected = fileCmd.ExecuteNonQuery();
+                        if (rowsAffected > 0) // Check if any rows were affected
+                        {
+                            lblError.Text = "File successfully loaded.";
+                        }
+                        else
+                        {
+                            lblError.Text = "File load failed.";
+                        }
                     }
-
-                    // Success
-                    Response.Write("File uploaded successfully! Path: " + relativeFilePath); // Display relative path
                 }
                 catch (Exception ex)
                 {
-                    // Error handling
-                    lblError.Text = ex.Message;
-                    lblError.Visible = true;
+                    lblError.Text = "Error: " + ex.Message;
                 }
             }
             else
             {
-                // No file selected
-                Response.Write("No file selected.");
+                lblError.Text = "No file selected.";
             }
+        }
+
+        // Helper method to check if an image URL is accessible
+        private async Task<bool> IsImageAccessible(string imageUrl)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(imageUrl);
+                    return response.IsSuccessStatusCode;
+                }
+                catch
+                {
+                    return false; // Image is not accessible
+                }
+            }
+        }
+
+        protected void UploadButton_Click1(object sender, EventArgs e)
+        {
+            UploadFileAsync().GetAwaiter().GetResult();
         }
     }
 }
