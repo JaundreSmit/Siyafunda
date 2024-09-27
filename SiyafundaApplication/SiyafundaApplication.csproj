@@ -176,15 +176,20 @@
     <Content Include="Content\Site.css" />
     <Content Include="frmAddAnnouncement.aspx" />
     <Content Include="frmAddFAQ.aspx" />
+    <Content Include="frmCreateQuiz.aspx" />
     <Content Include="frmDashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="frmEducator.aspx" />
+    <Content Include="frmFillBlank.aspx" />
     <Content Include="frmLogin.aspx" />
+    <Content Include="frmLongForm.aspx" />
+    <Content Include="frmMCQ.aspx" />
     <Content Include="frmModerator.aspx" />
     <Content Include="frmSignUp.aspx" />
     <Content Include="frmSystemAdmin.aspx" />
     <Content Include="frmSystemDev.aspx" />
+    <Content Include="frmTakeQuiz.aspx" />
     <Content Include="frmTimeTableAddClass.aspx" />
     <Content Include="frmTimeTableView.aspx" />
     <Content Include="frmUploadFiles.aspx" />
@@ -287,6 +292,13 @@
     <Compile Include="frmAddFAQ.aspx.designer.cs">
       <DependentUpon>frmAddFAQ.aspx</DependentUpon>
     </Compile>
+    <Compile Include="frmCreateQuiz.aspx.cs">
+      <DependentUpon>frmCreateQuiz.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmCreateQuiz.aspx.designer.cs">
+      <DependentUpon>frmCreateQuiz.aspx</DependentUpon>
+    </Compile>
     <Compile Include="frmDashboard.aspx.cs">
       <DependentUpon>frmDashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -308,12 +320,33 @@
     <Compile Include="frmEducator.aspx.designer.cs">
       <DependentUpon>frmEducator.aspx</DependentUpon>
     </Compile>
+    <Compile Include="frmFillBlank.aspx.cs">
+      <DependentUpon>frmFillBlank.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmFillBlank.aspx.designer.cs">
+      <DependentUpon>frmFillBlank.aspx</DependentUpon>
+    </Compile>
     <Compile Include="frmLogin.aspx.cs">
       <DependentUpon>frmLogin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="frmLogin.aspx.designer.cs">
       <DependentUpon>frmLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frmLongForm.aspx.cs">
+      <DependentUpon>frmLongForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmLongForm.aspx.designer.cs">
+      <DependentUpon>frmLongForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frmMCQ.aspx.cs">
+      <DependentUpon>frmMCQ.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmMCQ.aspx.designer.cs">
+      <DependentUpon>frmMCQ.aspx</DependentUpon>
     </Compile>
     <Compile Include="frmModerator.aspx.cs">
       <DependentUpon>frmModerator.aspx</DependentUpon>
@@ -342,6 +375,13 @@
     </Compile>
     <Compile Include="frmSystemDev.aspx.designer.cs">
       <DependentUpon>frmSystemDev.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frmTakeQuiz.aspx.cs">
+      <DependentUpon>frmTakeQuiz.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmTakeQuiz.aspx.designer.cs">
+      <DependentUpon>frmTakeQuiz.aspx</DependentUpon>
     </Compile>
     <Compile Include="frmTimeTableAddClass.aspx.cs">
       <DependentUpon>frmTimeTableAddClass.aspx</DependentUpon>
