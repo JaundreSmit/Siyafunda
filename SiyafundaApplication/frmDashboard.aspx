@@ -11,6 +11,7 @@
         }
         .auto-style4 {
             width: 120px;
+            height: 30px;
         }
         .auto-style5 {
             width: 146px;
@@ -24,6 +25,18 @@
         .auto-style10 {
             width: 1006px;
             height: 23px;
+        }
+        .auto-style11 {
+            width: 4px;
+            height: 30px;
+        }
+        .auto-style12 {
+            width: 112px;
+            height: 30px;
+        }
+        .auto-style13 {
+            width: 146px;
+            height: 30px;
         }
         </style>
 </head>
@@ -51,13 +64,13 @@
                 <td class="auto-style5">&nbsp;</td>
             </tr>
             <tr>
-                <td class="auto-style8">
+                <td class="auto-style11">
                     <asp:Button ID="btnEducators" runat="server" Text="Educator Page" OnClick="btnEducators_Click" />
                 </td>
-                <td class="auto-style2">
+                <td class="auto-style12">
                     <asp:Button ID="btnModerators" runat="server" Text="Moderators Page" OnClick="btnModerators_Click" />
                 </td>
-                <td class="auto-style5">
+                <td class="auto-style13">
                     <asp:Button ID="btnSystemDevs" runat="server" Text="System Dev Page" OnClick="btnSystemDevs_Click" />
                 </td>
                 <td class="auto-style4">

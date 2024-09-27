@@ -31,6 +31,10 @@ namespace SiyafundaApplication
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
             }
+            else
+            {
+                Response.Redirect("frmDashboard.aspx");
+            }
 
             if (!IsPostBack)
             {
@@ -116,7 +120,8 @@ namespace SiyafundaApplication
                 int moduleId = int.Parse(ModuleDropDown.SelectedValue);
                 if (moduleId == 0)
                 {
-                    Response.Write("Please select a valid module.");
+                    lblError.Text = "Please select a valid module.";
+                    lblError.Visible = true;
                     return; // Exit if no valid module is selected
                 }
 
@@ -142,30 +147,34 @@ namespace SiyafundaApplication
                     // Sync file upload with DB using the existing connection
                     using (Con)
                     {
-                        string query = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
-                                         VALUES (@resource_id, @file_path, @file_type, @file_size)";
+                        // Step 1: Insert a new record into the Resources table
+                        string resourceQuery = @"INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
+                                         VALUES (@user_id, @module_id, @title, @description, @upload_date);
+                                         SELECT SCOPE_IDENTITY();"; // Get the newly inserted resource_id
 
-                        SqlCommand cmd = new SqlCommand(query, Con);
+                        SqlCommand resourceCmd = new SqlCommand(resourceQuery, Con);
+                        resourceCmd.Parameters.AddWithValue("@user_id", UserID); // User who uploaded the file
+                        resourceCmd.Parameters.AddWithValue("@module_id", moduleId);
+                        resourceCmd.Parameters.AddWithValue("@title", txtTitle.Text); // Assuming txtTitle is a TextBox for the title
+                        resourceCmd.Parameters.AddWithValue("@description", txtDesc.Text); // Assuming txtDesc is a TextBox for the description
+                        resourceCmd.Parameters.AddWithValue("@upload_date", DateTime.Now);
 
-                        // Assuming you get resource_id from another source (e.g., query string)
-                        int resourceId;
-                        if (!int.TryParse(Request.QueryString["resource_id"], out resourceId))
-                        {
-                            lblError.Text = "Invalid resource ID.";
-                            lblError.Visible = true;
-                            return; // Exit if resource_id is invalid
-                        }
-
-                        // Add parameters
-                        cmd.Parameters.AddWithValue("@resource_id", resourceId);
-                        cmd.Parameters.AddWithValue("@file_path", filePath);
-                        cmd.Parameters.AddWithValue("@file_type", fileType);
-                        cmd.Parameters.AddWithValue("@file_size", fileSize);
-
-                        // Open the connection, execute query, and close the connection
+                        // Open the connection, execute query, and get the resource_id
                         Con.Open();
-                        cmd.ExecuteNonQuery();
-                        Con.Close();
+                        int resourceId = Convert.ToInt32(resourceCmd.ExecuteScalar()); // Get the newly inserted resource_id
+
+                        // Step 2: Insert the file record using the new resource_id
+                        string fileQuery = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
+                                     VALUES (@resource_id, @file_path, @file_type, @file_size)";
+
+                        SqlCommand fileCmd = new SqlCommand(fileQuery, Con);
+                        fileCmd.Parameters.AddWithValue("@resource_id", resourceId);
+                        fileCmd.Parameters.AddWithValue("@file_path", filePath);
+                        fileCmd.Parameters.AddWithValue("@file_type", fileType);
+                        fileCmd.Parameters.AddWithValue("@file_size", fileSize);
+
+                        // Execute the file insert command
+                        fileCmd.ExecuteNonQuery();
                     }
 
                     // Success
@@ -184,5 +193,6 @@ namespace SiyafundaApplication
                 Response.Write("No file selected.");
             }
         }
+
     }
 }

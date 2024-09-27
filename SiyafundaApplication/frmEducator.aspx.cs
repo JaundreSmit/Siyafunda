@@ -27,7 +27,7 @@ namespace SiyafundaApplication
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
-                if (UserID > 6) // Not at least educator
+                if (UserID == 7) // Not at least educator
                 {
                     Response.Redirect("frmDashboard.aspx");
                 }
@@ -40,7 +40,7 @@ namespace SiyafundaApplication
             if (!IsPostBack)
             {
                 // Populate the RadioButtonList
-                PopulateStudentFilter();
+                // PopulateStudentFilter();
             }
         }
 

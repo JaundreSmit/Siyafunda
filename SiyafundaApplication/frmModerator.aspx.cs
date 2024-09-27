@@ -29,7 +29,7 @@ namespace SiyafundaApplication
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
-                if (UserID > 4) //Not atleast moderator
+                if (Convert.ToInt32(Session["RoleID"]) > 4) //Not atleast moderator
                 {
                     Response.Redirect("frmDashboard.aspx");
                 }
