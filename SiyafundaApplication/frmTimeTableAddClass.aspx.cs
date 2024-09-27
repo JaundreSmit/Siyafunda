@@ -15,13 +15,16 @@ namespace SiyafundaApplication
 
         private SqlConnection Con;
 
-        // Temporary user ID
-        int UserID = 0; // TODO: auto get user Id from session
+        private int UserID = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             // Initialize connection using getConnectionString method
             Con = new SqlConnection(getConnectionString());
+            if (Session["UserID"] != null)
+            {
+                UserID = Convert.ToInt32(Session["UserID"]);
+            }
 
             if (!IsPostBack)
             {
@@ -95,7 +98,6 @@ namespace SiyafundaApplication
                 Con.Close();
             }
         }
-
 
         protected void btnAddClass_Click(object sender, EventArgs e)
         {
@@ -173,6 +175,5 @@ namespace SiyafundaApplication
             // Redirect back to frmTimeTableView.aspx
             Response.Redirect("frmTimeTableView.aspx");
         }
-
     }
 }
