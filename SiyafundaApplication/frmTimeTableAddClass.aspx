@@ -58,7 +58,7 @@
             <table style="width:100%;">
                 <tr>
                     <td class="auto-style2">
-                        <asp:Button ID="btnAddClass" runat="server" OnClick="btnAddClass_Click" Text="Add Class" />
+                        <asp:Button ID="btnAddClass" runat="server" OnClick="btnAddClass_Click" Text="Add Class" style="height: 26px" />
                     </td>
                     <td class="auto-style3">
                         <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Done!" />

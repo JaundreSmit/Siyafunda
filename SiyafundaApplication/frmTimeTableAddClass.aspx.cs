@@ -21,7 +21,7 @@ namespace SiyafundaApplication
         {
             // Initialize connection using getConnectionString method
             Con = new SqlConnection(getConnectionString());
-            if (Session["UserID"] != null)
+            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) != 7) //Only students can create time tables
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
             }

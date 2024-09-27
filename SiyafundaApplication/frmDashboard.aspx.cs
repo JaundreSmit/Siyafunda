@@ -18,6 +18,14 @@ namespace SiyafundaApplication
         protected void Page_Load(object sender, EventArgs e)
         {
             Con = new SqlConnection(getConnectionString());
+            lblError.Visible = false;
+            btnEducators.Visible = false;
+            btnModerators.Visible = false;
+            btnSystemDevs.Visible = false;
+            btnSystemAdmins.Visible = false;
+            lblError.Visible = false;
+            lblRole.Visible = false;
+            lblWelcome.Visible = false;
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
@@ -30,12 +38,6 @@ namespace SiyafundaApplication
                 return;
             }
 
-            lblError.Visible = false;
-            btnEducators.Visible = false;
-            btnModerators.Visible = false;
-            btnSystemDevs.Visible = false;
-            btnSystemAdmins.Visible = false;
-            lblError.Visible = true;
             // Determine visibility of buttons based on user role
             if (Session["RoleID"] != null)
             {
@@ -63,8 +65,7 @@ namespace SiyafundaApplication
                         break;
 
                     default:
-                        lblError.Text = "No user role found";
-                        lblError.Visible = true;
+                        Response.Redirect("frmLandingPage.aspx");
                         return;
                 }
             }
@@ -107,9 +108,9 @@ namespace SiyafundaApplication
             string query;
 
             // Determine the user's role and construct the appropriate SQL query
-            if (Convert.ToInt32(Session["RoleID"]) < 6)
+            if (Convert.ToInt32(Session["RoleID"]) < 4)
             {
-                // For roles below 6, show all approved resources
+                // For roles below Moderator, show all approved resources
                 query = @"
             SELECT
                 m.title AS ModuleName,
@@ -141,7 +142,7 @@ namespace SiyafundaApplication
             }
             else
             {
-                // For Educators and Students: Only show resources for modules they are part of
+                // For Module Moderators, Educators and Students: Only show resources for modules they are part of
                 query = @"
             SELECT
                 m.title AS ModuleName,
@@ -264,6 +265,16 @@ namespace SiyafundaApplication
         protected void btnEducators_Click(object sender, EventArgs e)
         {
             Response.Redirect("frmEducator.aspx");
+        }
+
+        protected void btnLogOut_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("frmLandingPage.aspx");
+        }
+
+        protected void btnProfile_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("frmProfile.aspx");
         }
     }
 }

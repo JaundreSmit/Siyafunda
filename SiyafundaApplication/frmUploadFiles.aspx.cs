@@ -14,8 +14,8 @@ namespace SiyafundaApplication
         {
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
-        int UserID = 0; //TODO auto get user Id from session
-        //UserID = Convert.ToInt32(Session["UserID"]); // Ensure you have set UserID in session after login
+
+        private int UserID = 0;
 
         // Declare connection variable
         private SqlConnection Con;
@@ -29,10 +29,10 @@ namespace SiyafundaApplication
 
             if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7) //Only users with higher than student status can  upload files
             {
-                int userId = Convert.ToInt32(Session["UserID"]);
+                UserID = Convert.ToInt32(Session["UserID"]);
             }
 
-                if (!IsPostBack)
+            if (!IsPostBack)
             {
                 BindModules();
             }
@@ -46,11 +46,27 @@ namespace SiyafundaApplication
             {
                 try
                 {
-                    // Adjust the query to filter modules based on the UserID
-                    string query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
+                    string query;
+
+                    // Check the user's role and adjust the query accordingly
+                    if (Convert.ToInt32(Session["RoleID"]) < 4)
+                    {
+                        // For roles less than 4, show all modules
+                        query = "SELECT module_id, title FROM [dbo].[Modules]";
+                    }
+                    else
+                    {
+                        // For roles 4 and above, filter modules based on the UserID
+                        query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
+                    }
 
                     SqlCommand cmd = new SqlCommand(query, Con);
-                    cmd.Parameters.AddWithValue("@UserID", UserID); // Use parameterized query to prevent SQL injection
+
+                    // Add parameter only if the role is 4 or higher
+                    if (Convert.ToInt32(Session["RoleID"]) >= 4)
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", UserID); // Use parameterized query to prevent SQL injection
+                    }
 
                     Con.Open();
 
@@ -90,8 +106,6 @@ namespace SiyafundaApplication
                 }
             }
         }
-
-
 
         // Handle file upload process
         protected void UploadButton_Click(object sender, EventArgs e)
@@ -137,7 +151,8 @@ namespace SiyafundaApplication
                         int resourceId;
                         if (!int.TryParse(Request.QueryString["resource_id"], out resourceId))
                         {
-                            Response.Write("Invalid resource ID.");
+                            lblError.Text = "Invalid resource ID.";
+                            lblError.Visible = true;
                             return; // Exit if resource_id is invalid
                         }
 
@@ -161,7 +176,6 @@ namespace SiyafundaApplication
                     // Error handling
                     lblError.Text = ex.Message;
                     lblError.Visible = true;
-
                 }
             }
             else

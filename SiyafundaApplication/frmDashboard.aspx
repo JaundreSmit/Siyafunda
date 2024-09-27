@@ -44,7 +44,8 @@
                     <asp:Label ID="lblRole" runat="server" Text="[Role Label]"></asp:Label>
                 </td>
                 <td class="auto-style5">
-                    &nbsp;</td>
+                    <asp:Button ID="btnProfile" runat="server" OnClick="btnProfile_Click" Text="Profile" />
+                </td>
             </tr>
             <tr>
                 <td class="auto-style8">&nbsp;</td>
@@ -71,7 +72,9 @@
     <td class="auto-style5">&nbsp;</td>
 </tr>
             <tr>
-    <td class="auto-style8">&nbsp;</td>
+    <td class="auto-style8">
+        <asp:Button ID="btnLogOut" runat="server" OnClick="btnLogOut_Click" Text="Log Out" />
+                </td>
     <td class="auto-style2">&nbsp;</td>
     <td class="auto-style5">&nbsp;</td>
 </tr>
