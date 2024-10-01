@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
@@ -23,7 +22,6 @@ namespace SiyafundaApplication
         {
             Con = new SqlConnection(getConnectionString());
             lblError.Visible = false;
-            UploadButton.Enabled = true;
 
             if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7)
             {
@@ -78,8 +76,6 @@ namespace SiyafundaApplication
                     {
                         lblError.Text = "No modules found for the specified user.";
                         lblError.Visible = true;
-                        UploadButton.Enabled = false;
-                        ModuleDropDown.Items.Clear();
                     }
                 }
                 catch (Exception ex)
@@ -94,36 +90,30 @@ namespace SiyafundaApplication
             }
         }
 
-        // Watermark service class to call the API
-        private async Task<string> AddWatermark(string mainImageUrl, string watermarkImageUrl, double markRatio)
+        private string AddWatermark(string mainImagePath, string watermarkImagePath, double markRatio)
         {
-            // Create the JSON payload
-            var payload = new
+            using (var mainImage = System.Drawing.Image.FromFile(mainImagePath))
+            using (var watermarkImage = System.Drawing.Image.FromFile(watermarkImagePath))
             {
-                mainImageUrl,
-                markImageUrl = watermarkImageUrl,
-                markRatio
-            };
-
-            string jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
-            using (HttpClient client = new HttpClient())
-            {
-                var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync("https://quickchart.io/watermark", content);
-
-                if (response.IsSuccessStatusCode)
+                using (var bitmap = new System.Drawing.Bitmap(mainImage.Width, mainImage.Height))
                 {
-                    string watermarkedImageUrl = await response.Content.ReadAsStringAsync();
-                    return watermarkedImageUrl; // The URL of the watermarked image
-                }
-                else
-                {
-                    throw new Exception("Failed to apply watermark: " + response.ReasonPhrase);
+                    using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+                    {
+                        graphics.DrawImage(mainImage, 0, 0);
+                        var watermarkWidth = (int)(mainImage.Width * markRatio);
+                        var watermarkHeight = (int)(watermarkImage.Height * ((double)watermarkWidth / watermarkImage.Width));
+                        var watermarkPositionX = mainImage.Width - watermarkWidth - 10; // 10px from right
+                        var watermarkPositionY = mainImage.Height - watermarkHeight - 10; // 10px from bottom
+
+                        graphics.DrawImage(watermarkImage, watermarkPositionX, watermarkPositionY, watermarkWidth, watermarkHeight);
+                    }
+                    var watermarkedPath = Path.Combine(Path.GetDirectoryName(mainImagePath), "watermarked_" + Path.GetFileName(mainImagePath));
+                    bitmap.Save(watermarkedPath);
+                    return watermarkedPath;
                 }
             }
         }
 
-        // Handle file upload process
         private async Task UploadFileAsync()
         {
             if (FileUploadControl.HasFile)
@@ -135,6 +125,7 @@ namespace SiyafundaApplication
                     lblError.Visible = true;
                     return;
                 }
+
                 lblError.Visible = true;
                 string moduleDirectory = Server.MapPath($"~/UploadedFiles/{moduleId}/");
                 if (!Directory.Exists(moduleDirectory))
@@ -156,34 +147,13 @@ namespace SiyafundaApplication
                     {
                         if (fileSize < 1048576) // Check if file size is less than 1 MB
                         {
-                            string mainImageUrl = $"{Request.Url.GetLeftPart(UriPartial.Path)}/{relativeFilePath}";
-                            string watermarkUrl = $"{Request.Url.GetLeftPart(UriPartial.Path)}/Assets/SiyafundaLogo.png"; //logo path
+                            string watermarkImagePath = Server.MapPath("~/Assets/SiyafundaLogo.png"); // logo path
+                            string watermarkedImagePath = AddWatermark(filePath, watermarkImagePath, 0.25);
 
-                            // Ensure that both image URLs are valid
-                            if (await IsImageAccessible(mainImageUrl) && await IsImageAccessible(watermarkUrl))
-                            {
-                                string watermarkedImageUrl = await AddWatermark(mainImageUrl, watermarkUrl, 0.25);
+                            // Overwrite the original file with the watermarked image
+                            File.Copy(watermarkedImagePath, filePath, true);
 
-                                // Download and save the watermarked image
-                                using (HttpClient client = new HttpClient())
-                                {
-                                    HttpResponseMessage response = await client.GetAsync(watermarkedImageUrl);
-                                    if (response.IsSuccessStatusCode)
-                                    {
-                                        byte[] watermarkedImageBytes = await response.Content.ReadAsByteArrayAsync();
-                                        File.WriteAllBytes(filePath, watermarkedImageBytes); // Overwrite the original file
-                                        lblError.Text = "File uploaded and watermarked successfully!";
-                                    }
-                                    else
-                                    {
-                                        throw new Exception("Failed to download the watermarked image: " + response.ReasonPhrase);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                lblError.Text = "Both image files must be accessible.";
-                            }
+                            lblError.Text = "File uploaded and watermarked successfully!";
                         }
                         else
                         {
@@ -215,50 +185,31 @@ namespace SiyafundaApplication
                         fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath);
                         fileCmd.Parameters.AddWithValue("@file_type", fileType);
                         fileCmd.Parameters.AddWithValue("@file_size", fileSize);
-
-                        // Execute the command and check if successful
-                        int rowsAffected = fileCmd.ExecuteNonQuery();
-                        if (rowsAffected > 0) // Check if any rows were affected
-                        {
-                            lblError.Text = "File successfully loaded.";
-                        }
-                        else
-                        {
-                            lblError.Text = "File load failed.";
-                        }
+                        fileCmd.ExecuteNonQuery();
                     }
                 }
                 catch (Exception ex)
                 {
-                    lblError.Text = "Error: " + ex.Message;
+                    lblError.Text = "File upload failed: " + ex.Message;
                 }
             }
             else
             {
-                lblError.Text = "No file selected.";
+                lblError.Text = "Please select a file.";
             }
         }
 
-        // Helper method to check if an image URL is accessible
-        private async Task<bool> IsImageAccessible(string imageUrl)
+        protected async void UploadButton_Click(object sender, EventArgs e)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    HttpResponseMessage response = await client.GetAsync(imageUrl);
-                    return response.IsSuccessStatusCode;
-                }
-                catch
-                {
-                    return false; // Image is not accessible
-                }
-            }
-        }
-
-        protected void UploadButton_Click1(object sender, EventArgs e)
-        {
-            UploadFileAsync().GetAwaiter().GetResult();
+            await UploadFileAsync();
         }
     }
 }
+
+
+
+
+
+
+
+
