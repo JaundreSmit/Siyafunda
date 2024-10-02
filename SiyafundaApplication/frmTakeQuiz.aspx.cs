@@ -134,8 +134,8 @@ namespace SiyafundaApplication
                         }
 
                         // Insert response into QuizResponses table
-                        string insertResponseQuery = @"INSERT INTO [dbo].[QuizResponses] 
-                                                       (user_id, question_id, selected_answer, submitted_at) 
+                        string insertResponseQuery = @"INSERT INTO [dbo].[QuizResponses]
+                                                       (user_id, question_id, selected_answer, submitted_at)
                                                        VALUES (@UserID, @QuestionID, @Answer, @SubmittedAt)";
                         SqlCommand cmd = new SqlCommand(insertResponseQuery, Con);
                         cmd.Parameters.AddWithValue("@UserID", Session["UserID"]);

@@ -151,7 +151,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="About.aspx" />
-    <Content Include="admin.aspx" />
+    <Content Include="frmSystemAdmin.aspx" />
     <Content Include="App_Data\SiyafundaDB.mdf" />
     <Content Include="App_Data\SiyafundaDB_log.ldf">
       <DependentUpon>SiyafundaDB.mdf</DependentUpon>
@@ -188,7 +188,6 @@
     <Content Include="frmMCQ.aspx" />
     <Content Include="frmModerator.aspx" />
     <Content Include="frmSignUp.aspx" />
-    <Content Include="frmSystemAdmin.aspx" />
     <Content Include="frmSystemDev.aspx" />
     <Content Include="frmTakeQuiz.aspx" />
     <Content Include="frmTimeTableAddClass.aspx" />
@@ -263,12 +262,12 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="admin.aspx.cs">
-      <DependentUpon>admin.aspx</DependentUpon>
+    <Compile Include="frmSystemAdmin.aspx.cs">
+      <DependentUpon>frmSystemAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="admin.aspx.designer.cs">
-      <DependentUpon>admin.aspx</DependentUpon>
+    <Compile Include="frmSystemAdmin.aspx.designer.cs">
+      <DependentUpon>frmSystemAdmin.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="About.aspx.cs">
@@ -369,13 +368,6 @@
     </Compile>
     <Compile Include="frmSignUp.aspx.designer.cs">
       <DependentUpon>frmSignUp.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="frmSystemAdmin.aspx.cs">
-      <DependentUpon>frmSystemAdmin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="frmSystemAdmin.aspx.designer.cs">
-      <DependentUpon>frmSystemAdmin.aspx</DependentUpon>
     </Compile>
     <Compile Include="frmSystemDev.aspx.cs">
       <DependentUpon>frmSystemDev.aspx</DependentUpon>
