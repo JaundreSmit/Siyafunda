@@ -151,6 +151,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="About.aspx" />
+    <Content Include="frmStudent.aspx" />
     <Content Include="frmSystemAdmin.aspx" />
     <Content Include="App_Data\SiyafundaDB.mdf" />
     <Content Include="App_Data\SiyafundaDB_log.ldf">
@@ -262,6 +263,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmStudent.aspx.cs">
+      <DependentUpon>frmStudent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmStudent.aspx.designer.cs">
+      <DependentUpon>frmStudent.aspx</DependentUpon>
+    </Compile>
     <Compile Include="frmSystemAdmin.aspx.cs">
       <DependentUpon>frmSystemAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
