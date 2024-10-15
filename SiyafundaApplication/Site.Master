@@ -15,6 +15,9 @@
     <webopt:bundlereference runat="server" path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
+    <!-- Add React CSS here -->
+    <link rel="stylesheet" href="~/reactapp/build/static/css/main.css" />
+
     <style>
         .navbar {
             background-color: rgb(108, 61, 145);
@@ -69,8 +72,13 @@
             </footer>
         </div>
     </form>
+
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/Scripts/bootstrap.js") %>
     </asp:PlaceHolder>
+
+    <!-- Add React JS here -->
+    <script defer src="~/reactapp/build/static/js/main.js"></script>
 </body>
 </html>
+
