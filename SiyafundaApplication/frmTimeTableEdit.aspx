@@ -1,58 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmTimeTableEdit.aspx.cs" Inherits="SiyafundaApplication.frmTimeTableAddClass" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmTimeTableEdit.aspx.cs" Inherits="SiyafundaApplication.frmTimeTableEdit" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-    <style type="text/css">
-        .auto-style1 {
-            width: 284px;
-        }
-        .auto-style2 {
-            width: 284px;
-            height: 22px;
-        }
-        .auto-style3 {
-            height: 22px;
-        }
-        .auto-style4 {
-            width: 96%;
-            height: 183px;
-        }
-        .auto-style5 {
-            width: 284px;
-            height: 26px;
-        }
-        .auto-style6 {
-            height: 26px;
-        }
-        .auto-style8 {
-            width: 111px;
-        }
-        .auto-style9 {
-            width: 111px;
-            height: 26px;
-        }
-        .auto-style10 {
-            width: 111px;
-            height: 23px;
-        }
-        .auto-style11 {
-            height: 23px;
-        }
-        .auto-style12 {
-            width: 111px;
-            height: 30px;
-        }
-        .auto-style13 {
-            height: 30px;
-        }
-    </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <title>Edit Timetable</title>
+    <div>
         <asp:Panel ID="pnlAddClass" runat="server" Height="193px" Width="293px">
             <table class="auto-style4">
                 <tr>
@@ -95,15 +45,13 @@
                 </tr>
             </table>
         </asp:Panel>
-        </div>
-        <p>
-            &nbsp;</p>
+
         <asp:Panel ID="pnlEditDeleteClass" runat="server" Height="211px" Width="292px">
             <table style="width:100%;">
                 <tr>
-    <td class="auto-style10">Edit Time table</td>
-    <td class="auto-style11"></td>
-</tr>
+                    <td class="auto-style10">Edit Time table</td>
+                    <td class="auto-style11"></td>
+                </tr>
                 <tr>
                     <td class="auto-style9">Select Class:</td>
                     <td class="auto-style6">
@@ -152,9 +100,7 @@
                 </tr>
             </table>
         </asp:Panel>
-        <p>
-                        <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Done!" />
-                    </p>
-    </form>
-</body>
-</html>
+
+        <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Done!" />
+    </div>
+</asp:Content>

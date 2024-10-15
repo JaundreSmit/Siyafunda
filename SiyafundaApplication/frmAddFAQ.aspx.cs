@@ -103,7 +103,7 @@ namespace SiyafundaApplication
 
         protected void btnAddFAQ_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtQuestion.Text) || string.IsNullOrWhiteSpace(txtAnwer.Text))
+            if (string.IsNullOrWhiteSpace(txtQuestion.Text) || string.IsNullOrWhiteSpace(txtAnswer.Text))
             {
                 lblErrors.Text = "Please fill in both the question and the answer.";
                 lblErrors.Visible = true;
@@ -113,7 +113,7 @@ namespace SiyafundaApplication
             int userID = Convert.ToInt32(Session["UserID"]);
             int module_id = GetModuleId(lblModuleName.Text);
             string question = txtQuestion.Text.Trim();
-            string answer = txtAnwer.Text.Trim();
+            string answer = txtAnswer.Text.Trim();
             DateTime dateTime = DateTime.Now;
 
             try
@@ -139,7 +139,7 @@ namespace SiyafundaApplication
                         lblErrors.Visible = true;
                         // Optionally clear the fields after successful insert
                         txtQuestion.Text = string.Empty;
-                        txtAnwer.Text = string.Empty;
+                        txtAnswer.Text = string.Empty;
                     }
                     else
                     {

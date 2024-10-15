@@ -1,8 +1,6 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmSystemAdmin.aspx.cs" Inherits="SiyafundaApplication.Admin" %>
+<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmSystemAdmin.aspx.cs" Inherits="SiyafundaApplication.Admin" %>
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Admin Page</title>
     <style>
         body {
@@ -28,33 +26,22 @@
             background-color: #2980b9;
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div>
-            <h1>Admin User Management</h1>
-            <asp:GridView ID="UsersGridView" runat="server" AutoGenerateColumns="False" OnRowCommand="UsersGridView_RowCommand" CssClass="grid-container">
-                <Columns>
-                    <asp:BoundField DataField="user_id" HeaderText="User ID" Visible="false" />
-                    <asp:BoundField DataField="Name" HeaderText="Name" />
-                    <asp:BoundField DataField="Surname" HeaderText="Surname" />
-                    <asp:BoundField DataField="Email" HeaderText="Email" />
-                    <asp:BoundField DataField="role_name" HeaderText="Role" />
-                    <asp:TemplateField HeaderText="Actions">
-                        <ItemTemplate>
-                            <asp:Button ID="DeleteButton" runat="server" Text="Delete" CommandArgument='<%# Eval("user_id") %>' CommandName="DeleteUser" CssClass="button" />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-        </div>
-    </form>
-</body>
-</html>
-
-
-
-
-
-
-
+    
+    <div>
+        <h1>Admin User Management</h1>
+        <asp:GridView ID="UsersGridView" runat="server" AutoGenerateColumns="False" OnRowCommand="UsersGridView_RowCommand" CssClass="grid-container">
+            <Columns>
+                <asp:BoundField DataField="user_id" HeaderText="User ID" Visible="false" />
+                <asp:BoundField DataField="Name" HeaderText="Name" />
+                <asp:BoundField DataField="Surname" HeaderText="Surname" />
+                <asp:BoundField DataField="Email" HeaderText="Email" />
+                <asp:BoundField DataField="role_name" HeaderText="Role" />
+                <asp:TemplateField HeaderText="Actions">
+                    <ItemTemplate>
+                        <asp:Button ID="DeleteButton" runat="server" Text="Delete" CommandArgument='<%# Eval("user_id") %>' CommandName="DeleteUser" CssClass="button" />
+                    </ItemTemplate>
+                </asp:TemplateField>
+            </Columns>
+        </asp:GridView>
+    </div>
+</asp:Content>

@@ -1,8 +1,6 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmLogin.aspx.cs" Inherits="SiyafundaApplication.frmLogin" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmLogin.aspx.cs" Inherits="SiyafundaApplication.frmLogin" %>
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Login</title>
     <style type="text/css">
         .auto-style1 {
@@ -23,59 +21,56 @@
             height: 30px;
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div>
-            <h2>Login</h2>
 
-            <!-- Username Label and TextBox -->
-            <table style="width:100%;">
-                <tr>
-                    <td class="auto-style3">
-            <asp:Label ID="UsernameLabel" runat="server" Text="Username/Email"></asp:Label></td>
-                    <td class="auto-style4">
-            <asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>&nbsp;<asp:RequiredFieldValidator ID="UsernameRequired" runat="server" ControlToValidate="UsernameTextBox" 
-                ErrorMessage="Username is required" ForeColor="Red"></asp:RequiredFieldValidator></td>
-                    <td class="auto-style5"></td>
-                </tr>
-                <tr>
-                    <td class="auto-style1">
-            <asp:Label ID="PasswordLabel" runat="server" Text="Password"></asp:Label></td>
-                    <td class="auto-style2">
-            <asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password"></asp:TextBox>&nbsp;<asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="PasswordTextBox" 
-                ErrorMessage="Password is required" ForeColor="Red"></asp:RequiredFieldValidator></td>
-                    <td>&nbsp;</td>
-                </tr>
-                <tr>
-                    <td class="auto-style1">
-            <asp:Label ID="lblError" runat="server" Text="" ForeColor="Red" Visible="false"></asp:Label>
-                    </td>
-                    <td class="auto-style2">&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
-                <tr>
-    <td class="auto-style1">
-            <asp:Button ID="LoginButton" runat="server" Text="Login" OnClick="LoginButton_Click" /></td>
-    <td class="auto-style2">
-            <asp:Button ID="btnBack" runat="server" Text="Back" OnClick="btnBack_Click" style="height: 26px" /></td>
-    <td>&nbsp;</td>
-</tr>
-            </table>
-            <br />
-            <br />
-            <br />
+    <div>
+        <h2>Login</h2>
 
-            <!-- Password Label and TextBox -->
-            <br />
-            <br />
-            <br />
+        <!-- Username Label and TextBox -->
+        <table style="width:100%;">
+            <tr>
+                <td class="auto-style3">
+                    <asp:Label ID="UsernameLabel" runat="server" Text="Username/Email"></asp:Label>
+                </td>
+                <td class="auto-style4">
+                    <asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>&nbsp;
+                    <asp:RequiredFieldValidator ID="UsernameRequired" runat="server" ControlToValidate="UsernameTextBox" 
+                        ErrorMessage="Username is required" ForeColor="Red"></asp:RequiredFieldValidator>
+                </td>
+                <td class="auto-style5"></td>
+            </tr>
+            <tr>
+                <td class="auto-style1">
+                    <asp:Label ID="PasswordLabel" runat="server" Text="Password"></asp:Label>
+                </td>
+                <td class="auto-style2">
+                    <asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password"></asp:TextBox>&nbsp;
+                    <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="PasswordTextBox" 
+                        ErrorMessage="Password is required" ForeColor="Red"></asp:RequiredFieldValidator>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style1">
+                    <asp:Label ID="lblError" runat="server" Text="" ForeColor="Red" Visible="false"></asp:Label>
+                </td>
+                <td class="auto-style2">&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style1">
+                    <asp:Button ID="LoginButton" runat="server" Text="Login" OnClick="LoginButton_Click" />
+                </td>
+                <td class="auto-style2">
+                    <asp:Button ID="btnBack" runat="server" Text="Back" OnClick="btnBack_Click" style="height: 26px" />
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
 
-            <!-- Login Button -->
-            <br />
+        <br />
+        <br />
+        <br />
 
-            <!-- Error Label -->
-        </div>
-    </form>
-</body>
-</html>
+        <!-- Error Label -->
+    </div>
+</asp:Content>

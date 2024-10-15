@@ -375,5 +375,14 @@ namespace SiyafundaApplication
         {
             Response.Redirect("frmAddFAQ.aspx");
         }
+
+        protected void btnAssignStudent_Click(object sender, EventArgs e)
+        {
+            //TODO
+        }
+
+        protected void btnAddStudent_Click(object sender, EventArgs e)
+        {
+        }
     }
 }

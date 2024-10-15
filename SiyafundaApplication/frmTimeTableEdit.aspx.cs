@@ -5,7 +5,7 @@ using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
-    public partial class frmTimeTableAddClass : System.Web.UI.Page
+    public partial class frmTimeTableEdit : System.Web.UI.Page
     {
         // Define connection string method
         protected string getConnectionString()
