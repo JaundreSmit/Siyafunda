@@ -14,6 +14,7 @@ namespace SiyafundaApplication
 
         private SqlConnection Con;
         private int UserID = 0;
+        private int RoleID = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -27,6 +28,9 @@ namespace SiyafundaApplication
             lblRole.Visible = false;
             lblWelcome.Visible = false;
             btnProfile.Visible = false;
+            lblDate.Visible = true;
+            lblTimeTableError.Visible = false;
+            lblDate.Text = "Today is " + DateTime.Now.ToString("dddd, MMMM dd yyyy, hh:mm tt");
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
@@ -40,10 +44,12 @@ namespace SiyafundaApplication
             }
 
             // Determine visibility of buttons based on user role
+
             if (Session["RoleID"] != null)
             {
+                RoleID = Convert.ToInt32(Session["RoleID"]);
                 lblError.Visible = true;
-                switch (Convert.ToInt32(Session["RoleID"]))
+                switch (RoleID)
                 {
                     case 2: // System Admin
                         ShowAllButtons();
@@ -72,6 +78,8 @@ namespace SiyafundaApplication
             }
 
             ShowAllResources();
+            ShowAnnouncements();
+            loadTimeTable();
         }
 
         private void LoadUserData(int userId)
@@ -230,6 +238,117 @@ namespace SiyafundaApplication
             }
         }
 
+        private void ShowAnnouncements()
+        {
+            // Query to retrieve announcements based on user ID and module enrollment
+            string query = @"
+        SELECT
+            m.title AS ModuleName,
+            a.created_at AS AnnouncementDate,
+            a.title AS AnnouncementTitle,
+            a.content AS AnnouncementContent
+        FROM
+            Announcements a
+        INNER JOIN
+            Modules m ON a.module_id = m.module_id
+        INNER JOIN
+            Stu_To_Module stm ON m.module_id = stm.module_id
+        WHERE
+            stm.user_id = @UserId
+        ORDER BY
+            a.created_at DESC";  // Order by the announcement creation date
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", UserID);  // Using the current UserID
+
+                        con.Open();
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        DataTable dt = new DataTable();
+                        dt.Load(reader);
+
+                        if (dt.Rows.Count == 0)
+                        {
+                            lblAnnoucementsError.Text = "No announcements found.";
+                            lblAnnoucementsError.Visible = true;
+                        }
+                        else
+                        {
+                            lblAnnoucementsError.Visible = false;  // Hide error label if announcements are found
+
+                            // Assuming dgvAnnouncements is a GridView, DataGridView, or similar control
+                            dgvAnnouncements.DataSource = dt;
+                            dgvAnnouncements.DataBind();  // Bind the data to the control
+                        }
+
+                        reader.Close();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                lblAnnoucementsError.Text = "An error occurred while retrieving announcements: " + ex.Message;
+                lblAnnoucementsError.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                lblAnnoucementsError.Text = "An unexpected error occurred: " + ex.Message;
+                lblAnnoucementsError.Visible = true;
+            }
+        }
+
+        private void loadTimeTable()
+        {
+            // Ensure a connection to the database is established
+            using (Con = new SqlConnection(getConnectionString()))
+            {
+                try
+                {
+                    Con.Open(); // Open the database connection
+
+                    // SQL query to select the timetable for the current user
+                    string query = @"SELECT TT.time_table_id, M.title AS module_title, D.day_name,
+                            TT.class_start_time, TT.class_end_time
+                     FROM TimeTable TT
+                     JOIN Modules M ON TT.module_id = M.module_id
+                     JOIN DaysOfTheWeek D ON TT.day_id = D.day_id
+                     WHERE TT.user_id = @UserID";
+
+                    // Create the SQL command and parameterize the query
+                    using (SqlCommand cmd = new SqlCommand(query, Con))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", UserID); // Pass the current user's ID
+
+                        // Execute the query and load the result into a DataTable
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        {
+                            System.Data.DataTable dt = new System.Data.DataTable();
+                            adapter.Fill(dt);
+
+                            // Bind the result to the GridView (dgvTimeTable)
+                            dgvTimeTable.DataSource = dt;
+                            dgvTimeTable.DataBind();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions (log the error, show message, etc.)
+                    lblTimeTableError.Visible = true;
+                    lblTimeTableError.Text = "Error loading timetable: " + ex.Message;
+                }
+                finally
+                {
+                    Con.Close(); // Ensure the connection is closed
+                }
+            }
+        }
+
         private void ShowAllButtons()
         {
             btnEducators.Visible = true;
@@ -279,6 +398,15 @@ namespace SiyafundaApplication
         protected void btnProfile_Click(object sender, EventArgs e)
         {
             Response.Redirect("frmProfile.aspx");
+        }
+
+        protected void btnEditTimeTable_Click(object sender, EventArgs e)
+        {
+            if (RoleID == 7)
+            {
+                // Students can edit time tables here
+                Response.Redirect("frmTimeTableEdit.aspx");
+            }
         }
     }
 }

@@ -38,6 +38,20 @@
             width: 146px;
             height: 30px;
         }
+        .auto-style14 {
+            width: 392px;
+        }
+        .auto-style16 {
+            width: 42%;
+            margin-right: 0px;
+        }
+        .auto-style17 {
+            width: 299px;
+        }
+        .auto-style18 {
+            width: 299px;
+            height: 24px;
+        }
         </style>
 </head>
 <body>
@@ -100,11 +114,52 @@
             </tr>
             <tr>
     <td class="auto-style10">
-                    <asp:GridView ID="dgvAvailableFiles" runat="server" Width="1479px">
+                    <asp:GridView ID="dgvAvailableFiles" runat="server" Width="552px">
                     </asp:GridView>
                 </td>
 </tr>
             </table>
+    <p>
+        &nbsp;</p>
+    <table class="auto-style16">
+        <tr>
+            <td class="auto-style14">Announcements</td>
+        </tr>
+        <tr>
+            <td class="auto-style14">
+                <asp:GridView ID="dgvAnnouncements" runat="server" Width="350px">
+                </asp:GridView>
+            </td>
+
+        </tr>
+        <tr>
+            <td class="auto-style14">
+                <asp:Label ID="lblAnnoucementsError" runat="server" Text="[Annoucements Errors]"></asp:Label>
+            </td>
+            
+        </tr>
+    </table>
+        <br />
+    <table style="width:100%;">
+        <tr>
+            <td class="auto-style17">Time Table</td>
+        </tr>
+        <tr>
+            <td class="auto-style17">
+                <asp:Label ID="lblDate" runat="server" Text="[Date]"></asp:Label>
+                <asp:GridView ID="dgvTimeTable" runat="server" Width="392px">
+                </asp:GridView>
+                <asp:Label ID="lblTimeTableError" runat="server" Text="[TT Error]"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td class="auto-style18">
+                &nbsp;
+                <asp:Button ID="btnEditTimeTable" runat="server" OnClick="btnEditTimeTable_Click" Text="Edit Time Table" />
+&nbsp;
+            </td>
+        </tr>
+    </table>
     </form>
-</body>
+    </body>
 </html>
