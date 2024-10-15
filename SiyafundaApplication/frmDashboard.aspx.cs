@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
@@ -407,6 +408,17 @@ namespace SiyafundaApplication
                 // Students can edit time tables here
                 Response.Redirect("frmTimeTableEdit.aspx");
             }
+        }
+        protected void btnFileAction_Click(object sender, EventArgs e)
+        {
+
+            Button btn = (Button)sender;
+
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+
+            
+            string fileName = row.Cells[1].Text; // Adjust the index based on selected file
+
         }
     }
 }

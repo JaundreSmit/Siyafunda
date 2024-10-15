@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -17,19 +14,17 @@ namespace SiyafundaApplication
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
 
-        // Declare connection variable
         private SqlConnection Con;
-
         private int UserID = 0;
         private int SelectedResourceID = 0;
-        private int ApproveReject = 3;
+        private int ApproveReject = 3; // Default to 'In Progress' state
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
-                if (Convert.ToInt32(Session["RoleID"]) > 5) //Not atleast moderator
+                if (Convert.ToInt32(Session["RoleID"]) > 5) // Not at least moderator
                 {
                     Response.Redirect("frmDashboard.aspx");
                 }
@@ -42,63 +37,58 @@ namespace SiyafundaApplication
             Con = new SqlConnection(getConnectionString());
             lblProgressErrors.Visible = false;
 
-            //Hide in progress controls:
+            // Hide moderation controls initially
             dgvInProgress.Visible = false;
             txtFeedback.Visible = false;
             txtSearchProgress.Visible = false;
             btnApprove.Visible = false;
             btnReject.Visible = false;
             btnInProgressSubmit.Visible = false;
-            LoadData();
+
+            if (!IsPostBack)
+            {
+                LoadData();
+            }
         }
 
         private void LoadData(string filter = null)
         {
             try
             {
-                // Open the connection
                 Con.Open();
 
-                // Define the base query with resource_id
                 string query = @"
-        SELECT r.resource_id,
-               m.title AS ModuleTitle,
-               r.title AS ResourceTitle,
-               r.description,
-               r.upload_date,
-               f.file_type,
-               f.file_size
-        FROM [Res_to_status] rs
-        INNER JOIN [Resources] r ON rs.resource_id = r.resource_id
-        INNER JOIN [Modules] m ON r.module_id = m.module_id
-        INNER JOIN [Files] f ON r.resource_id = f.resource_id
-        WHERE rs.status_id = 3";  // Only get resources with status_id of 3 aka in progress
+                SELECT r.resource_id,
+                       m.title AS ModuleTitle,
+                       r.title AS ResourceTitle,
+                       r.description,
+                       r.upload_date,
+                       f.file_type,
+                       f.file_size
+                FROM [Res_to_status] rs
+                INNER JOIN [Resources] r ON rs.resource_id = r.resource_id
+                INNER JOIN [Modules] m ON r.module_id = m.module_id
+                INNER JOIN [Files] f ON r.resource_id = f.resource_id
+                WHERE rs.status_id = 3";  // Only get resources with status_id of 3 (In Progress)
 
-                // Add filter for module title or resource title if provided
                 if (!string.IsNullOrEmpty(filter))
                 {
                     query += " AND (m.title LIKE @Filter OR r.title LIKE @Filter)";
                 }
 
-                // Create SQL command
                 SqlCommand cmd = new SqlCommand(query, Con);
 
-                // Add filter parameter if applicable
                 if (!string.IsNullOrEmpty(filter))
                 {
                     cmd.Parameters.AddWithValue("@Filter", "%" + filter + "%");
                 }
 
-                // Execute the query
                 SqlDataReader reader = cmd.ExecuteReader();
 
-                // Check if there are rows to read
                 if (reader.HasRows)
                 {
                     DataTable dt = new DataTable();
-                    dt.Load(reader);  // Load data into DataTable
-
-                    // Bind the DataTable to the DataGridView
+                    dt.Load(reader);
                     dgvInProgress.DataSource = dt;
                     dgvInProgress.DataBind();
                 }
@@ -108,15 +98,9 @@ namespace SiyafundaApplication
                     lblProgressErrors.Visible = true;
                 }
 
-                reader.Close(); // Close the reader
-
-                // Show controls:
+                reader.Close();
                 dgvInProgress.Visible = true;
                 txtSearchProgress.Visible = true;
-                txtFeedback.Visible = false;
-                btnApprove.Visible = false;
-                btnReject.Visible = false;
-                btnInProgressSubmit.Visible = false;
             }
             catch (Exception ex)
             {
@@ -125,7 +109,6 @@ namespace SiyafundaApplication
             }
             finally
             {
-                // Ensure the connection is closed
                 Con.Close();
             }
         }
@@ -136,21 +119,19 @@ namespace SiyafundaApplication
             {
                 Con.Open();
 
-                // Define the query to update resource status and feedback
                 string query = @"
                 UPDATE [Res_to_status]
                 SET status_id = @StatusID,
-                user_id = @UserID,
-                feedback = @Feedback
+                    user_id = @UserID,
+                    feedback = @Feedback
                 WHERE resource_id = @ResourceID";
 
                 SqlCommand cmd = new SqlCommand(query, Con);
                 cmd.Parameters.AddWithValue("@StatusID", statusID);
-                cmd.Parameters.AddWithValue("@UserID", UserID); // The moderator's ID
+                cmd.Parameters.AddWithValue("@UserID", UserID);
                 cmd.Parameters.AddWithValue("@Feedback", txtFeedback.Text.Trim());
                 cmd.Parameters.AddWithValue("@ResourceID", SelectedResourceID);
 
-                // Execute the query
                 int rowsAffected = cmd.ExecuteNonQuery();
 
                 if (rowsAffected > 0)
@@ -177,32 +158,18 @@ namespace SiyafundaApplication
 
         protected void txtSearchProgress_TextChanged(object sender, EventArgs e)
         {
-            if (txtSearchProgress.Text.Length > 0)
-            {
-                // Get the search term from the TextBox
-                string searchTerm = txtSearchProgress.Text.Trim();
-
-                // Call the LoadData method with the search term to filter results
-                LoadData(searchTerm);
-            }
+            string searchTerm = txtSearchProgress.Text.Trim();
+            LoadData(searchTerm);
         }
 
         protected void dgvInProgress_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Make feedback controls visible
             txtFeedback.Visible = true;
             btnApprove.Visible = true;
             btnReject.Visible = true;
             btnInProgressSubmit.Visible = true;
 
-            // Retrieve the selected resource ID from the GridView
-            if (dgvInProgress.SelectedDataKey != null)
-            {
-                int selectedResourceID = Convert.ToInt32(dgvInProgress.SelectedDataKey.Value);
-
-                // Assign the selected Resource ID to a field or use it as needed
-                SelectedResourceID = selectedResourceID;
-            }
+            SelectedResourceID = Convert.ToInt32(dgvInProgress.SelectedDataKey.Value);
         }
 
         protected void btnReject_Click(object sender, EventArgs e)
@@ -217,7 +184,7 @@ namespace SiyafundaApplication
 
         protected void btnInProgressSubmit_Click(object sender, EventArgs e)
         {
-            if (txtFeedback.Text.Length > 0)
+            if (!string.IsNullOrEmpty(txtFeedback.Text))
             {
                 UpdateResource(ApproveReject);
             }

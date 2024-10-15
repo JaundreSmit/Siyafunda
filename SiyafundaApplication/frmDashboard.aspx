@@ -107,6 +107,13 @@
         <tr>
             <td class="auto-style10">
                 <asp:GridView ID="dgvAvailableFiles" runat="server" Width="552px">
+                    <Columns>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:Button ID="btnFileAction" runat="server" Text="Action" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
                 </asp:GridView>
             </td>
         </tr>
@@ -121,6 +128,13 @@
         <tr>
             <td class="auto-style14">
                 <asp:GridView ID="dgvAnnouncements" runat="server" Width="350px">
+                    <Columns>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:Button ID="btnAnnouncementAction" runat="server" Text="Action" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
                 </asp:GridView>
             </td>
         </tr>
@@ -141,6 +155,13 @@
             <td class="auto-style17">
                 <asp:Label ID="lblDate" runat="server" Text="[Date]"></asp:Label>
                 <asp:GridView ID="dgvTimeTable" runat="server" Width="392px">
+                    <Columns>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:Button ID="btnTimeTableAction" runat="server" Text="Action" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
                 </asp:GridView>
                 <asp:Label ID="lblTimeTableError" runat="server" Text="[TT Error]"></asp:Label>
             </td>
@@ -154,3 +175,6 @@
         </tr>
     </table>
 </asp:Content>
+
+
+
