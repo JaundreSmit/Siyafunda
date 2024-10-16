@@ -26,15 +26,25 @@ IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_TimeTable_Modules')
 IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_TimeTable_DaysOfTheWeek')
     ALTER TABLE [dbo].[TimeTable] DROP CONSTRAINT FK_TimeTable_DaysOfTheWeek;
 
+-- Dropping QuizResponses foreign keys
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_QuizResponses_LFQuestions')
+    ALTER TABLE [dbo].[QuizResponses] DROP CONSTRAINT FK_QuizResponses_LFQuestions;
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_QuizResponses_FBQuestions')
+    ALTER TABLE [dbo].[QuizResponses] DROP CONSTRAINT FK_QuizResponses_FBQuestions;
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_QuizResponses_MCQuestions')
+    ALTER TABLE [dbo].[QuizResponses] DROP CONSTRAINT FK_QuizResponses_MCQuestions;
 IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_QuizResponses_Users')
     ALTER TABLE [dbo].[QuizResponses] DROP CONSTRAINT FK_QuizResponses_Users;
 
-IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_QuizResponses_QuizQuestions')
-    ALTER TABLE [dbo].[QuizResponses] DROP CONSTRAINT FK_QuizResponses_QuizQuestions;
+-- Dropping MCQuestions, FBQuestions, LFQuestions foreign keys
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_MCQuestions_Quizzes')
+    ALTER TABLE [dbo].[MCQuestions] DROP CONSTRAINT FK_MCQuestions_Quizzes;
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_FBQuestions_Quizzes')
+    ALTER TABLE [dbo].[FBQuestions] DROP CONSTRAINT FK_FBQuestions_Quizzes;
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_LFQuestions_Quizzes')
+    ALTER TABLE [dbo].[LFQuestions] DROP CONSTRAINT FK_LFQuestions_Quizzes;
 
-IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_QuizQuestions_Quizzes')
-    ALTER TABLE [dbo].[QuizQuestions] DROP CONSTRAINT FK_QuizQuestions_Quizzes;
-
+-- Dropping Quizzes foreign key
 IF EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_Quizzes_Modules')
     ALTER TABLE [dbo].[Quizzes] DROP CONSTRAINT FK_Quizzes_Modules;
 
@@ -102,7 +112,10 @@ DROP TABLE IF EXISTS [dbo].[FAQs];
 DROP TABLE IF EXISTS [dbo].[Modules];
 DROP TABLE IF EXISTS [dbo].[Gradebook];
 DROP TABLE IF EXISTS [dbo].[Quizzes];
-DROP TABLE IF EXISTS [dbo].[QuizQuestions];
+/*DROP TABLE IF EXISTS [dbo].[QuizQuestions];*/
+DROP TABLE IF EXISTS [dbo].[MCQuestions];
+DROP TABLE IF EXISTS [dbo].[LFQuestions];
+DROP TABLE IF EXISTS [dbo].[FBQuestions];
 DROP TABLE IF EXISTS [dbo].[QuizResponses];
 DROP TABLE IF EXISTS [dbo].[UserSessions];
 DROP TABLE IF EXISTS [dbo].[Roles];

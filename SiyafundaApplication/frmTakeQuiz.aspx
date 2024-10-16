@@ -1,37 +1,59 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmTakeQuiz.aspx.cs" Inherits="SiyafundaApplication.frmTakeQuiz" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmTakeQuiz.aspx.cs" Inherits="SiyafundaApplication.frmTakeQuiz" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
     <title>Take Quiz</title>
-    <div>
-        <h2><asp:Label ID="lblQuizTitle" runat="server"></asp:Label></h2>
-        <p><asp:Label ID="lblQuizDescription" runat="server"></asp:Label></p>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Take a Quiz</h2>
 
-        <asp:Repeater ID="rptQuestions" runat="server">
-            <ItemTemplate>
-                <div class="question-container">
-                    <p>Question <%# Container.ItemIndex + 1 %>: <%# Eval("question_text") %></p>
+            <!-- Module Selection -->
+            <label for="ddlModules">Select Module:</label>
+            <asp:DropDownList ID="ddlModules" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlModules_SelectedIndexChanged">
+                <asp:ListItem Text="Select a Module" Value="" />
+            </asp:DropDownList>
+            <br />
+            <asp:Label ID="lblModuleError" runat="server" Text="Error loading modules. Please try again later." ForeColor="Red" Visible="false" />
+            <br />
+            <br />
 
-                    <%-- Multiple Choice Questions --%>
-                    <asp:Panel ID="pnlMCQ" runat="server" Visible='<%# Eval("question_type").ToString() == "MCQ" %>'>
-                        <asp:RadioButtonList ID="rblOptions" runat="server" DataSource='<%# Eval("options") %>' DataTextField="Text" DataValueField="Value"></asp:RadioButtonList>
-                    </asp:Panel>
+            <!-- Quiz Selection -->
+            <label for="ddlQuizzes">Select Quiz:</label>
+            <asp:DropDownList ID="ddlQuizzes" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlQuizzes_SelectedIndexChanged" Enabled="false">
+                <asp:ListItem Text="Select a Quiz" Value="" />
+            </asp:DropDownList>
+            <br />
+            <asp:Label ID="lblQuizError" runat="server" Text="Error loading quizzes. Please try again later." ForeColor="Red" Visible="false" />
 
-                    <%-- Fill in the Blank Question --%>
-                    <asp:Panel ID="pnlFillBlank" runat="server" Visible='<%# Eval("question_type").ToString() == "FillBlank" %>'>
-                        <asp:TextBox ID="txtFillBlank" runat="server"></asp:TextBox>
-                    </asp:Panel>
+            <!-- Quiz Details Display -->
+            <h3>Quiz Information</h3>
+            <label for="lblQuizTitle">Title:</label>
+            <asp:Label ID="lblQuizTitle" runat="server" Text="N/A"></asp:Label>
+            <br />
 
-                    <%-- Long Form Answer --%>
-                    <asp:Panel ID="pnlLongForm" runat="server" Visible='<%# Eval("question_type").ToString() == "LongForm" %>'>
-                        <asp:TextBox ID="txtLongFormAnswer" runat="server" TextMode="MultiLine" Rows="5" Columns="50"></asp:TextBox>
-                    </asp:Panel>
+            <label for="lblDuration">Duration (minutes):</label>
+            <asp:Label ID="lblDuration" runat="server" Text="N/A"></asp:Label>
+            <br />
 
-                    <asp:HiddenField ID="hdnQuestionID" runat="server" Value='<%# Eval("question_id") %>' />
-                </div>
-            </ItemTemplate>
-        </asp:Repeater>
+            <label for="lblCreateDate">Created on:</label>
+            <asp:Label ID="lblCreateDate" runat="server" Text="N/A"></asp:Label>
+            <br />
 
-        <asp:Button ID="btnSubmitQuiz" runat="server" Text="Submit Quiz" OnClick="btnSubmitQuiz_Click" />
-        <asp:Label ID="lblMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label>
-    </div>
-</asp:Content>
+            <label for="lblDueDate">Due by:</label>
+            <asp:Label ID="lblDueDate" runat="server" Text="N/A"></asp:Label>
+            <br />
+            <br />
+
+            <!-- Start Quiz Button -->
+            <asp:Button ID="btnStartQuiz" runat="server" Text="Start Quiz" Enabled="false" OnClick="btnStartQuiz_Click" />
+            <br />
+
+            <asp:Label ID="lblWarning" runat="server" Text="Note: The questions are linear and you can't go back to a previous question." ForeColor="Red" />
+
+        </div>
+    </form>
+</body>
+</html>

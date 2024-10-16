@@ -1,4 +1,4 @@
-﻿-- Populate DaysOfTheWeek
+-- Populate DaysOfTheWeek
 INSERT INTO [dbo].[DaysOfTheWeek] (day_name)
 VALUES 
     ('Monday'),
@@ -33,7 +33,6 @@ VALUES
     ('Rejected'),
     ('Approved'),
     ('In Progress');
-
 
 -- Insert Admins (role_id = 2)
 INSERT INTO Users (name, surname, username, email, password, role_id) VALUES
@@ -123,5 +122,3 @@ VALUES
     ('PSYC 221', 'Fundamentals of psychology.', '2024-01-25 00:00:00'),
     ('BSCI 371', 'Biochemistry of macromolecules.', '2024-05-22 00:00:00'),
     ('ACCE 423', 'High level accounting', '2024-02-07 00:00:00');
-
-

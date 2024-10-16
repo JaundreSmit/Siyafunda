@@ -1,67 +1,141 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
     public partial class frmCreateQuiz : System.Web.UI.Page
     {
-        // Declare SQL connection
-        private SqlConnection Con;
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            Con = new SqlConnection(getConnectionString());
-        }
-
         // Connection string to the database
         protected string getConnectionString()
         {
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
 
-        // Handle creating the quiz entry in the database
+        // Declare SQL connection
+        private SqlConnection Con;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            Con = new SqlConnection(getConnectionString());
+
+            if (!IsPostBack)
+            {
+                // Initialize question count if it's not already set
+                if (Session["QuestionsSubmitted"] == null)
+                {
+                    Session["QuestionsSubmitted"] = 0;
+                }
+
+                // Update the label with the current question count
+                lblQuestionsSubmitted.Text = Session["QuestionsSubmitted"] + " questions submitted.";
+
+                // Populate the module dropdown list
+                LoadModules();
+            }
+        }
+
+        // Populate the module dropdown
+        protected void LoadModules()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                {
+                    con.Open();
+                    string query = "SELECT module_id FROM Modules";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    // Clear any existing items before adding
+                    ddlModules.Items.Clear();
+
+                    // Add a default "Select Module" option
+                    ddlModules.Items.Insert(0, new ListItem("Select Module", "0"));
+
+                    // Iterate over the data and add it to the dropdown
+                    while (reader.Read())
+                    {
+                        ListItem newItem = new ListItem(reader["module_id"].ToString());
+                        ddlModules.Items.Add(newItem);
+                    }
+
+                    reader.Close();
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                lblMessage.Text = "Error loading modules: " + ex.Message;
+                lblMessage.Visible = true;
+            }
+        }
+
         protected void btnSubmitQuiz_Click(object sender, EventArgs e)
         {
-            string quizTitle = txtQuizTitle.Text;
-            string quizDescription = txtQuizDescription.Text;
-            int moduleId = 1; // This should be dynamic based on which module the quiz is being created for.
+            string quizTitle = txtQuizTitle.Text.Trim();
+            int duration;
+            int moduleId = Convert.ToInt32(ddlModules.SelectedValue);
 
-            // Validate the form inputs
-            if (string.IsNullOrEmpty(quizTitle) || string.IsNullOrEmpty(quizDescription))
+            // Validate module selection
+            if (moduleId == 0)
             {
-                lblMessage.Text = "Please fill in all fields.";
+                lblMessage.Text = "Please select a module.";
                 lblMessage.Visible = true;
                 return;
             }
 
+            // Validate the input for the duration
+            if (!int.TryParse(txtDuration.Text, out duration) || duration <= 0)
+            {
+                lblMessage.Text = "Please enter a valid time limit in minutes.";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            // Validate the input for the due date
+            DateTime dueDate;
+
+            if (!DateTime.TryParse(txtDueDate.Text, out dueDate))
+            {
+                lblMessage.Text = "Please enter a valid due date and time in the format MM/dd/yyyy hh:mm tt.";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            if (dueDate <= DateTime.Now)
+            {
+                lblMessage.Text = "Please select a due date that is after the current date and time.";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            // Insert quiz into the database with the provided duration and module
             try
             {
-                using (Con)
+                using (SqlConnection con = new SqlConnection(getConnectionString()))
                 {
-                    Con.Open();
+                    con.Open();
 
-                    // Insert the new quiz into the Quizzes table
                     string insertQuizQuery = @"INSERT INTO [dbo].[Quizzes] 
-                                                (module_id, title, duration, due_date) 
+                                                (module_id, title, duration, create_date, due_date) 
                                                VALUES 
-                                                (@ModuleId, @Title, @Duration, @DueDate); 
-                                               SELECT SCOPE_IDENTITY();";
+                                                (@ModuleId, @Title, @Duration, @CreateDate, @DueDate);";
 
-                    SqlCommand cmd = new SqlCommand(insertQuizQuery, Con);
+                    SqlCommand cmd = new SqlCommand(insertQuizQuery, con);
                     cmd.Parameters.AddWithValue("@ModuleId", moduleId);
                     cmd.Parameters.AddWithValue("@Title", quizTitle);
-                    cmd.Parameters.AddWithValue("@Duration", 60); // Static for now, can be added to the form if needed.
-                    cmd.Parameters.AddWithValue("@DueDate", DateTime.Now.AddDays(7)); // Static, replace with actual due date field if required.
+                    cmd.Parameters.AddWithValue("@Duration", duration);
+                    cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@DueDate", dueDate);
 
-                    // Execute query and retrieve new quiz_id
-                    int newQuizId = Convert.ToInt32(cmd.ExecuteScalar());
+                    cmd.ExecuteNonQuery();
 
-                    // Store the new quiz ID in session so questions can be linked to this quiz
-                    Session["QuizID"] = newQuizId;
-
-                    lblMessage.Text = "Quiz created successfully! Quiz ID: " + newQuizId;
+                    lblMessage.Text = "Quiz created successfully!";
                     lblMessage.ForeColor = System.Drawing.Color.Green;
                     lblMessage.Visible = true;
+
+                    con.Close();
                 }
             }
             catch (Exception ex)
@@ -69,28 +143,32 @@ namespace SiyafundaApplication
                 lblMessage.Text = "Error: " + ex.Message;
                 lblMessage.Visible = true;
             }
-            finally
-            {
-                Con.Close();
-            }
         }
 
-        // Navigate to the Multiple Choice Question creation form
+        // Button Click Event Handlers for Adding Questions
         protected void btnAddMCQ_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmAddMCQ.aspx"); // Use session-stored quiz ID for adding questions
+            // Redirect to the MCQ page
+            Response.Redirect("frmAddMCQ.aspx?quizId=" + Session["QuizID"]);
         }
 
-        // Navigate to the Fill in the Blank Question creation form
         protected void btnAddFillBlank_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmAddFillBlank.aspx"); // Use session-stored quiz ID for adding questions
+            // Redirect to the Fill in the Blank page
+            Response.Redirect("frmAddFillBlank.aspx?quizId=" + Session["QuizID"]);
         }
 
-        // Navigate to the Long Form Question creation form
         protected void btnAddLongForm_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmAddLongForm.aspx"); // Use session-stored quiz ID for adding questions
+            // Redirect to the Long Form page
+            Response.Redirect("frmAddLongForm.aspx?quizId=" + Session["QuizID"]);
+        }
+
+        // Update the question count after successfully submitting a question
+        public void IncrementQuestionsSubmitted()
+        {
+            int questionCount = Convert.ToInt32(Session["QuestionsSubmitted"]);
+            Session["QuestionsSubmitted"] = questionCount + 1;
         }
     }
 }

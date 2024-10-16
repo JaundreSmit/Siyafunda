@@ -1,178 +1,292 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Data;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
+using SiyafundaApplication;
 
 namespace SiyafundaApplication
 {
+    public partial class Question
+    {
+        public int QuestionId { get; set; }
+        public string QuestionText { get; set; }
+        public string QuestionType { get; set; }
+    }
+
     public partial class frmTakeQuiz : System.Web.UI.Page
     {
-        // Declare SQL connection
-        private SqlConnection Con;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                Con = new SqlConnection(getConnectionString());
-                LoadQuizData();
+                LoadModules();
             }
         }
 
-        // Connection string method
-        protected string getConnectionString()
+        // Load available modules from the database
+        private void LoadModules()
         {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
-        // Load quiz data: title, description, and questions
-        protected void LoadQuizData()
-        {
-            int quizId = Convert.ToInt32(Session["QuizID"]); // Assuming QuizID is stored in Session when the quiz is selected
-
             try
             {
-                using (Con)
+                using (SqlConnection con = new SqlConnection(GetConnectionString()))
                 {
-                    Con.Open();
+                    con.Open();
+                    string query = "SELECT module_id, title FROM Modules";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-                    // Retrieve the quiz details
-                    string quizQuery = "SELECT title, description FROM Quizzes WHERE quiz_id = @QuizID";
-                    SqlCommand quizCmd = new SqlCommand(quizQuery, Con);
-                    quizCmd.Parameters.AddWithValue("@QuizID", quizId);
+                    ddlModules.DataSource = reader;
+                    ddlModules.DataTextField = "title";
+                    ddlModules.DataValueField = "module_id";
+                    ddlModules.DataBind();
 
-                    SqlDataReader reader = quizCmd.ExecuteReader();
+                    ddlModules.Items.Insert(0, new ListItem("Select a Module", "0"));
+
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                lblModuleError.Visible = true;
+            }
+        }
+
+        // Event when a module is selected, load quizzes for that module
+        protected void ddlModules_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlModules.SelectedValue != "0")
+            {
+                LoadQuizzes();
+            }
+            else
+            {
+                ddlQuizzes.Enabled = false;
+            }
+        }
+
+        // Load quizzes based on the selected module
+        private void LoadQuizzes()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(GetConnectionString()))
+                {
+                    con.Open();
+
+                    string query = "SELECT quiz_id, title FROM Quizzes WHERE module_id = @ModuleId";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@ModuleId", ddlModules.SelectedValue);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    ddlQuizzes.DataSource = reader;
+                    ddlQuizzes.DataTextField = "title";
+                    ddlQuizzes.DataValueField = "quiz_id";
+                    ddlQuizzes.DataBind();
+
+                    ddlQuizzes.Enabled = true;
+                    ddlQuizzes.Items.Insert(0, new ListItem("Select a Quiz", "0"));
+
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                lblQuizError.Visible = true;
+            }
+        }
+
+        // Event when a quiz is selected, display the quiz details
+        protected void ddlQuizzes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlQuizzes.SelectedValue != "0")
+            {
+                LoadQuizDetails();
+            }
+            else
+            {
+                ClearQuizDetails();
+            }
+        }
+
+        // Load the quiz details based on the selected quiz
+        private void LoadQuizDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(GetConnectionString()))
+                {
+                    con.Open();
+                    string query = "SELECT title, duration, create_date, due_date FROM Quizzes WHERE quiz_id = @QuizId";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@QuizId", ddlQuizzes.SelectedValue);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
                         lblQuizTitle.Text = reader["title"].ToString();
-                        lblQuizDescription.Text = reader["description"].ToString();
-                    }
-                    reader.Close();
+                        lblDuration.Text = reader["duration"].ToString();
+                        lblCreateDate.Text = Convert.ToDateTime(reader["create_date"]).ToString("MM/dd/yyyy");
+                        lblDueDate.Text = Convert.ToDateTime(reader["due_date"]).ToString("MM/dd/yyyy  hh:mm tt");
 
-                    // Retrieve the quiz questions
-                    string questionsQuery = @"SELECT question_id, question_text, question_type FROM QuizQuestions WHERE quiz_id = @QuizID";
-                    SqlCommand questionsCmd = new SqlCommand(questionsQuery, Con);
-                    questionsCmd.Parameters.AddWithValue("@QuizID", quizId);
-
-                    SqlDataAdapter da = new SqlDataAdapter(questionsCmd);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    // Prepare question data for Repeater
-                    List<object> questionList = new List<object>();
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        string questionType = row["question_type"].ToString();
-                        if (questionType == "MCQ")
+                        // Check if the quiz is still available
+                        DateTime dueDate = Convert.ToDateTime(reader["due_date"]);
+                        if (dueDate >= DateTime.Now)
                         {
-                            // Load the multiple-choice options from the database
-                            string optionsQuery = "SELECT option_text AS Text, option_id AS Value FROM QuestionOptions WHERE question_id = @QuestionID";
-                            SqlCommand optionsCmd = new SqlCommand(optionsQuery, Con);
-                            optionsCmd.Parameters.AddWithValue("@QuestionID", row["question_id"]);
-                            SqlDataAdapter optionsAdapter = new SqlDataAdapter(optionsCmd);
-                            DataTable optionsDt = new DataTable();
-                            optionsAdapter.Fill(optionsDt);
-
-                            questionList.Add(new
-                            {
-                                question_id = row["question_id"],
-                                question_text = row["question_text"],
-                                question_type = "MCQ",
-                                options = optionsDt
-                            });
+                            btnStartQuiz.Enabled = true;
+                            lblWarning.Text = "";
                         }
                         else
                         {
-                            questionList.Add(new
-                            {
-                                question_id = row["question_id"],
-                                question_text = row["question_text"],
-                                question_type = questionType
-                            });
+                            btnStartQuiz.Enabled = false;
+                            lblWarning.Text = "The quiz is past its due date and cannot be taken.";
                         }
                     }
-
-                    rptQuestions.DataSource = questionList;
-                    rptQuestions.DataBind();
                 }
             }
             catch (Exception ex)
             {
-                lblMessage.Text = "Error: " + ex.Message;
-                lblMessage.Visible = true;
+                lblWarning.Text = "There was an issue loading the quiz info.";
             }
         }
 
-        // Handle quiz submission
-        protected void btnSubmitQuiz_Click(object sender, EventArgs e)
+        // Clear the quiz details if no quiz is selected
+        private void ClearQuizDetails()
         {
-            try
-            {
-                using (Con)
-                {
-                    Con.Open();
+            lblQuizTitle.Text = "N/A";
+            lblDuration.Text = "N/A";
+            lblCreateDate.Text = "N/A";
+            lblDueDate.Text = "N/A";
+            btnStartQuiz.Enabled = false;
+            lblWarning.Text = "";
+        }
 
-                    foreach (RepeaterItem item in rptQuestions.Items)
+        // This method will start the quiz
+        protected void btnStartQuiz_Click(object sender, EventArgs e)
+        {
+            // Initialize timer based on the quiz duration
+            Session["QuizStartTime"] = DateTime.Now;
+            Session["QuizDuration"] = Convert.ToInt32(lblDuration.Text);
+
+            // Load all questions for the selected quiz and sort them by type
+            List<Question> questions = LoadSortedQuizQuestions(Convert.ToInt32(ddlQuizzes.SelectedValue));
+
+            // Store the sorted questions in session
+            Session["QuizQuestions"] = questions;
+            Session["CurrentQuestionIndex"] = 0;
+
+            // Redirect to the first question
+            RedirectToNextQuestion();
+        }
+
+        // Load and sort all questions for the selected quiz (MCQ first, then FBQ, then LFQ)
+        private List<Question> LoadSortedQuizQuestions(int quizId)
+        {
+            List<Question> mcqQuestions = new List<Question>();
+            List<Question> fbqQuestions = new List<Question>();
+            List<Question> lfqQuestions = new List<Question>();
+
+            using (SqlConnection con = new SqlConnection(GetConnectionString()))
+            {
+                con.Open();
+
+                // Load MCQs first
+                string mcqQuery = "SELECT question_id, question_text FROM MCQuestions WHERE quiz_id = @QuizId";
+                SqlCommand cmd = new SqlCommand(mcqQuery, con);
+                cmd.Parameters.AddWithValue("@QuizId", quizId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    mcqQuestions.Add(new Question
                     {
-                        string questionId = ((HiddenField)item.FindControl("hdnQuestionID")).Value;
+                        QuestionId = Convert.ToInt32(reader["question_id"]),
+                        QuestionText = reader["question_text"].ToString(),
+                        QuestionType = "MCQ"
+                    });
+                }
+                reader.Close();
 
-                        string questionType = GetQuestionType(questionId);
+                // Load Fill in the Blank Questions
+                string fbqQuery = "SELECT question_id, question_text FROM FBQuestions WHERE quiz_id = @QuizId";
+                cmd = new SqlCommand(fbqQuery, con);
+                cmd.Parameters.AddWithValue("@QuizId", quizId);
 
-                        string userAnswer = "";
-                        if (questionType == "MCQ")
-                        {
-                            userAnswer = ((RadioButtonList)item.FindControl("rblOptions")).SelectedValue;
-                        }
-                        else if (questionType == "FillBlank")
-                        {
-                            userAnswer = ((TextBox)item.FindControl("txtFillBlank")).Text;
-                        }
-                        else if (questionType == "LongForm")
-                        {
-                            userAnswer = ((TextBox)item.FindControl("txtLongFormAnswer")).Text;
-                        }
+                reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    fbqQuestions.Add(new Question
+                    {
+                        QuestionId = Convert.ToInt32(reader["question_id"]),
+                        QuestionText = reader["question_text"].ToString(),
+                        QuestionType = "FBQ"
+                    });
+                }
+                reader.Close();
 
-                        // Insert response into QuizResponses table
-                        string insertResponseQuery = @"INSERT INTO [dbo].[QuizResponses]
-                                                       (user_id, question_id, selected_answer, submitted_at)
-                                                       VALUES (@UserID, @QuestionID, @Answer, @SubmittedAt)";
-                        SqlCommand cmd = new SqlCommand(insertResponseQuery, Con);
-                        cmd.Parameters.AddWithValue("@UserID", Session["UserID"]);
-                        cmd.Parameters.AddWithValue("@QuestionID", questionId);
-                        cmd.Parameters.AddWithValue("@Answer", userAnswer);
-                        cmd.Parameters.AddWithValue("@SubmittedAt", DateTime.Now);
+                // Load Long Form Questions
+                string lfqQuery = "SELECT question_id, question_text FROM LFQuestions WHERE quiz_id = @QuizId";
+                cmd = new SqlCommand(lfqQuery, con);
+                cmd.Parameters.AddWithValue("@QuizId", quizId);
 
-                        cmd.ExecuteNonQuery();
-                    }
+                reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    lfqQuestions.Add(new Question
+                    {
+                        QuestionId = Convert.ToInt32(reader["question_id"]),
+                        QuestionText = reader["question_text"].ToString(),
+                        QuestionType = "LFQ"
+                    });
+                }
+                reader.Close();
+                con.Close();
+            }
 
-                    lblMessage.Text = "Quiz submitted successfully!";
-                    lblMessage.ForeColor = System.Drawing.Color.Green;
-                    lblMessage.Visible = true;
+            // Combine all questions in the desired order: MCQ first, then FBQ, then LFQ
+            List<Question> sortedQuestions = new List<Question>();
+            sortedQuestions.AddRange(mcqQuestions);
+            sortedQuestions.AddRange(fbqQuestions);
+            sortedQuestions.AddRange(lfqQuestions);
+
+            return sortedQuestions;
+        }
+
+        // Redirect to the next question based on the current index
+        private void RedirectToNextQuestion()
+        {
+            int currentQuestionIndex = Convert.ToInt32(Session["CurrentQuestionIndex"]);
+            List<Question> questions = (List<Question>)Session["QuizQuestions"];
+
+            if (currentQuestionIndex < questions.Count)
+            {
+                Question currentQuestion = questions[currentQuestionIndex];
+                Session["CurrentQuestionIndex"] = currentQuestionIndex + 1;
+
+                // Redirect based on the question type to specific forms
+                if (currentQuestion.QuestionType == "MCQ")
+                {
+                    Response.Redirect("frmMCAnswer.aspx?questionId=" + currentQuestion.QuestionId);
+                }
+                else if (currentQuestion.QuestionType == "FBQ")
+                {
+                    Response.Redirect("frmFBAnswer.aspx?questionId=" + currentQuestion.QuestionId);
+                }
+                else if (currentQuestion.QuestionType == "LFQ")
+                {
+                    Response.Redirect("frmLFAnswer.aspx?questionId=" + currentQuestion.QuestionId);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                lblMessage.Text = "Error: " + ex.Message;
-                lblMessage.Visible = true;
+                // All questions answered, handle quiz completion
+                Response.Redirect("frmQuizCompleted.aspx");
             }
         }
 
-        // Helper method to get question type by question ID
-        private string GetQuestionType(string questionId)
+        // Helper method to get the connection string
+        private string GetConnectionString()
         {
-            string query = "SELECT question_type FROM QuizQuestions WHERE question_id = @QuestionID";
-            SqlCommand cmd = new SqlCommand(query, Con);
-            cmd.Parameters.AddWithValue("@QuestionID", questionId);
-
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                if (reader.Read())
-                {
-                    return reader["question_type"].ToString();
-                }
-            }
-            return string.Empty; // Return an empty string if not found
+            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
     }
 }
