@@ -2,90 +2,93 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>File Moderation</title>
+
     <style type="text/css">
-        .auto-style1 {
-            width: 218px;
+        .bg-purple {
+            background-color: rgb(108, 61, 145);
         }
-        .auto-style2 {
-            width: 218px;
-            height: 23px;
+
+        .btn-purple {
+            background-color: whitesmoke;
+            color: black;
+            border: none;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 12px 24px;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 0;
         }
-        .auto-style3 {
-            height: 23px;
+
+        .btn-purple:hover {
+            background-color: rgb(108, 61, 145);
+            color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-radius: 0;
         }
-        .auto-style4 {
-            width: 657px;
+
+        .btn:disabled {
+            background-color: darkgrey;
+            color: white; 
+            border-color: darkgrey;
+            opacity: 1; 
+            cursor: not-allowed; 
         }
-        .auto-style5 {
-            width: 243px;
-        }
-        .auto-style6 {
-            width: 113px;
-        }
-        .auto-style7 {
-            width: 707px;
-        }
-        .auto-style8 {
-            height: 23px;
-            width: 707px;
+
+        .error-label {
+            color: red; 
         }
     </style>
 
-    <table style="width:100%;">
-        <tr>
-            <td class="auto-style1"><strong>File Moderation:</strong></td>
-            <td class="auto-style7">
-                <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Back" />
-            </td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style2"></td>
-            <td class="auto-style8">&nbsp;</td>
-            <td class="auto-style3"></td>
-        </tr>
-        <tr>
-            <td class="auto-style1">In Progress files:</td>
-            <td class="auto-style7">
-                Search title:
-                <asp:TextBox ID="txtSearchProgress" runat="server" AutoPostBack="True" OnTextChanged="txtSearchProgress_TextChanged"></asp:TextBox>
-                &nbsp;
-                <asp:Label ID="lblProgressErrors" runat="server" Text="[Progress Errors]"></asp:Label>
-            </td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style2">&nbsp;</td>
-            <td class="auto-style8">
-                <asp:GridView ID="dgvInProgress" runat="server" Width="581px" AllowSorting="True" OnSelectedIndexChanged="dgvInProgress_SelectedIndexChanged">
-                </asp:GridView>
-            </td>
-            <td class="auto-style3"></td>
-        </tr>
-    </table>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col text-center mb-3">
+                <h2 class="bg-purple text-white p-3"><strong>File Moderation</strong></h2>
+            </div>
+        </div>
 
-    <table>
-        <tr>
-            <td class="auto-style6">
-                <asp:Button ID="btnReject" runat="server" Text="Reject" OnClick="btnReject_Click" />
-            </td>
-            <td class="auto-style5">
-                <asp:Button ID="btnApprove" runat="server" Text="Approve" OnClick="btnApprove_Click" />
-            </td>
-            <td class="auto-style4">&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <asp:TextBox ID="txtFeedback" runat="server" Height="68px" MaxLength="200" TextMode="MultiLine" Width="451px"></asp:TextBox>
-            </td>
-            <td class="auto-style4">&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style1">
-                <asp:Button ID="btnInProgressSubmit" runat="server" OnClick="btnInProgressSubmit_Click" Text="Submit" />
-            </td>
-            <td class="auto-style5">&nbsp;</td>
-            <td class="auto-style1">&nbsp;</td>
-        </tr>
-    </table>
+        <div class="row mb-3">
+            <div class="col">
+                <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Back" CssClass="btn btn-primary btn-purple" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label><strong>In Progress files:</strong></label>
+                <div class="input-group">
+                    <asp:TextBox ID="txtSearchProgress" runat="server" AutoPostBack="True" OnTextChanged="txtSearchProgress_TextChanged" CssClass="form-control" />
+                    <asp:Label ID="lblProgressErrors" runat="server" Text="[Progress Errors]" CssClass="error-label" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <asp:GridView ID="dgvInProgress" runat="server" CssClass="table table-striped" AllowSorting="True" OnSelectedIndexChanged="dgvInProgress_SelectedIndexChanged">
+                </asp:GridView>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col text-center">
+                <asp:Button ID="btnReject" runat="server" Text="Reject" OnClick="btnReject_Click" CssClass="btn btn-danger btn-purple mx-2" />
+                <asp:Button ID="btnApprove" runat="server" Text="Approve" OnClick="btnApprove_Click" CssClass="btn btn-success btn-purple mx-2" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <asp:TextBox ID="txtFeedback" runat="server" Height="68px" MaxLength="200" TextMode="MultiLine" CssClass="form-control" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <asp:Button ID="btnInProgressSubmit" runat="server" OnClick="btnInProgressSubmit_Click" Text="Submit" CssClass="btn btn-primary btn-purple" />
+            </div>
+        </div>
+    </div>
 </asp:Content>
