@@ -11,14 +11,18 @@
             <h2>Add Long Form Question</h2>
 
             <label for="txtQuestion">Question Text:</label>
-            <asp:TextBox ID="txtQuestion" runat="server" TextMode="MultiLine"></asp:TextBox>
+            <asp:TextBox ID="txtQuestion" runat="server"></asp:TextBox>
+            <br />
             <br />
 
             <label for="txtPoints">Points (Max 6):</label>
             <asp:TextBox ID="txtPoints" runat="server"></asp:TextBox>
             <br />
+            <br />
 
             <asp:Button ID="btnSubmitLongForm" runat="server" Text="Add Question" OnClick="btnSubmitLongForm_Click" />
+
+            <br />
 
             <asp:Label ID="lblMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label>
         </div>

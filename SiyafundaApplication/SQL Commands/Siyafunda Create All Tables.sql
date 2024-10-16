@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[Users]
 
 CREATE TABLE [dbo].[Resources]
 (
-    [resource_id] INT NOT NULL PRIMARY KEY,
+    [resource_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [user_id] INT NOT NULL,
     [module_id] INT NOT NULL,
     [title] NVARCHAR(100) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE [dbo].[Resources]
 
 CREATE TABLE [dbo].[Files]
 (
-    [file_id] INT NOT NULL PRIMARY KEY,
+    [file_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [resource_id] INT NOT NULL,
     [file_path] NVARCHAR(500) NOT NULL,
     [file_type] NVARCHAR(20) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[Files]
 
 CREATE TABLE [dbo].[Reviews]
 (
-    [review_id] INT NOT NULL PRIMARY KEY,
+    [review_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [resource_id] INT NOT NULL,
     [user_id] INT NOT NULL,
     [rating] INT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE [dbo].[Reviews]
 
 CREATE TABLE [dbo].[Announcements]
 (
-    [announcement_id] INT NOT NULL PRIMARY KEY,
+    [announcement_id] INT   IDENTITY (1, 1) NOT NULL,
     [user_id] INT NOT NULL,
     [module_id] INT NOT NULL,
     [title] NVARCHAR(100) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE [dbo].[Modules]
 
 CREATE TABLE [dbo].[Gradebook]
 (
-    [gradebook_id] INT NOT NULL PRIMARY KEY,
+    [gradebook_id]INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [module_id] INT NOT NULL,
     [user_id] INT NOT NULL,
     [grade] FLOAT NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE [dbo].[Gradebook]
 
 CREATE TABLE [dbo].[Quizzes]
 (
-    [quiz_id] INT NOT NULL PRIMARY KEY,
+    [quiz_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [module_id] INT NOT NULL,
     [duration] INT NOT NULL,
     [title] NVARCHAR(50) NOT NULL,
@@ -90,9 +90,45 @@ CREATE TABLE [dbo].[Quizzes]
     [due_date] DATETIME NOT NULL
 );
 
-CREATE TABLE [dbo].[QuizQuestions]
+/*CREATE TABLE [dbo].[QuizQuestions]
 (
-    [question_id] INT NOT NULL PRIMARY KEY,
+    [question_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
+    [quiz_id] INT NOT NULL,
+    [question_text] NVARCHAR(MAX) NOT NULL,
+    [correct_answer] NVARCHAR(100) NOT NULL,
+    [points] INT NOT NULL
+);*/ 
+
+/*Need to accomodate the different question types and also store the options with the Multiple Choice Questions.*/
+
+CREATE TABLE [dbo].[MCQuestions]
+(
+    [mcq_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
+    [quiz_id] INT NOT NULL,
+    [question_text] NVARCHAR(MAX) NOT NULL,
+    [correct_answer] NVARCHAR(100) NOT NULL,
+    [option_a] NVARCHAR(100) NOT NULL,
+    [option_b] NVARCHAR(100) NOT NULL,
+    [option_c] NVARCHAR(100) NOT NULL,
+    [option_d] NVARCHAR(100) NOT NULL,
+    [points] INT NOT NULL
+);
+
+/*Long Form Questions are difficult to mark automatically, thus it'll be evaluated manually.*/
+
+CREATE TABLE [dbo].[LFQuestions]
+(
+    [mcq_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
+    [quiz_id] INT NOT NULL,
+    [question_text] NVARCHAR(MAX) NOT NULL,
+    [points] INT NOT NULL
+);
+
+/*Working with the assumption that Fill in the Blank questions will only have one fill space.*/
+
+CREATE TABLE [dbo].[FBQuestions]
+(
+    [mcq_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [quiz_id] INT NOT NULL,
     [question_text] NVARCHAR(MAX) NOT NULL,
     [correct_answer] NVARCHAR(100) NOT NULL,
@@ -101,16 +137,16 @@ CREATE TABLE [dbo].[QuizQuestions]
 
 CREATE TABLE [dbo].[QuizResponses]
 (
-    [response_id] INT NOT NULL PRIMARY KEY,
+    [response_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [user_id] INT NOT NULL,
     [question_id] INT NOT NULL,
-    [selected_answer] NVARCHAR(255) NOT NULL,
+    [selected_answer] NVARCHAR(MAX) NOT NULL,
     [submitted_at] DATETIME NOT NULL
 );
 
 CREATE TABLE [dbo].[UserSessions]
 (
-    [session_id] INT NOT NULL PRIMARY KEY,
+    [session_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
     [user_id] INT NOT NULL,
     [session_token] NVARCHAR(255) NOT NULL,
     [created_at] DATETIME NOT NULL,
@@ -214,20 +250,38 @@ ALTER TABLE [dbo].[Gradebook]
 ALTER TABLE [dbo].[Gradebook]
     ADD CONSTRAINT FK_Gradebook_Users FOREIGN KEY ([user_id]) REFERENCES [dbo].[Users]([user_id]);
 
-    -- Quizzes foreign keys
+-- Quizzes foreign keys
 ALTER TABLE [dbo].[Quizzes]
     ADD CONSTRAINT FK_Quizzes_Modules FOREIGN KEY ([module_id]) REFERENCES [dbo].[Modules]([module_id]);
 
-    -- QuizQuestions foreign keys
-ALTER TABLE [dbo].[QuizQuestions]
-    ADD CONSTRAINT FK_QuizQuestions_Quizzes FOREIGN KEY ([quiz_id]) REFERENCES [dbo].[Quizzes]([quiz_id]);
+-- QuizQuestions foreign keys (remove if not used)
+-- ALTER TABLE [dbo].[QuizQuestions]
+--    ADD CONSTRAINT FK_QuizQuestions_Quizzes FOREIGN KEY ([quiz_id]) REFERENCES [dbo].[Quizzes]([quiz_id]);
 
-    -- QuizResponses foreign keys
+-- MCQuestions foreign keys
+ALTER TABLE [dbo].[MCQuestions]
+    ADD CONSTRAINT FK_MCQuestions_Quizzes FOREIGN KEY ([quiz_id]) REFERENCES [dbo].[Quizzes]([quiz_id]);
+
+-- FBQuestions foreign keys
+ALTER TABLE [dbo].[FBQuestions]
+    ADD CONSTRAINT FK_FBQuestions_Quizzes FOREIGN KEY ([quiz_id]) REFERENCES [dbo].[Quizzes]([quiz_id]);
+
+-- LFQuestions foreign keys
+ALTER TABLE [dbo].[LFQuestions]
+    ADD CONSTRAINT FK_LFQuestions_Quizzes FOREIGN KEY ([quiz_id]) REFERENCES [dbo].[Quizzes]([quiz_id]);
+
+-- QuizResponses foreign keys
 ALTER TABLE [dbo].[QuizResponses]
     ADD CONSTRAINT FK_QuizResponses_Users FOREIGN KEY ([user_id]) REFERENCES [dbo].[Users]([user_id]);
 
 ALTER TABLE [dbo].[QuizResponses]
-    ADD CONSTRAINT FK_QuizResponses_QuizQuestions FOREIGN KEY ([question_id]) REFERENCES [dbo].[QuizQuestions]([question_id]);
+    ADD CONSTRAINT FK_QuizResponses_MCQuestions FOREIGN KEY ([question_id]) REFERENCES [dbo].[MCQuestions]([question_id]);
+
+ALTER TABLE [dbo].[QuizResponses]
+    ADD CONSTRAINT FK_QuizResponses_FBQuestions FOREIGN KEY ([question_id]) REFERENCES [dbo].[FBQuestions]([question_id]);
+
+ALTER TABLE [dbo].[QuizResponses]
+    ADD CONSTRAINT FK_QuizResponses_LFQuestions FOREIGN KEY ([question_id]) REFERENCES [dbo].[LFQuestions]([question_id]);
 
     -- UserSessions foreign keys
 ALTER TABLE [dbo].[UserSessions]

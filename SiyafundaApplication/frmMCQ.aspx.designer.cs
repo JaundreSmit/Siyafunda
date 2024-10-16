@@ -9,8 +9,6 @@
 
 namespace SiyafundaApplication
 {
-
-
     public partial class frmMCQ
     {
 
@@ -24,15 +22,6 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// form2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form2;
-
-        /// <summary>
         /// txtQuestion control.
         /// </summary>
         /// <remarks>
@@ -42,49 +31,49 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.TextBox txtQuestion;
 
         /// <summary>
-        /// txtOption1 control.
+        /// txtOptionA control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOption1;
+        protected global::System.Web.UI.WebControls.TextBox txtOptionA;
 
         /// <summary>
-        /// txtOption2 control.
+        /// txtOptionB control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOption2;
+        protected global::System.Web.UI.WebControls.TextBox txtOptionB;
 
         /// <summary>
-        /// txtOption3 control.
+        /// txtOptionC control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOption3;
+        protected global::System.Web.UI.WebControls.TextBox txtOptionC;
 
         /// <summary>
-        /// txtOption4 control.
+        /// txtOptionD control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOption4;
+        protected global::System.Web.UI.WebControls.TextBox txtOptionD;
 
         /// <summary>
-        /// ddlCorrectOption control.
+        /// ddlCorrectAnswer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCorrectOption;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCorrectAnswer;
 
         /// <summary>
         /// btnSubmitMCQ control.

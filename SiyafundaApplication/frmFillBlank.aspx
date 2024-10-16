@@ -13,12 +13,16 @@
             <label for="txtQuestion">Question Text:</label>
             <asp:TextBox ID="txtQuestion" runat="server"></asp:TextBox>
             <br />
+            <br />
 
             <label for="txtCorrectAnswer">Correct Answer:</label>
             <asp:TextBox ID="txtCorrectAnswer" runat="server"></asp:TextBox>
             <br />
+            <br />
 
             <asp:Button ID="btnSubmitFillBlank" runat="server" Text="Add Question" OnClick="btnSubmitFillBlank_Click" />
+
+            <br />
 
             <asp:Label ID="lblMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label>
         </div>

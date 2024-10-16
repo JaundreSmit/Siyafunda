@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
@@ -37,14 +38,14 @@ namespace SiyafundaApplication
                 {
                     Con.Open();
 
-                    // Insert question into the database
-                    string query = "INSERT INTO [dbo].[QuizQuestions] (quiz_id, question_text, question_type, correct_answer) " +
-                                   "VALUES (@QuizId, @QuestionText, @QuestionType, @CorrectAnswer)";
+                    // Insert question into the FBQuestions table
+                    string query = @"INSERT INTO [dbo].[FBQuestions] 
+                                    (quiz_id, question_text, correct_answer) 
+                                    VALUES (@QuizId, @QuestionText, @CorrectAnswer)";
 
                     SqlCommand cmd = new SqlCommand(query, Con);
-                    cmd.Parameters.AddWithValue("@QuizId", /* Replace with selected quiz ID */ 1);
+                    cmd.Parameters.AddWithValue("@QuizId", GetSelectedQuizId());
                     cmd.Parameters.AddWithValue("@QuestionText", questionText);
-                    cmd.Parameters.AddWithValue("@QuestionType", "Fill in the Blank");
                     cmd.Parameters.AddWithValue("@CorrectAnswer", correctAnswer);
 
                     int result = cmd.ExecuteNonQuery();
@@ -52,6 +53,8 @@ namespace SiyafundaApplication
                     lblMessage.Text = result > 0 ? "Question added successfully!" : "Error adding question.";
                     lblMessage.ForeColor = System.Drawing.Color.Green;
                     lblMessage.Visible = true;
+
+                    Con.Close();
                 }
             }
             catch (Exception ex)
@@ -63,6 +66,11 @@ namespace SiyafundaApplication
             {
                 Con.Close();
             }
+        }
+
+        private int GetSelectedQuizId()
+        {
+            return Convert.ToInt32(Session["QuizID"]);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
@@ -21,15 +22,18 @@ namespace SiyafundaApplication
         protected void btnSubmitMCQ_Click(object sender, EventArgs e)
         {
             string questionText = txtQuestion.Text;
-            string option1 = txtOption1.Text;
-            string option2 = txtOption2.Text;
-            string option3 = txtOption3.Text;
-            string option4 = txtOption4.Text;
-            int correctOption = Convert.ToInt32(ddlCorrectOption.SelectedValue);
+            string optionA = txtOptionA.Text;
+            string optionB = txtOptionB.Text;
+            string optionC = txtOptionC.Text;
+            string optionD = txtOptionD.Text;
+            string correctAnswer = ddlCorrectAnswer.SelectedValue;
+
+            // Get the selected Quiz ID dynamically
+            int quizId = GetSelectedQuizId();
 
             // Basic validation
-            if (string.IsNullOrEmpty(questionText) || string.IsNullOrEmpty(option1) ||
-                string.IsNullOrEmpty(option2) || string.IsNullOrEmpty(option3) || string.IsNullOrEmpty(option4))
+            if (string.IsNullOrEmpty(questionText) || string.IsNullOrEmpty(optionA) ||
+                string.IsNullOrEmpty(optionB) || string.IsNullOrEmpty(optionC) || string.IsNullOrEmpty(optionD))
             {
                 lblMessage.Text = "Please fill all options.";
                 lblMessage.Visible = true;
@@ -42,38 +46,27 @@ namespace SiyafundaApplication
                 {
                     Con.Open();
 
-                    // Insert question into the database
-                    string questionQuery = "INSERT INTO [dbo].[QuizQuestions] (quiz_id, question_text, question_type, correct_answer) " +
-                                           "VALUES (@QuizId, @QuestionText, @QuestionType, @CorrectAnswer); SELECT SCOPE_IDENTITY();";
+                    // Insert question into the MCQuestions table
+                    string questionQuery = @"INSERT INTO [dbo].[MCQuestions] 
+                                             (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_answer) 
+                                             VALUES (@QuizId, @QuestionText, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectAnswer);";
 
                     SqlCommand cmd = new SqlCommand(questionQuery, Con);
-                    cmd.Parameters.AddWithValue("@QuizId", /* Replace with selected quiz ID */ 1);
+                    cmd.Parameters.AddWithValue("@QuizId", quizId);
                     cmd.Parameters.AddWithValue("@QuestionText", questionText);
-                    cmd.Parameters.AddWithValue("@QuestionType", "Multiple Choice");
-                    cmd.Parameters.AddWithValue("@CorrectAnswer", correctOption);
+                    cmd.Parameters.AddWithValue("@OptionA", optionA);
+                    cmd.Parameters.AddWithValue("@OptionB", optionB);
+                    cmd.Parameters.AddWithValue("@OptionC", optionC);
+                    cmd.Parameters.AddWithValue("@OptionD", optionD);
+                    cmd.Parameters.AddWithValue("@CorrectAnswer", correctAnswer);
 
-                    int questionId = Convert.ToInt32(cmd.ExecuteScalar());
-
-                    // Insert each option into the database
-                    string optionQuery = "INSERT INTO [dbo].[Options] (question_id, option_text) VALUES (@QuestionId, @OptionText)";
-                    SqlCommand optionCmd = new SqlCommand(optionQuery, Con);
-
-                    optionCmd.Parameters.AddWithValue("@QuestionId", questionId);
-                    optionCmd.Parameters.AddWithValue("@OptionText", option1);
-                    optionCmd.ExecuteNonQuery();
-
-                    optionCmd.Parameters["@OptionText"].Value = option2;
-                    optionCmd.ExecuteNonQuery();
-
-                    optionCmd.Parameters["@OptionText"].Value = option3;
-                    optionCmd.ExecuteNonQuery();
-
-                    optionCmd.Parameters["@OptionText"].Value = option4;
-                    optionCmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
                     lblMessage.Text = "Question added successfully!";
                     lblMessage.ForeColor = System.Drawing.Color.Green;
                     lblMessage.Visible = true;
+
+                    Con.Close();
                 }
             }
             catch (Exception ex)
@@ -85,6 +78,11 @@ namespace SiyafundaApplication
             {
                 Con.Close();
             }
+        }
+
+        private int GetSelectedQuizId()
+        {
+            return Convert.ToInt32(Session["QuizID"]);
         }
     }
 }
