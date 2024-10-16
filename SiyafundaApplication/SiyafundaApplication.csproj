@@ -164,6 +164,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Siyafunda.png" />
     <Content Include="frmSystemAdmin.aspx" />
     <Content Include="App_Data\SiyafundaDB.mdf" />
     <Content Include="App_Data\SiyafundaDB_log.ldf">

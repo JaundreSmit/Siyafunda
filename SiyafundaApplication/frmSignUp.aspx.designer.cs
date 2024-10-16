@@ -15,6 +15,15 @@ namespace SiyafundaApplication
     {
 
         /// <summary>
+        /// UsernameLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label UsernameLabel;
+
+        /// <summary>
         /// UsernameTextBox control.
         /// </summary>
         /// <remarks>
@@ -33,6 +42,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.RequiredFieldValidator UsernameRequired;
 
         /// <summary>
+        /// NameLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label NameLabel;
+
+        /// <summary>
         /// txtName control.
         /// </summary>
         /// <remarks>
@@ -42,6 +60,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.TextBox txtName;
 
         /// <summary>
+        /// SurnameLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label SurnameLabel;
+
+        /// <summary>
         /// txtSurname control.
         /// </summary>
         /// <remarks>
@@ -49,6 +76,15 @@ namespace SiyafundaApplication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtSurname;
+
+        /// <summary>
+        /// EmailLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label EmailLabel;
 
         /// <summary>
         /// EmailTextBox control.
@@ -78,6 +114,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.RegularExpressionValidator EmailValidator;
 
         /// <summary>
+        /// PasswordLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label PasswordLabel;
+
+        /// <summary>
         /// PasswordTextBox control.
         /// </summary>
         /// <remarks>
@@ -94,6 +139,15 @@ namespace SiyafundaApplication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator PasswordRequired;
+
+        /// <summary>
+        /// ConfirmPasswordLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ConfirmPasswordLabel;
 
         /// <summary>
         /// ConfirmPasswordTextBox control.

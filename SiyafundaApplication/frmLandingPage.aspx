@@ -2,9 +2,9 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <!-- Bootstrap container to align the content -->
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
+    <div class="container d-flex align-items-center justify-content-center"> <!-- Added py-5 for padding -->
+        <div class="row w-100"> <!-- Set the row to full width -->
+            <div class="col-md-4 mx-auto"> <!-- Center the column -->
                 <!-- Bootstrap card for styling the login/signup section -->
                 <div class="card" style="border: none; background-color: rgb(108, 61, 145);"> <!-- Card background color -->
                     <div class="card-body text-white"> <!-- Text color to match the sidebar and navbar -->

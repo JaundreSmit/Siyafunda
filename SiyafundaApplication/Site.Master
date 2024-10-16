@@ -53,12 +53,18 @@
         position: fixed; /* Fix sidebar to the left */
         width: 250px; /* Width of the sidebar */
         top: 56px; /* Adjust to start below the navbar */
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Distributes space evenly */
+        height: calc(100vh - 56px); /* Ensure it takes full height */
     }
 
     /* Ensure content flows next to the side panel */
     .content-wrapper {
         margin-left: 250px; /* Adjust based on panel width */
         margin-top: 56px; /* Adjust based on navbar height */
+        flex: 1; /* Allow content to grow and fill available space */
     }
 
     /* Ensure the main content area does not have margin or padding */
@@ -76,6 +82,8 @@
 
      .card {
         border: none; /* Remove card border */
+        margin-top: 200px; /* Adjust as needed */
+        padding: 5px;
     }
 
      .card-title {
@@ -83,7 +91,7 @@
     }
 
      .btn {
-        background-color: lightgray; /* Light gray background */
+        background-color: whitesmoke; /* Light gray background */
         color: black; /* Black text for visibility */
         border: none; /* Remove border */
         font-weight: bold; /* Bold text */
@@ -98,11 +106,24 @@
     
     }
      .btn:hover {
-    background-color: darkgray; /* Purple background on hover */
-    color: black; /* Change text color to white on hover */
-    transform: translateY(-2px); /* Lift effect on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
-    border-radius: 0; /* Square corners */
+        background-color: darkgray; /* Purple background on hover */
+        color: black; /* Change text color to white on hover */
+        transform: translateY(-2px); /* Lift effect on hover */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
+        border-radius: 0; /* Square corners */
+    }
+
+     footer {
+        /* Remove margin-top from the footer */
+        background-color: white; /* Optional: Add a background color */
+        padding: 20px 0; /* Optional: Add some padding */
+        text-align: left; /* Center the footer text */
+    }
+
+     .container-fluid {
+        display: flex; /* Make the main container a flex container */
+        flex-direction: column; /* Arrange children in a column */
+        min-height: 100vh; /* Minimum height is the full height of the viewport */
     }
 
 </style>
@@ -127,13 +148,12 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Side Panel Section -->
-                <div class="col-2 side-panel">
-                    
+                <div class="col-2 side-panel">                   
                     <ul class="nav flex-column">
-                        <!-- sider panel items-->
+                        <!-- Add more sidebar items as needed -->
                     </ul>
+                    <img src="/Content/Siyafunda.png" alt="Description of Image" class="img-fluid" />
                 </div>
-
                 <!-- Main Content Section -->
                 <div class="col content-wrapper">
                     <!-- Full-width Navbar -->
@@ -158,8 +178,9 @@
                     <div class="container body-content">
                         <asp:ContentPlaceHolder ID="MainContent" runat="server">
                         </asp:ContentPlaceHolder>
-                        <hr />
-                        <footer>
+                        
+                        <footer runat="server" id="footerControl" visible="true">
+                            <hr />
                             <p>&copy; <%: DateTime.Now.Year %> - Siyafunda</p>
                         </footer>
                     </div>
