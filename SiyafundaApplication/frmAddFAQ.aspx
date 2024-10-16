@@ -11,23 +11,23 @@
         </div>
 
         <div class="form-group">
-            <label for="lblModuleName">Module:</label>
+            <label for="lblModuleName" style="color: whitesmoke;">Module:</label>
             <asp:Label ID="lblModuleName" runat="server" Text="[Module Name]" CssClass="form-control" />
         </div>
         <div class="form-group">
-            <label for="txtQuestion">Question:</label>
+            <label for="txtQuestion" style="color: whitesmoke;">Question:</label>
             <asp:TextBox ID="txtQuestion" runat="server" MaxLength="600" TextMode="MultiLine" CssClass="form-control" Rows="4" />
         </div>
         <div class="form-group">
-            <label for="txtAnswer">Answer:</label>
+            <label for="txtAnswer" style="color: whitesmoke;">Answer:</label>
             <asp:TextBox ID="txtAnswer" runat="server" MaxLength="600" TextMode="MultiLine" CssClass="form-control" Rows="4" />
         </div>
         <div class="form-group">
             <asp:Label ID="lblErrors" runat="server" Text="[Errors]" CssClass="text-danger" />
         </div>
         <div class="form-group text-center">
-            <asp:Button ID="Back" runat="server" OnClick="Back_Click" Text="Back" CssClass="btn btn-primary btn-purple mx-2" />
             <asp:Button ID="btnAddFAQ" runat="server" OnClick="btnAddFAQ_Click" Text="Add FAQ" CssClass="btn btn-primary btn-purple mx-2" />
+            <asp:Button ID="Back" runat="server" OnClick="Back_Click" Text="Back" CssClass="btn btn-primary btn-purple mx-2" />
         </div>
     </div>
 

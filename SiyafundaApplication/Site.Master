@@ -68,7 +68,7 @@
     }
 
     .navbar-brand {
-        margin-left: 40px;
+        margin-left: 80px;
     }
 
      .navbar-nav.ms-auto {
@@ -110,9 +110,10 @@
      
 
      footer {
-        background-color: white; 
+        background-color: #212121; 
         padding: 20px 0;
         text-align: left;
+        color: whitesmoke
     }
 
      .container-fluid {
@@ -121,12 +122,25 @@
         min-height: 100vh; 
     }
 
+     .siyafunda-title {
+        font-family: 'Arial', sans-serif; /* Change to your desired font */
+        font-size: 24px; /* Adjust size as needed */
+        font-weight: bold; /* Adjust weight if needed */
+        color: #000; /* Change color as desired */
+    }
+
+     .custom-label {
+        color: whitesmoke; /* Change this to your desired color */
+    }
+
+
 </style>
 
 
 
 </head>
-<body>
+<body style="background-color: #212121;">
+
     <form runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
@@ -160,9 +174,10 @@
                         </button>
                         <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                             <ul class="navbar-nav flex-grow-1">
-                                <li class="nav-item"><a class="nav-link" runat="server" href="~/frmDashboard.aspx">Home</a></li>
+                              
                             </ul>
                             <ul class="navbar-nav ms-auto">
+                                <li class="nav-item"><a class="nav-link" runat="server" href="~/frmDashboard.aspx">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" runat="server" href="~/frmlandingpage.aspx">Login / Sign Up</a></li>
                                 <li class="nav-item"><a class="nav-link" runat="server" href="~/frmProfile.aspx">Profile</a></li>
                             </ul>

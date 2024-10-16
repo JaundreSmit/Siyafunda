@@ -57,7 +57,7 @@
 
         <div class="row mb-3">
             <div class="col">
-                <label><strong>In Progress files:</strong></label>
+                <label style="color: whitesmoke;"><strong>In Progress files:</strong></label>
                 <div class="input-group">
                     <asp:TextBox ID="txtSearchProgress" runat="server" AutoPostBack="True" OnTextChanged="txtSearchProgress_TextChanged" CssClass="form-control" />
                     <asp:Label ID="lblProgressErrors" runat="server" Text="[Progress Errors]" CssClass="error-label" />

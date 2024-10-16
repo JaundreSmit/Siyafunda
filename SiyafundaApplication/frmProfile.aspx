@@ -12,7 +12,7 @@
         </div>
 
         <!-- User Information -->
-        <h3>Edit Profile</h3>
+        <h3 style="color: whitesmoke;">Edit Profile</h3>
         <table class="table table-bordered">
             <tr>
                 <td>Role:</td>
@@ -67,7 +67,7 @@
 
         <br />
 
-        <h3>Enrolled Modules</h3>
+        <h3 style="color: whitesmoke;">Enrolled Modules</h3>
         <asp:GridView ID="ModulesGridView" runat="server" CssClass="table table-striped"></asp:GridView>
 
         <br />

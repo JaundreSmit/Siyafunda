@@ -29,15 +29,15 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="txtAddModName">Title:</label>
+                <label for="txtAddModName" style="color: whitesmoke;">Title:</label>
                 <asp:TextBox ID="txtAddModName" runat="server" MaxLength="100" CssClass="form-control" />
             </div>
             <div class="mb-3">
-                <label for="txtAddModDesc">Description:</label>
+                <label for="txtAddModDesc" style="color: whitesmoke;">Description:</label>
                 <asp:TextBox ID="txtAddModDesc" runat="server" MaxLength="200" TextMode="MultiLine" CssClass="form-control" />
             </div>
             <div class="mb-3">
-                <label for="ddlAddEducator">Educator:</label>
+                <label for="ddlAddEducator" style="color: whitesmoke;">Educator:</label>
                 <asp:DropDownList ID="ddlAddEducator" runat="server" CssClass="form-control"></asp:DropDownList>
             </div>
             <asp:Label ID="lblAddModErrors" runat="server" Text="[Adding Errors]" CssClass="text-danger mb-3" />
@@ -52,19 +52,19 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="ddlEditModSelect">Module:</label>
+                <label for="ddlEditModSelect" style="color: whitesmoke;">Module:</label>
                 <asp:DropDownList ID="ddlEditModSelect" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlEditModSelect_SelectedIndexChanged" CssClass="form-control"></asp:DropDownList>
             </div>
             <div class="mb-3">
-                <label for="txtEditModTitle">Title:</label>
+                <label for="txtEditModTitle" style="color: whitesmoke;">Title:</label>
                 <asp:TextBox ID="txtEditModTitle" runat="server" MaxLength="100" CssClass="form-control" />
             </div>
             <div class="mb-3">
-                <label for="txtEditModDesc">Description:</label>
+                <label for="txtEditModDesc" style="color: whitesmoke;">Description:</label>
                 <asp:TextBox ID="txtEditModDesc" runat="server" MaxLength="200" TextMode="MultiLine" CssClass="form-control" />
             </div>
             <div class="mb-3">
-                <label for="ddlEditEducator">Educator:</label>
+                <label for="ddlEditEducator" style="color: whitesmoke;">Educator:</label>
                 <asp:DropDownList ID="ddlEditEducator" runat="server" CssClass="form-control"></asp:DropDownList>
             </div>
             <asp:Label ID="lblEditModErrors" runat="server" Text="[Editing Errors]" CssClass="text-danger mb-3" />

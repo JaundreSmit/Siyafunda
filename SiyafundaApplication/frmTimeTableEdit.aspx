@@ -12,28 +12,28 @@
                 </div>
                 <asp:Panel ID="pnlAddClass" runat="server">
                     <div class="form-group">
-                        <label for="ddlModule">Module:</label>
+                        <label for="ddlModule" style="color: whitesmoke;">Module:</label>
                         <asp:DropDownList ID="ddlModule" runat="server" CssClass="form-control">
                         </asp:DropDownList>
                     </div>
                     <div class="form-group">
-                        <label for="ddlDayOfWeek">Day of The Week:</label>
+                        <label for="ddlDayOfWeek" style="color: whitesmoke;">Day of The Week:</label>
                         <asp:DropDownList ID="ddlDayOfWeek" runat="server" CssClass="form-control">
                         </asp:DropDownList>
                     </div>
                     <div class="form-group">
-                        <label for="txtStartTime">Start Time:</label>
+                        <label for="txtStartTime" style="color: whitesmoke;">Start Time:</label>
                         <asp:TextBox ID="txtStartTime" runat="server" CssClass="form-control"></asp:TextBox>
                     </div>
                     <div class="form-group">
-                        <label for="txtEndTime">End Time:</label>
+                        <label for="txtEndTime" style="color: whitesmoke;">End Time:</label>
                         <asp:TextBox ID="txtEndTime" runat="server" CssClass="form-control"></asp:TextBox>
                     </div>
                     <div class="form-group">
                         <asp:Button ID="btnAddClass" runat="server" OnClick="btnAddClass_Click" Text="Add Class" CssClass="btn btn-primary btn-purple mx-2" style="margin-top: 20px;" />
                     </div>
                     <div>
-                        <asp:Label ID="lblResult" runat="server" Text="[Results]" CssClass="text-success"></asp:Label>
+                        <asp:Label ID="lblResult" runat="server" Text="[Results]" CssClass="text-success" style="color: whitesmoke;"></asp:Label>
                     </div>
                 </asp:Panel>
             </div>
@@ -46,7 +46,7 @@
                 </div>
                 <asp:Panel ID="pnlEditDeleteClass" runat="server">
                     <div class="form-group">
-                        <label for="ddlClass">Select Class:</label>
+                        <label for="ddlClass" style="color: whitesmoke;">Select Class:</label>
                         <asp:DropDownList ID="ddlClass" runat="server" CssClass="form-control" OnSelectedIndexChanged="ddlClass_SelectedIndexChanged">
                         </asp:DropDownList>
                     </div>

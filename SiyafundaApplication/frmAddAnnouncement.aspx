@@ -11,15 +11,15 @@
         </div>
 
         <div class="form-group">
-            <label for="lblModuleName">Module:</label>
+            <label for="lblModuleName" style="color: whitesmoke;">Module:</label>
             <asp:Label ID="lblModuleName" runat="server" Text="[Module Name]" CssClass="form-control" />
         </div>
         <div class="form-group">
-            <label for="txtTitle">Title:</label>
+            <label for="txtTitle" style="color: whitesmoke;">Title:</label>
             <asp:TextBox ID="txtTitle" runat="server" MaxLength="600" CssClass="form-control" />
         </div>
         <div class="form-group">
-            <label for="txtContent">Content:</label>
+            <label for="txtContent" style="color: whitesmoke;">Content:</label>
             <asp:TextBox ID="txtContent" runat="server" MaxLength="600" TextMode="MultiLine" CssClass="form-control" Rows="5" />
         </div>
         <div class="form-group">

@@ -7,10 +7,10 @@
         <!-- Welcome Section -->
         <div class="row mb-4"> <!-- Row for welcome message -->
             <div class="col-md-6">
-                <asp:Label ID="lblWelcome" runat="server" Text="[Welcome Label]" CssClass="h4"></asp:Label>
+                <asp:Label ID="lblWelcome" runat="server" Text="[Welcome Label]" CssClass="h4 custom-label"></asp:Label>
             </div>
             <div class="col-md-6 text-end">
-                <asp:Label ID="lblRole" runat="server" Text="[Role Label]"></asp:Label>
+                <asp:Label ID="lblRole" runat="server" Text="[Role Label]" CssClass="custom-label"></asp:Label>
                 <asp:Button ID="btnProfile" runat="server" OnClick="btnProfile_Click" Text="Profile" CssClass="btn btn-primary w-5 btn-purple mx-2" />
                 <asp:Button ID="btnLogOut" runat="server" OnClick="btnLogOut_Click" Text="Log Out" CssClass="btn btn-primary w-5 btn-purple" />
             </div>
@@ -33,15 +33,15 @@
         </div>
 
         <!-- Available Resources Section -->
-        <h5>Available Resources:</h5>
-        <asp:Label ID="lblError" runat="server" Text="[Error Label]" CssClass="text-danger"></asp:Label>
+        <h5 style="color: whitesmoke;">Available Resources:</h5>
+        <asp:Label ID="lblError" runat="server" Text="[Error Label]" CssClass="text-danger "></asp:Label>
         <asp:GridView ID="dgvAvailableFiles" runat="server" CssClass="table table-striped" Width="100%">
         </asp:GridView>
 
         <hr /> <!-- Horizontal line for separation -->
 
         <!-- Announcements Section -->
-        <h5>Announcements</h5>
+        <h5 style="color: whitesmoke;">Announcements</h5>
         <asp:GridView ID="dgvAnnouncements" runat="server" CssClass="table table-striped" Width="100%">
         </asp:GridView>
         <asp:Label ID="lblAnnoucementsError" runat="server" Text="[Announcements Errors]" CssClass="text-danger"></asp:Label>
@@ -49,8 +49,8 @@
         <hr /> <!-- Horizontal line for separation -->
 
         <!-- Time Table Section -->
-        <h5>Time Table</h5>
-        <asp:Label ID="lblDate" runat="server" Text="[Date]"></asp:Label>
+        <h5 style="color: whitesmoke;">Time Table</h5>
+        <asp:Label ID="lblDate" runat="server" Text="[Date]" CssClass="custom-label"></asp:Label>
         <asp:GridView ID="dgvTimeTable" runat="server" CssClass="table table-striped" Width="100%">
         </asp:GridView>
         <asp:Label ID="lblTimeTableError" runat="server" Text="[TT Error]" CssClass="text-danger"></asp:Label>
@@ -78,5 +78,6 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             border-radius: 0;
         }
+
     </style>
 </asp:Content>

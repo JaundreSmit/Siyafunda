@@ -14,7 +14,7 @@
             <div class="col-md-4">
                 <!-- Improved Radio Button List -->
                 <asp:RadioButtonList ID="rblStudentFilter" runat="server" AutoPostBack="True" 
-                                     OnSelectedIndexChanged="rblStudentFilter_SelectedIndexChanged" CssClass="form-check form-check-inline">
+                                     OnSelectedIndexChanged="rblStudentFilter_SelectedIndexChanged" CssClass="form-check form-check-inline" style="color: whitesmoke;">
                     <asp:ListItem Text="Filter 1" Value="1"></asp:ListItem>
                     <asp:ListItem Text="Filter 2" Value="2"></asp:ListItem>
                     <asp:ListItem Text="Filter 3" Value="3"></asp:ListItem>
@@ -36,7 +36,7 @@
 
             <div class="col-md-8">
                 <div class="d-flex align-items-center mb-3">
-                    <h3 class="me-2">Other Features:</h3>
+                    <h3 class="me-2" style="color: whitesmoke;">Other Features:</h3>
                     <div class="d-flex">
                         <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Back" CssClass="btn btn-primary btn-purple mx-2" />
                         <asp:Button ID="btnUploadResources" runat="server" OnClick="btnUploadResources_Click" Text="Upload Resources" CssClass="btn btn-primary w-50 btn-purple mx-2" />
