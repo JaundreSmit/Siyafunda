@@ -3,24 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmprofile.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmprofile.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmeducator.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmeducator.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmdashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmdashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmprofile.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmprofile.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}",
       "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmlogin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmlogin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmlandingpage.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmlandingpage.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmlogin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmlogin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmsignup.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
@@ -47,6 +51,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "frmEducator.aspx",
+              "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx",
+              "RelativeDocumentMoniker": "frmEducator.aspx",
+              "ToolTip": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx",
+              "RelativeToolTip": "frmEducator.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2024-10-16T15:34:58.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "frmProfile.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmProfile.aspx",
               "RelativeDocumentMoniker": "frmProfile.aspx",
@@ -72,7 +89,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "frmSignUp.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmSignUp.aspx",
               "RelativeDocumentMoniker": "frmSignUp.aspx",
@@ -85,7 +102,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "frmLogin.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmLogin.aspx",
               "RelativeDocumentMoniker": "frmLogin.aspx",
@@ -111,7 +128,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Site.Master",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\Site.Master",
               "RelativeDocumentMoniker": "Site.Master",
