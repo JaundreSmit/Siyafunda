@@ -38,14 +38,14 @@
         width: 100%; 
         position: fixed;
         top: 0; 
-        left: 0px; 
+        right: 0px; 
         z-index: 1000; 
     }
 
     .side-panel {
         background-color: rgb(108, 61, 145); 
         color: white;
-        height: calc(100vh - 56px); 
+        height: 100%; 
         padding: 20px;
         position: fixed; 
         width: 250px; 
@@ -159,15 +159,16 @@
                 <!-- Side Panel Section -->
                 <div class="col-2 side-panel">                   
                     <ul class="nav flex-column">
-                        <!-- Add more sidebar items as needed -->
+                        <img src="/Content/Siyafunda.png" alt="Description of Image" class="img-fluid" style="margin-top: -60px; margin-bottom: 20px;" />
                     </ul>
-                    <img src="/Content/Siyafunda.png" alt="Description of Image" class="img-fluid" />
+                    <p style="text-align: center;">&copy; <%: DateTime.Now.Year %> - Siyafunda</p>
+                    
                 </div>
                 <!-- Main Content Section -->
                 <div class="col content-wrapper">
                     <!-- Full-width Navbar -->
                     <nav class="navbar navbar-expand-sm navbar-dark">
-                        <span class="navbar-brand">Siyafunda</span>
+                        <span class="navbar-brand"></span>
                         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -177,7 +178,7 @@
                               
                             </ul>
                             <ul class="navbar-nav ms-auto">
-                                <li class="nav-item"><a class="nav-link" runat="server" href="~/frmDashboard.aspx">Home</a></li>
+                               <li class="nav-item"><a class="nav-link" runat="server" href="~/frmDashboard.aspx">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" runat="server" href="~/frmlandingpage.aspx">Login / Sign Up</a></li>
                                 <li class="nav-item"><a class="nav-link" runat="server" href="~/frmProfile.aspx">Profile</a></li>
                             </ul>
