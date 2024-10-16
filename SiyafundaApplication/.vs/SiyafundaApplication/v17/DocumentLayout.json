@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmtimetableedit.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmtimetableedit.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmtimetableedit.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmtimetableedit.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\renie\\source\\repos\\siyafunda\\siyafundaapplication\\frmaddfaq.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmaddfaq.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
@@ -58,8 +66,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "frmTimeTableEdit.aspx.cs",
+              "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmTimeTableEdit.aspx.cs",
+              "RelativeDocumentMoniker": "frmTimeTableEdit.aspx.cs",
+              "ToolTip": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmTimeTableEdit.aspx.cs",
+              "RelativeToolTip": "frmTimeTableEdit.aspx.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAiwB8AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-16T18:04:50.235Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
@@ -71,6 +92,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "frmTimeTableEdit.aspx",
+              "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmTimeTableEdit.aspx",
+              "RelativeDocumentMoniker": "frmTimeTableEdit.aspx",
+              "ToolTip": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmTimeTableEdit.aspx",
+              "RelativeToolTip": "frmTimeTableEdit.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2024-10-16T18:03:59.487Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "frmAddFAQ.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmAddFAQ.aspx",
               "RelativeDocumentMoniker": "frmAddFAQ.aspx",
@@ -83,7 +117,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "frmAddAnnouncement.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmAddAnnouncement.aspx",
               "RelativeDocumentMoniker": "frmAddAnnouncement.aspx",
@@ -96,7 +130,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "frmSystemAdmin.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmSystemAdmin.aspx",
               "RelativeDocumentMoniker": "frmSystemAdmin.aspx",
@@ -109,7 +143,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "frmSystemDev.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmSystemDev.aspx",
               "RelativeDocumentMoniker": "frmSystemDev.aspx",
@@ -122,7 +156,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "frmModerator.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmModerator.aspx",
               "RelativeDocumentMoniker": "frmModerator.aspx",
@@ -135,7 +169,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "frmUploadFiles.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmUploadFiles.aspx",
               "RelativeDocumentMoniker": "frmUploadFiles.aspx",
@@ -148,7 +182,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "frmEducator.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx",
               "RelativeDocumentMoniker": "frmEducator.aspx",
@@ -161,7 +195,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "frmDashboard.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmDashboard.aspx",
               "RelativeDocumentMoniker": "frmDashboard.aspx",
@@ -174,7 +208,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "frmSignUp.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmSignUp.aspx",
               "RelativeDocumentMoniker": "frmSignUp.aspx",
@@ -187,7 +221,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "frmLogin.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmLogin.aspx",
               "RelativeDocumentMoniker": "frmLogin.aspx",
@@ -200,7 +234,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "frmLandingPage.aspx",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\frmLandingPage.aspx",
               "RelativeDocumentMoniker": "frmLandingPage.aspx",
@@ -213,7 +247,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "Site.Master",
               "DocumentMoniker": "C:\\Users\\renie\\source\\repos\\Siyafunda\\SiyafundaApplication\\Site.Master",
               "RelativeDocumentMoniker": "Site.Master",
