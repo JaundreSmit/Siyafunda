@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -9,23 +10,27 @@ namespace SiyafundaApplication
 {
     public partial class frmUploadFiles : System.Web.UI.Page
     {
-        // Define connection string method
         protected string getConnectionString()
         {
             return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
         }
-        int UserID = 0; //TODO auto get user Id from session
-        //UserID = Convert.ToInt32(Session["UserID"]); // Ensure you have set UserID in session after login
 
-        // Declare connection variable
+        private int UserID = 0;
         private SqlConnection Con;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Initialize connection using getConnectionString method
             Con = new SqlConnection(getConnectionString());
             lblError.Visible = false;
-            UploadButton.Enabled = true;
+
+            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7)
+            {
+                UserID = Convert.ToInt32(Session["UserID"]);
+            }
+            else
+            {
+                Response.Redirect("frmDashboard.aspx");
+            }
 
             if (!IsPostBack)
             {
@@ -33,49 +38,48 @@ namespace SiyafundaApplication
             }
         }
 
-        // Populate the module dropdown list
         private void BindModules()
         {
-            // Use existing connection
             using (Con)
             {
                 try
                 {
-                    // Adjust the query to filter modules based on the UserID
-                    string query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
+                    string query;
+                    if (Convert.ToInt32(Session["RoleID"]) < 4)
+                    {
+                        query = "SELECT module_id, title FROM [dbo].[Modules]";
+                    }
+                    else
+                    {
+                        query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
+                    }
 
                     SqlCommand cmd = new SqlCommand(query, Con);
-                    cmd.Parameters.AddWithValue("@UserID", UserID); // Use parameterized query to prevent SQL injection
+
+                    if (Convert.ToInt32(Session["RoleID"]) >= 4)
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", UserID);
+                    }
 
                     Con.Open();
-
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    // Check if the reader has rows
                     if (reader.HasRows)
                     {
                         ModuleDropDown.DataSource = reader;
-                        ModuleDropDown.DataTextField = "title";   // Display module title
-                        ModuleDropDown.DataValueField = "module_id"; // Store module_id as value
+                        ModuleDropDown.DataTextField = "title";
+                        ModuleDropDown.DataValueField = "module_id";
                         ModuleDropDown.DataBind();
-
-                        // Add a default item
                         ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
                     }
                     else
                     {
-                        // No modules found; display an error message
                         lblError.Text = "No modules found for the specified user.";
                         lblError.Visible = true;
-                        UploadButton.Enabled = false;
-
-                        // Optionally, you can clear the dropdown
-                        ModuleDropDown.Items.Clear();
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Error handling
                     lblError.Text = "Error retrieving modules: " + ex.Message;
                     lblError.Visible = true;
                 }
@@ -86,84 +90,126 @@ namespace SiyafundaApplication
             }
         }
 
+        private string AddWatermark(string mainImagePath, string watermarkImagePath, double markRatio)
+        {
+            using (var mainImage = System.Drawing.Image.FromFile(mainImagePath))
+            using (var watermarkImage = System.Drawing.Image.FromFile(watermarkImagePath))
+            {
+                using (var bitmap = new System.Drawing.Bitmap(mainImage.Width, mainImage.Height))
+                {
+                    using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+                    {
+                        graphics.DrawImage(mainImage, 0, 0);
+                        var watermarkWidth = (int)(mainImage.Width * markRatio);
+                        var watermarkHeight = (int)(watermarkImage.Height * ((double)watermarkWidth / watermarkImage.Width));
+                        var watermarkPositionX = mainImage.Width - watermarkWidth - 10; // 10px from right
+                        var watermarkPositionY = mainImage.Height - watermarkHeight - 10; // 10px from bottom
 
+                        graphics.DrawImage(watermarkImage, watermarkPositionX, watermarkPositionY, watermarkWidth, watermarkHeight);
+                    }
+                    var watermarkedPath = Path.Combine(Path.GetDirectoryName(mainImagePath), "watermarked_" + Path.GetFileName(mainImagePath));
+                    bitmap.Save(watermarkedPath);
+                    return watermarkedPath;
+                }
+            }
+        }
 
-        // Handle file upload process
-        protected void UploadButton_Click(object sender, EventArgs e)
+        private async Task UploadFileAsync()
         {
             if (FileUploadControl.HasFile)
             {
-                // Get the selected module_id from the dropdown
                 int moduleId = int.Parse(ModuleDropDown.SelectedValue);
                 if (moduleId == 0)
                 {
-                    Response.Write("Please select a valid module.");
-                    return; // Exit if no valid module is selected
+                    lblError.Text = "Please select a valid module.";
+                    lblError.Visible = true;
+                    return;
                 }
 
-                // Create the path to the UploadedFiles directory for the specific module
+                lblError.Visible = true;
                 string moduleDirectory = Server.MapPath($"~/UploadedFiles/{moduleId}/");
-
-                // Ensure the module directory exists
                 if (!Directory.Exists(moduleDirectory))
                 {
                     Directory.CreateDirectory(moduleDirectory);
                 }
 
-                // Combine the directory path with the uploaded file name
-                string filePath = Path.Combine(moduleDirectory, FileUploadControl.FileName);
-                string fileType = Path.GetExtension(FileUploadControl.FileName);
+                string fileName = FileUploadControl.FileName;
+                string filePath = Path.Combine(moduleDirectory, fileName);
+                string relativeFilePath = $"UploadedFiles/{moduleId}/{fileName}";
+                string fileType = Path.GetExtension(fileName).ToLower();
                 int fileSize = FileUploadControl.PostedFile.ContentLength;
 
                 try
                 {
-                    // Save the uploaded file to the specified path
-                    FileUploadControl.SaveAs(filePath);
+                    FileUploadControl.SaveAs(filePath); // Save the uploaded file
 
-                    // Sync file upload with DB using the existing connection
-                    using (Con)
+                    if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png" || fileType == ".gif")
                     {
-                        string query = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
-                                         VALUES (@resource_id, @file_path, @file_type, @file_size)";
-
-                        SqlCommand cmd = new SqlCommand(query, Con);
-
-                        // Assuming you get resource_id from another source (e.g., query string)
-                        int resourceId;
-                        if (!int.TryParse(Request.QueryString["resource_id"], out resourceId))
+                        if (fileSize < 1048576) // Check if file size is less than 1 MB
                         {
-                            Response.Write("Invalid resource ID.");
-                            return; // Exit if resource_id is invalid
+                            string watermarkImagePath = Server.MapPath("~/Assets/SiyafundaLogo.png"); // logo path
+                            string watermarkedImagePath = AddWatermark(filePath, watermarkImagePath, 0.25);
+
+                            // Overwrite the original file with the watermarked image
+                            File.Copy(watermarkedImagePath, filePath, true);
+
+                            lblError.Text = "File uploaded and watermarked successfully!";
                         }
-
-                        // Add parameters
-                        cmd.Parameters.AddWithValue("@resource_id", resourceId);
-                        cmd.Parameters.AddWithValue("@file_path", filePath);
-                        cmd.Parameters.AddWithValue("@file_type", fileType);
-                        cmd.Parameters.AddWithValue("@file_size", fileSize);
-
-                        // Open the connection, execute query, and close the connection
-                        Con.Open();
-                        cmd.ExecuteNonQuery();
-                        Con.Close();
+                        else
+                        {
+                            lblError.Text = "Uploaded file is too large";
+                        }
                     }
 
-                    // Success
-                    Response.Write("File uploaded successfully! Path: " + filePath);
+                    using (Con)
+                    {
+                        string resourceQuery = @"INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
+                                         VALUES (@user_id, @module_id, @title, @description, @upload_date);
+                                         SELECT SCOPE_IDENTITY();";
+
+                        SqlCommand resourceCmd = new SqlCommand(resourceQuery, Con);
+                        resourceCmd.Parameters.AddWithValue("@user_id", UserID);
+                        resourceCmd.Parameters.AddWithValue("@module_id", moduleId);
+                        resourceCmd.Parameters.AddWithValue("@title", txtTitle.Text);
+                        resourceCmd.Parameters.AddWithValue("@description", txtDesc.Text);
+                        resourceCmd.Parameters.AddWithValue("@upload_date", DateTime.Now);
+
+                        Con.Open();
+                        int resourceId = Convert.ToInt32(resourceCmd.ExecuteScalar());
+
+                        string fileQuery = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
+                                     VALUES (@resource_id, @file_path, @file_type, @file_size)";
+
+                        SqlCommand fileCmd = new SqlCommand(fileQuery, Con);
+                        fileCmd.Parameters.AddWithValue("@resource_id", resourceId);
+                        fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath);
+                        fileCmd.Parameters.AddWithValue("@file_type", fileType);
+                        fileCmd.Parameters.AddWithValue("@file_size", fileSize);
+                        fileCmd.ExecuteNonQuery();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    // Error handling
-                    lblError.Text = ex.Message;
-                    lblError.Visible = true;
-
+                    lblError.Text = "File upload failed: " + ex.Message;
                 }
             }
             else
             {
-                // No file selected
-                Response.Write("No file selected.");
+                lblError.Text = "Please select a file.";
             }
+        }
+
+        protected async void UploadButton_Click(object sender, EventArgs e)
+        {
+            await UploadFileAsync();
         }
     }
 }
+
+
+
+
+
+
+
+

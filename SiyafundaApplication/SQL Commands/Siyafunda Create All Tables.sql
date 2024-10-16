@@ -90,15 +90,6 @@ CREATE TABLE [dbo].[Quizzes]
     [due_date] DATETIME NOT NULL
 );
 
-/*CREATE TABLE [dbo].[QuizQuestions]
-(
-    [question_id] INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
-    [quiz_id] INT NOT NULL,
-    [question_text] NVARCHAR(MAX) NOT NULL,
-    [correct_answer] NVARCHAR(100) NOT NULL,
-    [points] INT NOT NULL
-);*/ 
-
 /*Need to accomodate the different question types and also store the options with the Multiple Choice Questions.*/
 
 CREATE TABLE [dbo].[MCQuestions]
@@ -253,10 +244,6 @@ ALTER TABLE [dbo].[Gradebook]
 -- Quizzes foreign keys
 ALTER TABLE [dbo].[Quizzes]
     ADD CONSTRAINT FK_Quizzes_Modules FOREIGN KEY ([module_id]) REFERENCES [dbo].[Modules]([module_id]);
-
--- QuizQuestions foreign keys (remove if not used)
--- ALTER TABLE [dbo].[QuizQuestions]
---    ADD CONSTRAINT FK_QuizQuestions_Quizzes FOREIGN KEY ([quiz_id]) REFERENCES [dbo].[Quizzes]([quiz_id]);
 
 -- MCQuestions foreign keys
 ALTER TABLE [dbo].[MCQuestions]

@@ -15,15 +15,6 @@ namespace SiyafundaApplication
     {
 
         /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-
-        /// <summary>
         /// UsernameLabel control.
         /// </summary>
         /// <remarks>
@@ -78,6 +69,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.RequiredFieldValidator PasswordRequired;
 
         /// <summary>
+        /// lblError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
+
+        /// <summary>
         /// LoginButton control.
         /// </summary>
         /// <remarks>
@@ -87,12 +87,12 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.Button LoginButton;
 
         /// <summary>
-        /// lblError control.
+        /// btnBack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblError;
+        protected global::System.Web.UI.WebControls.Button btnBack;
     }
 }

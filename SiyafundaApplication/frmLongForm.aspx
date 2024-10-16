@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmLongForm.aspx.cs" Inherits="SiyafundaApplication.frmLongForm" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmLongForm.aspx.cs" Inherits="SiyafundaApplication.frmLongForm" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">

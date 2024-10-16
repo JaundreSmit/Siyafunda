@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmTakeQuiz.aspx.cs" Inherits="SiyafundaApplication.frmTakeQuiz" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="frmTakeQuiz.aspx.cs" Inherits="SiyafundaApplication.frmTakeQuiz" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
