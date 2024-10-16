@@ -11,24 +11,24 @@
             </div>
             <div class="col-md-6 text-end">
                 <asp:Label ID="lblRole" runat="server" Text="[Role Label]"></asp:Label>
-                <asp:Button ID="btnProfile" runat="server" OnClick="btnProfile_Click" Text="Profile" CssClass="btn btn-secondary mx-2" />
-                <asp:Button ID="btnLogOut" runat="server" OnClick="btnLogOut_Click" Text="Log Out" CssClass="btn btn-danger" />
+                <asp:Button ID="btnProfile" runat="server" OnClick="btnProfile_Click" Text="Profile" CssClass="btn btn-primary w-5 btn-purple mx-2" />
+                <asp:Button ID="btnLogOut" runat="server" OnClick="btnLogOut_Click" Text="Log Out" CssClass="btn btn-primary w-5 btn-purple" />
             </div>
         </div>
 
         <!-- Navigation Buttons -->
         <div class="row mb-4 text-center">
             <div class="col-md-3">
-                <asp:Button ID="btnEducators" runat="server" Text="Educator Page" OnClick="btnEducators_Click" CssClass="btn btn-primary w-100" />
+                <asp:Button ID="btnEducators" runat="server" Text="Educator Page" OnClick="btnEducators_Click" CssClass="btn btn-primary w-100 btn-purple" />
             </div>
             <div class="col-md-3">
-                <asp:Button ID="btnModerators" runat="server" Text="Moderators Page" OnClick="btnModerators_Click" CssClass="btn btn-primary w-100" />
+                <asp:Button ID="btnModerators" runat="server" Text="Moderators Page" OnClick="btnModerators_Click" CssClass="btn btn-primary w-100 btn-purple" />
             </div>
             <div class="col-md-3">
-                <asp:Button ID="btnSystemDevs" runat="server" Text="System Dev Page" OnClick="btnSystemDevs_Click" CssClass="btn btn-primary w-100" />
+                <asp:Button ID="btnSystemDevs" runat="server" Text="System Dev Page" OnClick="btnSystemDevs_Click" CssClass="btn btn-primary w-100 btn-purple" />
             </div>
             <div class="col-md-3">
-                <asp:Button ID="btnSystemAdmins" runat="server" Text="System Admins" OnClick="btnSystemAdmins_Click" CssClass="btn btn-primary w-100" />
+                <asp:Button ID="btnSystemAdmins" runat="server" Text="System Admins" OnClick="btnSystemAdmins_Click" CssClass="btn btn-primary w-100 btn-purple" />
             </div>
         </div>
 
@@ -54,6 +54,29 @@
         <asp:GridView ID="dgvTimeTable" runat="server" CssClass="table table-striped" Width="100%">
         </asp:GridView>
         <asp:Label ID="lblTimeTableError" runat="server" Text="[TT Error]" CssClass="text-danger"></asp:Label>
-        <asp:Button ID="btnEditTimeTable" runat="server" OnClick="btnEditTimeTable_Click" Text="Edit Time Table" CssClass="btn btn-warning mt-2 w-100" />
+        <asp:Button ID="btnEditTimeTable" runat="server" OnClick="btnEditTimeTable_Click" Text="Edit Time Table" CssClass="btn btn-warning mt-2 w-100 btn-purple" />
     </div>
+
+    <style type="text/css">
+        
+        .btn-purple {
+            background-color: whitesmoke; 
+            color: black; 
+            border: none; 
+            font-weight: bold; 
+            padding: 12px 24px; 
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, transform 0.2s ease; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+            border-radius: 0;
+        }
+
+        .btn-purple:hover {
+            background-color: rgb(108, 61, 145); 
+            color: black; 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-radius: 0;
+        }
+    </style>
 </asp:Content>

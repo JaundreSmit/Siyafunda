@@ -11,7 +11,7 @@
     <!-- Include Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-whatever-integrity" crossorigin="anonymous">
 
-    <!-- Example font import -->
+    <!-- font import -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
 
@@ -23,107 +23,102 @@
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
    <style>
-    /* Ensure no margin or padding on the body */
     body {
         margin: 0;
         padding: 0;
-        overflow-x: hidden; /* Prevent horizontal scroll */
+        overflow-x: hidden; 
     }
 
     .custom-font {
-    font-family: 'Lato', sans-serif; /* Replace with your chosen font */
+    font-family: 'Lato', sans-serif; 
     }
 
-    /* Navbar styles */
     .navbar {
-        background-color: rgb(108, 61, 145); /* Purple background for navbar */
-        width: 100%; /* Full width minus the sidebar width */
-        position: fixed; /* Keep navbar fixed at the top */
-        top: 0; /* Align to the top */
-        left: 0px; /* Start at the right edge of the sidebar */
-        z-index: 1000; /* Ensure it sits above other elements */
+        background-color: rgb(108, 61, 145); 
+        width: 100%; 
+        position: fixed;
+        top: 0; 
+        left: 0px; 
+        z-index: 1000; 
     }
 
-    /* Purple side panel styling */
     .side-panel {
-        background-color: rgb(108, 61, 145); /* Purple background */
+        background-color: rgb(108, 61, 145); 
         color: white;
-        height: calc(100vh - 56px); /* Full height minus navbar height */
+        height: calc(100vh - 56px); 
         padding: 20px;
-        position: fixed; /* Fix sidebar to the left */
-        width: 250px; /* Width of the sidebar */
-        top: 56px; /* Adjust to start below the navbar */
+        position: fixed; 
+        width: 250px; 
+        top: 56px;
 
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* Distributes space evenly */
-        height: calc(100vh - 56px); /* Ensure it takes full height */
+        justify-content: space-between;
+        height: calc(100vh - 56px);
     }
 
-    /* Ensure content flows next to the side panel */
     .content-wrapper {
-        margin-left: 250px; /* Adjust based on panel width */
-        margin-top: 56px; /* Adjust based on navbar height */
-        flex: 1; /* Allow content to grow and fill available space */
+        margin-left: 250px; 
+        margin-top: 56px; 
+        flex: 1; 
     }
 
-    /* Ensure the main content area does not have margin or padding */
     .container.body-content {
-        padding: 0; /* Remove default padding */
+        padding: 0; 
     }
 
     .navbar-brand {
-        margin-left: 40px; /* Adjust the value as needed */
+        margin-left: 40px;
     }
 
      .navbar-nav.ms-auto {
-        margin-right: 40px; /* Adjust the value as needed */
+        margin-right: 40px; 
     }
 
      .card {
-        border: none; /* Remove card border */
-        margin-top: 200px; /* Adjust as needed */
+        border: none; 
+        margin-top: 200px;
         padding: 5px;
     }
 
      .card-title {
-        font-weight: bold; /* Make title bold */
+        font-weight: bold;
     }
 
      .btn {
-        background-color: whitesmoke; /* Light gray background */
-        color: black; /* Black text for visibility */
-        border: none; /* Remove border */
-        font-weight: bold; /* Bold text */
-        padding: 12px 24px; /* Add padding for better sizing */
-        text-transform: uppercase; /* Uppercase text for better visibility */
-        transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-        border-radius: 0; /* Square corners */
+        background-color: whitesmoke; 
+        color: black;
+        border: none;
+        font-weight: bold; 
+        padding: 12px 24px; 
+        text-transform: uppercase; 
+        transition: background-color 0.3s ease, transform 0.2s ease; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        border-radius: 0; 
 
-        width: 120px; /* Set a fixed width */
-        height: 50px; /* Set a fixed height */
+        width: 120px; 
+        height: 50px; 
     
     }
      .btn:hover {
-        background-color: darkgray; /* Purple background on hover */
-        color: black; /* Change text color to white on hover */
-        transform: translateY(-2px); /* Lift effect on hover */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
-        border-radius: 0; /* Square corners */
+        background-color: darkgray;
+        color: black; 
+        transform: translateY(-2px); 
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        border-radius: 0;
     }
+     
 
      footer {
-        /* Remove margin-top from the footer */
-        background-color: white; /* Optional: Add a background color */
-        padding: 20px 0; /* Optional: Add some padding */
-        text-align: left; /* Center the footer text */
+        background-color: white; 
+        padding: 20px 0;
+        text-align: left;
     }
 
      .container-fluid {
-        display: flex; /* Make the main container a flex container */
-        flex-direction: column; /* Arrange children in a column */
-        min-height: 100vh; /* Minimum height is the full height of the viewport */
+        display: flex; 
+        flex-direction: column; 
+        min-height: 100vh; 
     }
 
 </style>
