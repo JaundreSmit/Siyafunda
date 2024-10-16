@@ -25,11 +25,18 @@
         .button:hover {
             background-color: #2980b9;
         }
+        .auto-style1 {
+            margin-top: 20px;
+        }
     </style>
     
     <div>
         <h1>Admin User Management</h1>
-        <asp:GridView ID="UsersGridView" runat="server" AutoGenerateColumns="False" OnRowCommand="UsersGridView_RowCommand" CssClass="grid-container">
+        <p>
+            <asp:Button ID="btnPurge" runat="server" OnClick="btnPurge_Click" Text="Purge Non Existent Files" />
+            <asp:Label ID="lblResults" runat="server" Text="[Purge Results]"></asp:Label>
+        </p>
+        <asp:GridView ID="UsersGridView" runat="server" AutoGenerateColumns="False" OnRowCommand="UsersGridView_RowCommand" CssClass="auto-style1" OnSelectedIndexChanged="UsersGridView_SelectedIndexChanged" Width="1194px">
             <Columns>
                 <asp:BoundField DataField="user_id" HeaderText="User ID" Visible="false" />
                 <asp:BoundField DataField="Name" HeaderText="Name" />

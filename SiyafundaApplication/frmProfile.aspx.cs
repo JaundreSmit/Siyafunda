@@ -13,6 +13,7 @@ namespace SiyafundaApplication  //TODO User_id (ex. row 27) needs to contain log
         }
 
         private int userId = 0;
+        private int userRole = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -20,8 +21,9 @@ namespace SiyafundaApplication  //TODO User_id (ex. row 27) needs to contain log
             // Check if the session contains the user ID
             if (Session["UserID"] != null && int.TryParse(Session["UserID"].ToString(), out userId))
             {
+                userRole = Convert.ToInt32(Session["RoleID"]);
                 // Check if the user ID is within a valid range
-                if (userId < 2 || userId > 7)
+                if (userRole < 2 || userRole > 7)
                 {
                     Response.Redirect("frmLandingPage.aspx");
                     return;

@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
@@ -117,71 +118,24 @@ namespace SiyafundaApplication
 
         private void ShowAllResources(string filter = null)
         {
-            string query;
-
-            // Determine the user's role and construct the appropriate SQL query
-            if (Convert.ToInt32(Session["RoleID"]) < 4)
-            {
-                // For roles below Moderator, show only resources with status_id = 3 (in progress)
-                query = @"
+            string query = @"
                 SELECT
-                m.title AS ModuleName,
-                r.title AS ResourceTitle,
-                r.description AS ResourceDescription,
-                r.upload_date AS UploadDate,
-                f.file_size AS FileSize,
-                ds.status_name AS StatusName,
-                AVG(rv.rating) AS AvgRating
+                    m.title AS ModuleName,
+                    r.title AS ResourceTitle,
+                    r.description AS ResourceDescription,
+                    r.upload_date AS UploadDate,
+                    f.file_size AS FileSize
                 FROM
-                Resources r
+                    Resources r
                 INNER JOIN
-                Modules m ON r.module_id = m.module_id
+                    Modules m ON r.module_id = m.module_id
                 INNER JOIN
-                Files f ON r.resource_id = f.resource_id
-                INNER JOIN
-                Res_to_status rst ON r.resource_id = rst.resource_id
-                INNER JOIN
-                DocStatuses ds ON rst.status_id = ds.status_id
-                LEFT JOIN
-                Reviews rv ON r.resource_id = rv.resource_id
-                WHERE
-                rst.status_id = 3";  // Only show resources with status_id = 3 (in progress)
-
-                // Add GROUP BY for all non-aggregated columns
-                query += @"
-                GROUP BY
-                m.title, r.title, r.description, r.upload_date, f.file_size, ds.status_name";
-            }
-            else
-            {
-                // For Module Moderators, Educators, and Students: Show only resources with status_id = 2
-                query = @"
-                SELECT
-                m.title AS ModuleName,
-                r.title AS ResourceTitle,
-                r.description AS ResourceDescription,
-                r.upload_date AS UploadDate,
-                f.file_size AS FileSize
-                FROM
-                Resources r
-                INNER JOIN
-                Modules m ON r.module_id = m.module_id
-                INNER JOIN
-                Files f ON r.resource_id = f.resource_id
-                INNER JOIN
-                Res_to_status rst ON r.resource_id = rst.resource_id
-                INNER JOIN
-                DocStatuses ds ON rst.status_id = ds.status_id
-                INNER JOIN
-                Stu_To_Module stm ON m.module_id = stm.module_id
-                WHERE
-                rst.status_id = 2 AND (stm.user_id = @UserId OR m.educator_id = @UserId)";  // Only show Approved resources
-            }
+                    Files f ON r.resource_id = f.resource_id";
 
             // If a filter is provided, add it to the query
             if (!string.IsNullOrEmpty(filter))
             {
-                query += " AND r.title LIKE @Filter";
+                query += " WHERE r.title LIKE @Filter"; // Added WHERE clause for filtering
             }
 
             try
@@ -190,12 +144,6 @@ namespace SiyafundaApplication
                 {
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        // Add parameters for user filtering, if applicable
-                        if (Convert.ToInt32(Session["RoleID"]) >= 4)
-                        {
-                            cmd.Parameters.AddWithValue("@UserId", UserID);
-                        }
-
                         // Add the filter parameter if a filter is provided
                         if (!string.IsNullOrEmpty(filter))
                         {
@@ -212,7 +160,7 @@ namespace SiyafundaApplication
 
                         if (dt.Rows.Count == 0)
                         {
-                            lblError.Text = "No resources in progress found.";
+                            lblError.Text = "No resources found.";
                             lblError.Visible = true;
                         }
                         else
@@ -242,21 +190,21 @@ namespace SiyafundaApplication
         {
             // Query to retrieve announcements based on user ID and module enrollment
             string query = @"
-        SELECT
-            m.title AS ModuleName,
-            a.created_at AS AnnouncementDate,
-            a.title AS AnnouncementTitle,
-            a.content AS AnnouncementContent
-        FROM
-            Announcements a
-        INNER JOIN
-            Modules m ON a.module_id = m.module_id
-        INNER JOIN
-            Stu_To_Module stm ON m.module_id = stm.module_id
-        WHERE
-            stm.user_id = @UserId
-        ORDER BY
-            a.created_at DESC";  // Order by the announcement creation date
+                            SELECT
+                                m.title AS ModuleName,
+                                a.created_at AS AnnouncementDate,
+                                a.title AS AnnouncementTitle,
+                                a.content AS AnnouncementContent
+                            FROM
+                                Announcements a
+                            INNER JOIN
+                                Modules m ON a.module_id = m.module_id
+                            INNER JOIN
+                                Stu_To_Module stm ON m.module_id = stm.module_id
+                            WHERE
+                                stm.user_id = @UserId OR m.educator_id = @UserId
+                            ORDER BY
+                                a.created_at DESC";  // Order by the announcement creation date
 
             try
             {
@@ -407,6 +355,145 @@ namespace SiyafundaApplication
                 // Students can edit time tables here
                 Response.Redirect("frmTimeTableEdit.aspx");
             }
+        }
+
+        protected void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Select")
+            {
+                // Get the row index of the clicked item
+                int rowIndex = Convert.ToInt32(e.CommandArgument);
+
+                // Get the selected row
+                GridViewRow selectedRow = dgvAvailableFiles.Rows[rowIndex];
+
+                // Retrieve the module name and resource title from the selected row
+                string moduleName = selectedRow.Cells[0].Text; // Assuming the Module Name is in the first column
+                string resourceTitle = ((LinkButton)selectedRow.FindControl("lnkResourceTitle")).Text; // Get the text of the LinkButton
+
+                int moduleId = 0;
+                int resourceId = 0;
+                string filePath = string.Empty;
+
+                // Get the module_id from the Modules table
+                string moduleQuery = "SELECT module_id FROM Modules WHERE title = @ModuleName";
+                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand(moduleQuery, con))
+                    {
+                        cmd.Parameters.AddWithValue("@ModuleName", moduleName);
+                        con.Open();
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            moduleId = Convert.ToInt32(result);
+                        }
+                    }
+                }
+
+                // Get the resource_id and file path from Resources and Files tables
+                string resourceQuery = "SELECT r.resource_id, f.file_path FROM Resources r " +
+                                       "INNER JOIN Files f ON r.resource_id = f.resource_id " +
+                                       "WHERE r.title = @ResourceTitle AND r.module_id = @ModuleId";
+                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand(resourceQuery, con))
+                    {
+                        cmd.Parameters.AddWithValue("@ResourceTitle", resourceTitle);
+                        cmd.Parameters.AddWithValue("@ModuleId", moduleId);
+                        con.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                resourceId = reader.GetInt32(0); // resource_id
+                                filePath = reader.GetString(1); // file_path
+                            }
+                        }
+                    }
+                }
+
+                // Check if filePath is not empty and trigger download
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    Response.ContentType = "application/octet-stream";
+                    Response.AppendHeader("Content-Disposition", $"attachment; filename={System.IO.Path.GetFileName(filePath)}");
+                    Response.TransmitFile(Server.MapPath(filePath));
+                    Response.End();
+                }
+                else
+                {
+                    lblError.Text = "File not found.";
+                    lblError.Visible = true;
+                }
+            }
+        }
+
+        private int GetModuleId(string moduleName)
+        {
+            int moduleId = 0;
+            string query = "SELECT module_id FROM Modules WHERE title = @ModuleName";
+
+            using (SqlConnection con = new SqlConnection(getConnectionString()))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@ModuleName", moduleName);
+                    con.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        moduleId = Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            return moduleId;
+        }
+
+        private int GetResourceId(string resourceTitle, int moduleId)
+        {
+            int resourceId = 0;
+            string query = "SELECT resource_id FROM Resources WHERE title = @ResourceTitle AND module_id = @ModuleId";
+
+            using (SqlConnection con = new SqlConnection(getConnectionString()))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@ResourceTitle", resourceTitle);
+                    cmd.Parameters.AddWithValue("@ModuleId", moduleId);
+                    con.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        resourceId = Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            return resourceId;
+        }
+
+        private string GetFilePath(int resourceId)
+        {
+            string filePath = string.Empty;
+            string query = "SELECT file_path FROM Files WHERE resource_id = @ResourceId";
+
+            using (SqlConnection con = new SqlConnection(getConnectionString()))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@ResourceId", resourceId);
+                    con.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        filePath = result.ToString();
+                    }
+                }
+            }
+
+            return filePath;
         }
     }
 }

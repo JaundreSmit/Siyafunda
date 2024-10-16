@@ -158,11 +158,13 @@ namespace SiyafundaApplication
                         else
                         {
                             lblError.Text = "Uploaded file is too large";
+                            return; // Exit if file size exceeds limit
                         }
                     }
 
                     using (Con)
                     {
+                        // Insert into Resources
                         string resourceQuery = @"INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
                                          VALUES (@user_id, @module_id, @title, @description, @upload_date);
                                          SELECT SCOPE_IDENTITY();";
@@ -177,6 +179,7 @@ namespace SiyafundaApplication
                         Con.Open();
                         int resourceId = Convert.ToInt32(resourceCmd.ExecuteScalar());
 
+                        // Insert into Files
                         string fileQuery = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
                                      VALUES (@resource_id, @file_path, @file_type, @file_size)";
 
@@ -186,6 +189,17 @@ namespace SiyafundaApplication
                         fileCmd.Parameters.AddWithValue("@file_type", fileType);
                         fileCmd.Parameters.AddWithValue("@file_size", fileSize);
                         fileCmd.ExecuteNonQuery();
+
+                        // Insert into Res_to_status
+                        string statusQuery = @"INSERT INTO [dbo].[Res_to_status] (resource_id, status_id, feedback, user_id)
+                                       VALUES (@resource_id, @status_id, @feedback, @user_id)";
+
+                        SqlCommand statusCmd = new SqlCommand(statusQuery, Con);
+                        statusCmd.Parameters.AddWithValue("@resource_id", resourceId);
+                        statusCmd.Parameters.AddWithValue("@status_id", 3); // In progress
+                        statusCmd.Parameters.AddWithValue("@feedback", "Waiting for moderator approval");
+                        statusCmd.Parameters.AddWithValue("@user_id", UserID); // Add the user ID for context
+                        statusCmd.ExecuteNonQuery();
                     }
                 }
                 catch (Exception ex)
@@ -205,11 +219,3 @@ namespace SiyafundaApplication
         }
     }
 }
-
-
-
-
-
-
-
-
