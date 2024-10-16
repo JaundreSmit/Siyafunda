@@ -15,13 +15,13 @@ namespace SiyafundaApplication
     {
 
         /// <summary>
-        /// btnBack control.
+        /// pnlInProgress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBack;
+        protected global::System.Web.UI.WebControls.Panel pnlInProgress;
 
         /// <summary>
         /// txtSearchProgress control.
@@ -51,22 +51,22 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.GridView dgvInProgress;
 
         /// <summary>
-        /// btnReject control.
+        /// pnlRejectApprove control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReject;
+        protected global::System.Web.UI.WebControls.Panel pnlRejectApprove;
 
         /// <summary>
-        /// btnApprove control.
+        /// rbDecision control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnApprove;
+        protected global::System.Web.UI.WebControls.RadioButtonList rbDecision;
 
         /// <summary>
         /// txtFeedback control.
@@ -85,5 +85,14 @@ namespace SiyafundaApplication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnInProgressSubmit;
+
+        /// <summary>
+        /// btnCancel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancel;
     }
 }
