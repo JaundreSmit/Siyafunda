@@ -106,8 +106,23 @@
         </tr>
         <tr>
             <td class="auto-style10">
-                <asp:GridView ID="dgvAvailableFiles" runat="server" Width="552px">
+                <asp:GridView ID="dgvAvailableFiles" runat="server" AutoGenerateColumns="False" OnRowCommand="dgvAvailableFiles_RowCommand" Width="552px">
+                    <Columns>
+                        <asp:BoundField DataField="ModuleName" HeaderText="Module Name" />
+                        <asp:TemplateField HeaderText="Resource Title">
+                            <ItemTemplate>
+                                    <asp:LinkButton ID="lnkResourceTitle" runat="server" 
+                                    CommandName="Select" 
+                                    CommandArgument='<%# Container.DataItemIndex %>' 
+                                    Text='<%# Eval("ResourceTitle") %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="ResourceDescription" HeaderText="Description" />
+                        <asp:BoundField DataField="UploadDate" HeaderText="Upload Date" />
+                        <asp:BoundField DataField="FileSize" HeaderText="File Size" />
+                    </Columns>
                 </asp:GridView>
+
             </td>
         </tr>
     </table>

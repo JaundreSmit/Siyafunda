@@ -74,7 +74,7 @@
     <tr>
         <td class="auto-style11">Select decision:</td>
         <td colspan="3">
-            <asp:RadioButtonList ID="rbDecision" runat="server" Width="86px" OnSelectedIndexChanged="rbDecision_SelectedIndexChanged">
+            <asp:RadioButtonList ID="rbDecision" runat="server" Width="86px">
                 <asp:ListItem Value="1">Reject</asp:ListItem>
                 <asp:ListItem Value="2">Approve</asp:ListItem>
             </asp:RadioButtonList>

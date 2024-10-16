@@ -138,15 +138,13 @@ namespace SiyafundaApplication
                 string query = @"
                 UPDATE [Res_to_status]
                 SET status_id = @StatusID,
-                user_id = @UserID,
                 feedback = @Feedback
                 WHERE resource_id = @ResourceID";
 
                 SqlCommand cmd = new SqlCommand(query, Con);
                 cmd.Parameters.AddWithValue("@StatusID", statusID);
-                cmd.Parameters.AddWithValue("@UserID", UserID); // The moderator's ID
                 cmd.Parameters.AddWithValue("@Feedback", txtFeedback.Text.Trim());
-                cmd.Parameters.AddWithValue("@ResourceID", SelectedResourceID);
+                cmd.Parameters.AddWithValue("@ResourceID", Convert.ToInt32(ViewState["SelectedResourceID"]));
 
                 // Execute the query
                 int rowsAffected = cmd.ExecuteNonQuery();
@@ -192,18 +190,20 @@ namespace SiyafundaApplication
             btnInProgressSubmit.Visible = true;
 
             // Retrieve the selected resource ID from the GridView
-            if (dgvInProgress.SelectedDataKey != null)
+            if (dgvInProgress.SelectedValue != null)
             {
-                int selectedResourceID = Convert.ToInt32(dgvInProgress.SelectedDataKey.Value);
+                int selectedResourceID = Convert.ToInt32(dgvInProgress.SelectedValue);
 
                 // Assign the selected Resource ID to a field or use it as needed
                 SelectedResourceID = selectedResourceID;
                 pnlRejectApprove.Visible = true;
+                ViewState["SelectedResourceID"] = SelectedResourceID; //the view state is needed to ensure that the value is passed correctly
             }
         }
 
         protected void btnInProgressSubmit_Click(object sender, EventArgs e)
         {
+            ApproveReject = Convert.ToInt32(rbDecision.SelectedValue);
             if (txtFeedback.Text.Length > 0)
             {
                 UpdateResource(ApproveReject);
@@ -228,7 +228,6 @@ namespace SiyafundaApplication
 
         protected void rbDecision_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ApproveReject = Convert.ToInt32(rbDecision.SelectedValue);
         }
     }
 }
