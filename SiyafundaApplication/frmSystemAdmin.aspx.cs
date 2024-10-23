@@ -21,7 +21,6 @@ namespace SiyafundaApplication
             {
                 Response.Redirect("frmLandingPage.aspx"); // Redirect if not admin
             }
-            lblResults.Visible = false;
 
             if (!IsPostBack)
             {
@@ -116,7 +115,6 @@ namespace SiyafundaApplication
 
         protected void btnPurge_Click(object sender, EventArgs e)
         {
-            lblResults.Visible = true;
             string uploadPath = Server.MapPath("~/UploadedFiles");
             lblResults.Visible = false; // Hide the label initially
             lblResults.Text = string.Empty; // Clear any previous messages

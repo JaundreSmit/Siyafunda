@@ -225,5 +225,9 @@ namespace SiyafundaApplication
             pnlRejectApprove.Visible = false;
             txtSearchProgress.Focus();
         }
+
+        protected void rbDecision_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
     }
 }

@@ -2,134 +2,101 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>File Moderation</title>
-
     <style type="text/css">
-        .bg-purple {
-            background-color: rgb(108, 61, 145);
+        .auto-style2 {
+            width: 218px;
+            height: 23px;
         }
-
-        .btn-purple {
-            background-color: whitesmoke;
-            color: black;
-            border: none;
-            font-weight: bold;
-            font-size: 12px;
-            padding: 12px 24px;
-            text-transform: uppercase;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 0;
+        .auto-style8 {
+            height: 23px;
+            width: 707px;
         }
-
-        .btn-purple:hover {
-            background-color: rgb(108, 61, 145);
-            color: black;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            border-radius: 0;
+        .auto-style10 {
+            width: 81px;
         }
-
-        .btn:disabled {
-            background-color: darkgrey;
-            color: white;
-            border-color: darkgrey;
-            opacity: 1;
-            cursor: not-allowed;
+        .auto-style11 {
+            width: 215px;
         }
-
-        .error-label {
-            color: red;
+        .auto-style12 {
+            width: 304px;
         }
-
-        .radio-align-left {
-            text-align: left;
+        .auto-style13 {
+            width: 218px;
+            height: 31px;
         }
-
-        .radio-item {
-            color: white;
-            display: block;
+        .auto-style14 {
+            width: 707px;
+            height: 31px;
         }
-
-        .form-label {
-            color: whitesmoke;
-            font-weight: bold;
-        }
-
     </style>
+    <asp:Panel ID="pnlInProgress" runat="server" Width="744px">
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col text-center mb-3">
-                <h2 class="bg-purple text-white p-3"><strong>File Moderation</strong></h2>
-            </div>
-        </div>
+         <table style="width:100%;">
+     <tr>
+         <td class="auto-style13">In Progress files:</td>
+         <td class="auto-style14">
+             Search title:
+             <asp:TextBox ID="txtSearchProgress" runat="server" AutoPostBack="True" OnTextChanged="txtSearchProgress_TextChanged"></asp:TextBox>
+             &nbsp;
+             <asp:Label ID="lblProgressErrors" runat="server" Text="[Progress Errors]"></asp:Label>
+         </td>
+        
+     </tr>
+     <tr>
+         <td class="auto-style2">
+             
+         </td>
+         <td class="auto-style8">
+             <asp:GridView ID="dgvInProgress" runat="server" Width="607px" AllowSorting="True" AutoGenerateColumns="False" OnSelectedIndexChanged="dgvInProgress_SelectedIndexChanged" DataKeyNames="resource_id">
+                 <Columns>
+                     <asp:BoundField DataField="ModuleTitle" HeaderText="Module Title" />
+                     <asp:BoundField DataField="ResourceTitle" HeaderText="Resource Title" />
+                     <asp:BoundField DataField="upload_date" HeaderText="Upload Date" />
+                     <asp:BoundField DataField="file_type" HeaderText="File Type" />
+                     <asp:BoundField DataField="file_size" HeaderText="File Size" />
+                     <asp:TemplateField HeaderText="Select">
+                         <ItemTemplate>
+                             <asp:Button ID="btnSelect" runat="server" Text="Select" CommandName="Select" />
+                         </ItemTemplate>
+                     </asp:TemplateField>
+                 </Columns>
+             </asp:GridView>
+         </td>
+         
+     </tr>
+ </table>
+</asp:Panel>
 
-        <div class="row mb-3">
-            <div class="col">
-                <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Back" CssClass="btn btn-primary btn-purple" />
-            </div>
-        </div>
+   
+   <p></p>
+    <asp:Panel ID="pnlRejectApprove" runat="server" Height="215px" Width="942px">
+        <table>
+    <tr>
+        <td class="auto-style11">Select decision:</td>
+        <td colspan="3">
+            <asp:RadioButtonList ID="rbDecision" runat="server" Width="86px">
+                <asp:ListItem Value="1">Reject</asp:ListItem>
+                <asp:ListItem Value="2">Approve</asp:ListItem>
+            </asp:RadioButtonList>
+        </td>
+    </tr>
+    <tr>
+        <td class="auto-style11">Feedback:</td>
+        <td colspan="3">
+            <asp:TextBox ID="txtFeedback" runat="server" Height="68px" MaxLength="200" TextMode="MultiLine" Width="824px"></asp:TextBox>
+        </td>
+    </tr>
+    <tr>
+        <td class="auto-style11">
+            <asp:Button ID="btnInProgressSubmit" runat="server" OnClick="btnInProgressSubmit_Click" Text="Submit" />
+        </td>
+        <td class="auto-style10">
+            <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" />
+        </td>
+        <td class="auto-style12">&nbsp;</td>
+    </tr>
+</table>
 
-        <!-- Panel for In Progress Files -->
-        <asp:Panel ID="pnlInProgress" runat="server" Width="744px">
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label"><strong>In Progress files:</strong></label>
-                    <div class="input-group">
-                        Search title:
-                        <asp:TextBox ID="txtSearchProgress" runat="server" AutoPostBack="True" OnTextChanged="txtSearchProgress_TextChanged" CssClass="form-control" />
-                        <asp:Label ID="lblProgressErrors" runat="server" Text="[Progress Errors]" CssClass="error-label" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <asp:GridView ID="dgvInProgress" runat="server" CssClass="table table-striped" AllowSorting="True" OnSelectedIndexChanged="dgvInProgress_SelectedIndexChanged" DataKeyNames="resource_id">
-                        <Columns>
-                            <asp:BoundField DataField="ModuleTitle" HeaderText="Module Title" />
-                            <asp:BoundField DataField="ResourceTitle" HeaderText="Resource Title" />
-                            <asp:BoundField DataField="upload_date" HeaderText="Upload Date" />
-                            <asp:BoundField DataField="file_type" HeaderText="File Type" />
-                            <asp:BoundField DataField="file_size" HeaderText="File Size" />
-                            <asp:TemplateField HeaderText="Select">
-                                <ItemTemplate>
-                                    <asp:Button ID="btnSelect" runat="server" Text="Select" CommandName="Select" />
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                        </Columns>
-                    </asp:GridView>
-                </div>
-            </div>
-        </asp:Panel>
-
-        <!-- Panel for Reject/Approve Decision -->
-        <asp:Panel ID="pnlRejectApprove" runat="server" Height="215px" Width="942px">
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label"><strong>Select decision:</strong></label>
-                    <div class="radio-align-left">
-                        <asp:RadioButtonList ID="rbDecision" runat="server" CssClass="radio-align-left">
-                            <asp:ListItem Value="1" Text="Reject" CssClass="radio-item" Style="color:red;"></asp:ListItem>
-                            <asp:ListItem Value="2" Text="Approve" CssClass="radio-item" Style="color:green;"></asp:ListItem>
-                        </asp:RadioButtonList>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label"><strong>Feedback:</strong></label>
-                    <asp:TextBox ID="txtFeedback" runat="server" Height="68px" MaxLength="200" TextMode="MultiLine" CssClass="form-control" />
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <asp:Button ID="btnInProgressSubmit" runat="server" OnClick="btnInProgressSubmit_Click" Text="Submit" CssClass="btn btn-primary btn-purple" />
-                    <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" CssClass="btn btn-secondary" />
-                </div>
-            </div>
-        </asp:Panel>
-    </div>
+    </asp:Panel>
+    
 </asp:Content>
