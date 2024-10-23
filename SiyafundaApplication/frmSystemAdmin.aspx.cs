@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -9,12 +10,7 @@ namespace SiyafundaApplication
 {
     public partial class Admin : System.Web.UI.Page
     {
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
             // Check if user is an admin
             if (Convert.ToInt32(Session["RoleID"]) != 2) // 2 = Admin role id
@@ -24,14 +20,14 @@ namespace SiyafundaApplication
 
             if (!IsPostBack)
             {
-                LoadUsers();
+                await LoadUsersAsync();
             }
         }
 
-        // Load users into GridView
-        private void LoadUsers()
+        // Asynchronously load users into GridView
+        private async Task LoadUsersAsync()
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
                 string query = @"SELECT u.user_id, u.Name, u.Surname, u.Email, r.role_name
                                  FROM [dbo].[Users] u
@@ -39,7 +35,7 @@ namespace SiyafundaApplication
 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
-                da.Fill(dt);
+                await Task.Run(() => da.Fill(dt)); // Fill the DataTable asynchronously
 
                 UsersGridView.DataSource = dt;
                 UsersGridView.DataBind();
@@ -47,7 +43,7 @@ namespace SiyafundaApplication
         }
 
         // Handle row command (delete user)
-        protected void UsersGridView_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected async void UsersGridView_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "DeleteUser")
             {
@@ -55,31 +51,28 @@ namespace SiyafundaApplication
                 GridViewRow row = UsersGridView.Rows[rowIndex];
 
                 int userId = Convert.ToInt32(row.Cells[0].Text);
-
-                DeleteUser(userId);
+                await DeleteUserAsync(userId);
             }
         }
 
-        // Delete user from the database
-        private void DeleteUser(int userId)
+        // Asynchronously delete user from the database
+        private async Task DeleteUserAsync(int userId)
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
                 string query = @"DELETE FROM [dbo].[Users] WHERE user_id = @user_id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@user_id", userId);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
-
-                LoadUsers(); // Reload users after deletion
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+                await LoadUsersAsync(); // Reload users after deletion
             }
         }
 
         // Handle role change
-        protected void RoleDropDownList_SelectedIndexChanged(object sender, EventArgs e)
+        protected async void RoleDropDownList_SelectedIndexChanged(object sender, EventArgs e)
         {
             DropDownList ddl = (DropDownList)sender;
             GridViewRow row = (GridViewRow)ddl.NamingContainer;
@@ -87,13 +80,13 @@ namespace SiyafundaApplication
             int userId = Convert.ToInt32(row.Cells[0].Text);
             int roleId = Convert.ToInt32(ddl.SelectedValue);
 
-            UpdateUserRole(userId, roleId);
+            await UpdateUserRoleAsync(userId, roleId);
         }
 
-        // Update user role in the database
-        private void UpdateUserRole(int userId, int roleId)
+        // Asynchronously update user role in the database
+        private async Task UpdateUserRoleAsync(int userId, int roleId)
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
                 string query = @"UPDATE [dbo].[Users] SET Role_id = @role_id WHERE user_id = @user_id";
 
@@ -101,19 +94,13 @@ namespace SiyafundaApplication
                 cmd.Parameters.AddWithValue("@role_id", roleId);
                 cmd.Parameters.AddWithValue("@user_id", userId);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
-
-                LoadUsers(); // Reload users after updating role
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+                await LoadUsersAsync(); // Reload users after updating role
             }
         }
 
-        protected void UsersGridView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
-
-        protected void btnPurge_Click(object sender, EventArgs e)
+        protected async void btnPurge_Click(object sender, EventArgs e)
         {
             string uploadPath = Server.MapPath("~/UploadedFiles");
             lblResults.Visible = false; // Hide the label initially
@@ -123,13 +110,13 @@ namespace SiyafundaApplication
             {
                 // Step 1: Get all existing module_ids from the database
                 var existingModuleIds = new HashSet<int>();
-                using (SqlConnection conn = new SqlConnection(getConnectionString()))
+                using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                 {
                     string query = @"SELECT module_id FROM [dbo].[Modules]";
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    conn.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    await conn.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
                     {
                         existingModuleIds.Add(reader.GetInt32(0));
                     }
@@ -150,16 +137,16 @@ namespace SiyafundaApplication
                 }
 
                 // Step 4: Check remaining files in the Files table
-                using (SqlConnection conn = new SqlConnection(getConnectionString()))
+                using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                 {
                     string query = @"SELECT file_id, file_path FROM [dbo].[Files]";
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    conn.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    await conn.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
                     List<int> filesToDelete = new List<int>();
 
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         int fileId = reader.GetInt32(0);
                         string filePath = reader.GetString(1);
@@ -176,20 +163,20 @@ namespace SiyafundaApplication
                     // Step 6: Delete marked files from the database and cascade deletions
                     foreach (var fileId in filesToDelete)
                     {
-                        DeleteFileAndReferences(fileId);
+                        await DeleteFileAndReferencesAsync(fileId);
                     }
                 }
 
                 // Step 7: Delete Resources that do not have corresponding files
-                using (SqlConnection conn = new SqlConnection(getConnectionString()))
+                using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                 {
                     string deleteOrphanedResourcesQuery = @"
                 DELETE FROM [dbo].[Resources]
                 WHERE resource_id NOT IN (SELECT DISTINCT resource_id FROM [dbo].[Files])";
 
                     SqlCommand cmd = new SqlCommand(deleteOrphanedResourcesQuery, conn);
-                    conn.Open();
-                    int orphanedResourcesCount = cmd.ExecuteNonQuery();
+                    await conn.OpenAsync();
+                    int orphanedResourcesCount = await cmd.ExecuteNonQueryAsync();
                     conn.Close();
 
                     // Inform about deleted orphaned resources
@@ -200,7 +187,7 @@ namespace SiyafundaApplication
                 }
 
                 // Step 8: Ensure all resource_ids in Resources exist in Res_to_status
-                using (SqlConnection conn = new SqlConnection(getConnectionString()))
+                using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                 {
                     string query = @"
         SELECT r.resource_id, r.user_id
@@ -208,13 +195,13 @@ namespace SiyafundaApplication
         WHERE r.resource_id NOT IN (SELECT resource_id FROM [dbo].[Res_to_status])";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    conn.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    await conn.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
                     List<(int resourceId, int userId)> missingResources = new List<(int, int)>();
 
                     // Collect resource_ids and corresponding user_ids that need to be inserted
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         missingResources.Add((reader.GetInt32(0), reader.GetInt32(1))); // (resource_id, user_id)
                     }
@@ -223,7 +210,7 @@ namespace SiyafundaApplication
                     // Insert missing resource_ids into Res_to_status with the correct user_id
                     foreach (var (resourceId, userId) in missingResources)
                     {
-                        using (SqlConnection insertConn = new SqlConnection(getConnectionString()))
+                        using (SqlConnection insertConn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                         {
                             string insertQuery = @"
                 INSERT INTO [dbo].[Res_to_status] (resource_id, user_id, status_id, feedback)
@@ -232,8 +219,8 @@ namespace SiyafundaApplication
                             SqlCommand insertCmd = new SqlCommand(insertQuery, insertConn);
                             insertCmd.Parameters.AddWithValue("@resource_id", resourceId);
                             insertCmd.Parameters.AddWithValue("@user_id", userId);
-                            insertConn.Open();
-                            insertCmd.ExecuteNonQuery();
+                            await insertConn.OpenAsync();
+                            await insertCmd.ExecuteNonQueryAsync();
                             insertConn.Close();
                         }
                     }
@@ -259,48 +246,30 @@ namespace SiyafundaApplication
             }
         }
 
-        // Helper method to delete a file and its references
-        private void DeleteFileAndReferences(int fileId)
+        // Asynchronously delete a file and its references
+        private async Task DeleteFileAndReferencesAsync(int fileId)
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
-                // Start a transaction to ensure data integrity
-                conn.Open();
-                SqlTransaction transaction = conn.BeginTransaction();
+                string deleteFileQuery = @"DELETE FROM [dbo].[Files] WHERE file_id = @file_id";
+                string deleteReferencesQuery = @"DELETE FROM [dbo].[QuizResponses] WHERE file_id = @file_id;
 
-                try
-                {
-                    // Delete from Res_to_status
-                    string deleteResToStatus = @"DELETE FROM [dbo].[Res_to_status] WHERE resource_id IN
-                                           (SELECT resource_id FROM [dbo].[Files] WHERE file_id = @file_id)";
-                    SqlCommand cmd1 = new SqlCommand(deleteResToStatus, conn, transaction);
-                    cmd1.Parameters.AddWithValue("@file_id", fileId);
-                    cmd1.ExecuteNonQuery();
+                                               DELETE FROM [dbo].[LFQuestions] WHERE file_id = @file_id;
 
-                    // Delete from Files
-                    string deleteFiles = @"DELETE FROM [dbo].[Files] WHERE file_id = @file_id";
-                    SqlCommand cmd2 = new SqlCommand(deleteFiles, conn, transaction);
-                    cmd2.Parameters.AddWithValue("@file_id", fileId);
-                    cmd2.ExecuteNonQuery();
+                                               DELETE FROM [dbo].[FBQuestions] WHERE file_id = @file_id";
 
-                    // Delete from Resources (if applicable)
-                    string deleteResources = @"DELETE FROM [dbo].[Resources] WHERE resource_id IN
-                                        (SELECT resource_id FROM [dbo].[Files] WHERE file_id = @file_id)";
-                    SqlCommand cmd3 = new SqlCommand(deleteResources, conn, transaction);
-                    cmd3.Parameters.AddWithValue("@file_id", fileId);
-                    cmd3.ExecuteNonQuery();
+                // Delete the file first
+                SqlCommand deleteCmd = new SqlCommand(deleteFileQuery, conn);
+                deleteCmd.Parameters.AddWithValue("@file_id", fileId);
+                await conn.OpenAsync();
+                await deleteCmd.ExecuteNonQueryAsync();
 
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw; // Handle the error as necessary
-                }
-                finally
-                {
-                    conn.Close();
-                }
+                // Delete references in other tables
+                SqlCommand deleteRefsCmd = new SqlCommand(deleteReferencesQuery, conn);
+                deleteRefsCmd.Parameters.AddWithValue("@file_id", fileId);
+                await deleteRefsCmd.ExecuteNonQueryAsync();
+
+                conn.Close();
             }
         }
     }

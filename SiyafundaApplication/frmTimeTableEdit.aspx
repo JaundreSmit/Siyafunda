@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmTimeTableEdit.aspx.cs" Inherits="SiyafundaApplication.frmTimeTableEdit" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmTimeTableEdit.aspx.cs" Inherits="SiyafundaApplication.frmTimeTableEdit" Async="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Edit Timetable</title>

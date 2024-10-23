@@ -326,6 +326,7 @@ namespace SiyafundaApplication
         protected void btnSystemDevs_Click(object sender, EventArgs e)
         {
             Response.Redirect("frmSystemDev.aspx");
+            lblDate.Text = Convert.ToInt32(Session["UserID"]).ToString();
         }
 
         protected void btnModerators_Click(object sender, EventArgs e)

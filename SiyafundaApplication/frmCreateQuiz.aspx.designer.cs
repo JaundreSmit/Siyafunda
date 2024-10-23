@@ -9,57 +9,108 @@
 
 namespace SiyafundaApplication
 {
+
+
     public partial class frmCreateQuiz
     {
 
         /// <summary>
+        /// form1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+
+        /// <summary>
         /// txtQuizTitle control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtQuizTitle;
 
         /// <summary>
         /// ddlModules control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlModules;
 
         /// <summary>
         /// txtDuration control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDuration;
 
         /// <summary>
         /// txtDueDate control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDueDate;
-
-        /// <summary>
-        /// lblQuestionsSubmitted control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Label lblQuestionsSubmitted;
 
         /// <summary>
         /// btnAddMCQ control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnAddMCQ;
 
         /// <summary>
         /// btnAddFillBlank control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnAddFillBlank;
 
         /// <summary>
         /// btnAddLongForm control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnAddLongForm;
+
+        /// <summary>
+        /// lblQuestionsSubmitted control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblQuestionsSubmitted;
 
         /// <summary>
         /// btnSubmitQuiz control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSubmitQuiz;
 
         /// <summary>
         /// lblMessage control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblMessage;
     }
 }

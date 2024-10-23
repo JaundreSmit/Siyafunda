@@ -1,35 +1,39 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using System.Web.UI;
 
 namespace SiyafundaApplication
 {
     public partial class frmAddAnnouncement : System.Web.UI.Page
     {
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
+        // Declare the connection variable
         private SqlConnection Con;
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Page load event
+        protected async void Page_Load(object sender, EventArgs e)
         {
-            Con = new SqlConnection(getConnectionString());
+            // Retrieve the connection string asynchronously from Azure Key Vault
+            string connectionString = await SiyafundaFunctions.GetConnectionStringAsync();
+            Con = new SqlConnection(connectionString);
+
+            // Redirect if user is not logged in or does not have the Educator role (RoleID = 6)
             if (Session["UserID"] == null || Convert.ToInt32(Session["RoleID"]) != 6)
             {
-                Response.Redirect("frmEducator.aspx");
+                SiyafundaFunctions.SafeRedirect("frmEducator.aspx");
                 return;
             }
 
             if (!IsPostBack)
             {
-                LoadModule();
+                await LoadModuleAsync(); // Load module asynchronously
             }
+
             lblErrors.Visible = false;
         }
 
-        private void LoadModule()
+        // Asynchronously load the module for the educator
+        private async Task LoadModuleAsync()
         {
             try
             {
@@ -42,7 +46,7 @@ namespace SiyafundaApplication
                 {
                     cmd.Parameters.AddWithValue("@EducatorId", Convert.ToInt32(Session["UserID"]));
                     Con.Open();
-                    var result = cmd.ExecuteScalar();
+                    var result = await cmd.ExecuteScalarAsync();
 
                     if (result != null)
                     {
@@ -66,7 +70,8 @@ namespace SiyafundaApplication
             }
         }
 
-        protected void btnAddAnnouncement_Click(object sender, EventArgs e)
+        // Handle Add Announcement button click
+        protected async void btnAddAnnouncement_Click(object sender, EventArgs e)
         {
             string title = txtTitle.Text.Trim();
             string content = txtContent.Text.Trim();
@@ -74,7 +79,7 @@ namespace SiyafundaApplication
             int User_ID = Convert.ToInt32(Session["UserID"]);
 
             // Retrieve the ModuleID using the loaded module title
-            int ModuleID = GetModuleId(lblModuleName.Text);
+            int ModuleID = await GetModuleIdAsync(lblModuleName.Text);
 
             if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(content))
             {
@@ -85,7 +90,7 @@ namespace SiyafundaApplication
 
             try
             {
-                // Check if the title already exists
+                // Check if the title already exists for the module
                 string checkQuery = @"
                     SELECT COUNT(*)
                     FROM Announcements
@@ -96,7 +101,7 @@ namespace SiyafundaApplication
                     checkCmd.Parameters.AddWithValue("@Title", title);
                     checkCmd.Parameters.AddWithValue("@ModuleID", ModuleID);
                     Con.Open();
-                    int count = (int)checkCmd.ExecuteScalar();
+                    int count = (int)await checkCmd.ExecuteScalarAsync();
 
                     if (count > 0)
                     {
@@ -106,7 +111,7 @@ namespace SiyafundaApplication
                     }
                 }
 
-                // Insert into the database
+                // Insert the new announcement into the database
                 string insertQuery = @"
                     INSERT INTO Announcements (title, content, created_at, user_id, module_id)
                     VALUES (@Title, @Content, @CreatedAt, @UserId, @ModuleId)";
@@ -119,7 +124,7 @@ namespace SiyafundaApplication
                     insertCmd.Parameters.AddWithValue("@UserId", User_ID);
                     insertCmd.Parameters.AddWithValue("@ModuleId", ModuleID);
 
-                    insertCmd.ExecuteNonQuery();
+                    await insertCmd.ExecuteNonQueryAsync();
                     lblErrors.Text = "Announcement added successfully.";
                     lblErrors.Visible = true;
                 }
@@ -135,7 +140,8 @@ namespace SiyafundaApplication
             }
         }
 
-        private int GetModuleId(string moduleTitle)
+        // Asynchronously retrieve the ModuleID based on the module title
+        private async Task<int> GetModuleIdAsync(string moduleTitle)
         {
             int moduleId = 0;
             try
@@ -149,7 +155,7 @@ namespace SiyafundaApplication
                 {
                     cmd.Parameters.AddWithValue("@Title", moduleTitle);
                     Con.Open();
-                    var result = cmd.ExecuteScalar();
+                    var result = await cmd.ExecuteScalarAsync();
 
                     if (result != null)
                     {
@@ -170,9 +176,10 @@ namespace SiyafundaApplication
             return moduleId;
         }
 
+        // Handle back button click
         protected void Back_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmEducator.aspx");
+            SiyafundaFunctions.SafeRedirect("frmEducator.aspx");
         }
     }
 }

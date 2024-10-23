@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmLogin.aspx.cs" Inherits="SiyafundaApplication.frmLogin" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmLogin.aspx.cs" Inherits="SiyafundaApplication.frmLogin" Async="true" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Login</title>

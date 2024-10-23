@@ -11,7 +11,7 @@ namespace SiyafundaApplication
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            lblDate.Text = DateTime.Now.Year.ToString();
         }
     }
 }

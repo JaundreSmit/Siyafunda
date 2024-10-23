@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmAddAnnouncement.aspx.cs" Inherits="SiyafundaApplication.frmAddAnnouncement" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmAddAnnouncement.aspx.cs" Inherits="SiyafundaApplication.frmAddAnnouncement" Async="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Add Announcement</title>

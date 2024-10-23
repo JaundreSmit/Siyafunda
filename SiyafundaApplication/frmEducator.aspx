@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmEducator.aspx.cs" Inherits="SiyafundaApplication.frmEducator" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmEducator.aspx.cs" Inherits="SiyafundaApplication.frmEducator" Async="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Student Management</title>

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmProfile.aspx.cs" Inherits="SiyafundaApplication.Profile" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmProfile.aspx.cs" Inherits="SiyafundaApplication.Profile" Async="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>User Profile</title>

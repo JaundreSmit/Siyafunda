@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace SiyafundaApplication
 {
     public partial class frmSignUp : System.Web.UI.Page
     {
-        // Define connection string method
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
-        // Declare connection variable
+        // Declare the connection variable
         private SqlConnection Con;
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Page load event
+        protected async void Page_Load(object sender, EventArgs e)
         {
-            Con = new SqlConnection(getConnectionString());
+            // Retrieve the connection string asynchronously from Azure Key Vault
+            string connectionString = await SiyafundaFunctions.GetConnectionStringAsync();
+            Con = new SqlConnection(connectionString);
+
             lblError.Visible = false;
             Master.FindControl("footerControl").Visible = false;
         }
 
         // Handle sign-up button click event
-        protected void SignUpButton_Click(object sender, EventArgs e)
+        protected async void SignUpButton_Click(object sender, EventArgs e)
         {
             string Name = txtName.Text;
             string Surname = txtSurname.Text;
@@ -39,7 +38,7 @@ namespace SiyafundaApplication
             }
 
             // Retrieve the Role_id for the role "Student"
-            int roleId = GetRoleId("Student");
+            int roleId = await GetRoleIdAsync("Student");
 
             if (roleId == 0)
             {
@@ -49,13 +48,13 @@ namespace SiyafundaApplication
             }
 
             // Query to insert a new user into the database
-            string query = @"INSERT INTO [dbo].[Users] (Name, Surname, Username, Email, Password, Role_id) 
+            string query = @"INSERT INTO [dbo].[Users] (Name, Surname, Username, Email, Password, Role_id)
                              VALUES (@Name, @Surname, @Username, @Email, @Password, @RoleID);
                              SELECT SCOPE_IDENTITY();"; // Added to get the newly inserted user's ID
 
             try
             {
-                using (SqlConnection Con = new SqlConnection(getConnectionString())) // Create a new connection instance
+                using (SqlConnection Con = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync())) // Create a new connection instance
                 {
                     SqlCommand cmd = new SqlCommand(query, Con);
                     cmd.Parameters.AddWithValue("@Name", Name);
@@ -77,7 +76,7 @@ namespace SiyafundaApplication
                         Session["RoleID"] = roleId;
 
                         // Redirect to login page or another page upon successful sign-up
-                        Response.Redirect("frmDashboard.aspx");
+                        SiyafundaFunctions.SafeRedirect("frmDashboard.aspx");
                     }
                     else
                     {
@@ -95,15 +94,15 @@ namespace SiyafundaApplication
         }
 
         // Helper method to get Role_id based on the role name
-        private int GetRoleId(string roleName)
+        private async Task<int> GetRoleIdAsync(string roleName)
         {
             int roleId = 0;
             string roleQuery = "SELECT Role_id FROM [dbo].[Roles] WHERE Role_name = @RoleName";
 
             try
             {
-                // Open a new connection in the GetRoleId method
-                using (SqlConnection roleCon = new SqlConnection(getConnectionString()))
+                // Open a new connection in the GetRoleIdAsync method
+                using (SqlConnection roleCon = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                 {
                     SqlCommand roleCmd = new SqlCommand(roleQuery, roleCon);
                     roleCmd.Parameters.AddWithValue("@RoleName", roleName);
@@ -128,9 +127,10 @@ namespace SiyafundaApplication
             return roleId;
         }
 
+        // Handle back button click event
         protected void btnBack_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmLandingPage.aspx");
+            SiyafundaFunctions.SafeRedirect("frmLandingPage.aspx");
         }
     }
 }
