@@ -148,6 +148,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="About.aspx" />
+    <Content Include="Content\backround.png" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -164,6 +165,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Siyafunda.png" />
     <Content Include="frmSystemAdmin.aspx" />
     <Content Include="App_Data\SiyafundaDB.mdf" />
     <Content Include="App_Data\SiyafundaDB_log.ldf">

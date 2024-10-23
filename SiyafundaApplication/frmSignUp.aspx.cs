@@ -18,6 +18,7 @@ namespace SiyafundaApplication
         {
             Con = new SqlConnection(getConnectionString());
             lblError.Visible = false;
+            Master.FindControl("footerControl").Visible = false;
         }
 
         // Handle sign-up button click event

@@ -33,6 +33,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.DropDownList ModuleDropDown;
 
         /// <summary>
+        /// FileLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label FileLabel;
+
+        /// <summary>
         /// FileUploadControl control.
         /// </summary>
         /// <remarks>
@@ -42,6 +51,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.FileUpload FileUploadControl;
 
         /// <summary>
+        /// TitleLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label TitleLabel;
+
+        /// <summary>
         /// txtTitle control.
         /// </summary>
         /// <remarks>
@@ -49,6 +67,15 @@ namespace SiyafundaApplication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtTitle;
+
+        /// <summary>
+        /// DescLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label DescLabel;
 
         /// <summary>
         /// txtDesc control.

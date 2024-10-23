@@ -2,105 +2,114 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Edit Timetable</title>
-    <div>
-        <asp:Panel ID="pnlAddClass" runat="server" Height="193px" Width="293px">
-            <table class="auto-style4">
-                <tr>
-                    <td class="auto-style5">Module:</td>
-                    <td class="auto-style6">
-                        <asp:DropDownList ID="ddlModule" runat="server" Height="16px" Width="122px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card bg-purple text-white mb-4" style="margin-top: 50px;">
+                    <div class="card-header">
+                        <h5 class="card-title">Add Class</h5>
+                    </div>
+                </div>
+                <asp:Panel ID="pnlAddClass" runat="server">
+                    <div class="form-group">
+                        <label for="ddlModule" style="color: whitesmoke;">Module:</label>
+                        <asp:DropDownList ID="ddlModule" runat="server" CssClass="form-control">
                         </asp:DropDownList>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style1">Day of The Week:</td>
-                    <td>
-                        <asp:DropDownList ID="ddlDayOfWeek" runat="server" Height="18px" Width="122px">
+                    </div>
+                    <div class="form-group">
+                        <label for="ddlDayOfWeek" style="color: whitesmoke;">Day of The Week:</label>
+                        <asp:DropDownList ID="ddlDayOfWeek" runat="server" CssClass="form-control">
                         </asp:DropDownList>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style1">Start Time:</td>
-                    <td>
-                        <asp:TextBox ID="txtStartTime" runat="server"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style2">End Time:</td>
-                    <td class="auto-style3">
-                        <asp:TextBox ID="txtEndTime" runat="server"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style2">
-                        <asp:Button ID="btnAddClass" runat="server" OnClick="btnAddClass_Click" Text="Add Class" style="height: 26px" />
-                    </td>
-                    <td class="auto-style3">
-                        &nbsp;</td>
-                </tr>
-                <tr>
-                    <td class="auto-style2">
-                        <asp:Label ID="lblResult" runat="server" Text="[Results]"></asp:Label>
-                    </td>
-                </tr>
-            </table>
-        </asp:Panel>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtStartTime" style="color: whitesmoke;">Start Time:</label>
+                        <asp:TextBox ID="txtStartTime" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtEndTime" style="color: whitesmoke;">End Time:</label>
+                        <asp:TextBox ID="txtEndTime" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                    <div class="form-group">
+                        <asp:Button ID="btnAddClass" runat="server" OnClick="btnAddClass_Click" Text="Add Class" CssClass="btn btn-primary btn-purple mx-2" style="margin-top: 20px;" />
+                    </div>
+                    <div>
+                        <asp:Label ID="lblResult" runat="server" Text="[Results]" CssClass="text-success" style="color: whitesmoke;"></asp:Label>
+                    </div>
+                </asp:Panel>
+            </div>
 
-        <asp:Panel ID="pnlEditDeleteClass" runat="server" Height="211px" Width="292px">
-            <table style="width:100%;">
-                <tr>
-                    <td class="auto-style10">Edit Time table</td>
-                    <td class="auto-style11"></td>
-                </tr>
-                <tr>
-                    <td class="auto-style9">Select Class:</td>
-                    <td class="auto-style6">
-                        <asp:DropDownList ID="ddlClass" runat="server" Height="16px" Width="162px" OnSelectedIndexChanged="ddlClass_SelectedIndexChanged">
+            <div class="col-md-6">
+                <div class="card bg-purple text-white mb-4" style="margin-top: 50px;">
+                    <div class="card-header">
+                        <h5 class="card-title">Edit Timetable</h5>
+                    </div>
+                </div>
+                <asp:Panel ID="pnlEditDeleteClass" runat="server">
+                    <div class="form-group">
+                        <label for="ddlClass" style="color: whitesmoke;">Select Class:</label>
+                        <asp:DropDownList ID="ddlClass" runat="server" CssClass="form-control" OnSelectedIndexChanged="ddlClass_SelectedIndexChanged">
                         </asp:DropDownList>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style10">
-                        <asp:Label ID="lblEditDay" runat="server" Text="Day:"></asp:Label>
-                    </td>
-                    <td class="auto-style11">
-                        <asp:DropDownList ID="ddlEditDayOfWeek" runat="server" Height="16px" Width="162px">
+                    </div>
+                    <div class="form-group">
+                        <asp:Label ID="lblEditDay" runat="server" Text="Day:" CssClass="control-label"></asp:Label>
+                        <asp:DropDownList ID="ddlEditDayOfWeek" runat="server" CssClass="form-control">
                         </asp:DropDownList>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style10">
-                        <asp:Label ID="lblEditStartTime" runat="server" Text="Start Time:"></asp:Label>
-                    </td>
-                    <td class="auto-style11">
-                        <asp:TextBox ID="txtEditStartTime" runat="server" Width="156px"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style8">
-                        <asp:Label ID="lblEditEndTime" runat="server" Text="End Time:"></asp:Label>
-                    </td>
-                    <td>
-                        <asp:TextBox ID="txtEditEndTime" runat="server" Width="156px"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style12">
-                        <asp:Button ID="btnConfirmEdit" runat="server" OnClick="btnConfirmEdit_Click" Text="Update Class" />
-                    </td>
-                    <td class="auto-style13">
-                        <asp:Button ID="btnDeleteClass" runat="server" OnClick="btnDeleteClass_Click" Text="Delete Class" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="auto-style12">
-                        <asp:Label ID="lblEditResults" runat="server" Text="[Results]"></asp:Label>
-                    </td>
-                    <td class="auto-style13">&nbsp;</td>
-                </tr>
-            </table>
-        </asp:Panel>
-
-        <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Done!" />
+                    </div>
+                    <div class="form-group">
+                        <asp:Label ID="lblEditStartTime" runat="server" Text="Start Time:" CssClass="control-label"></asp:Label>
+                        <asp:TextBox ID="txtEditStartTime" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                    <div class="form-group">
+                        <asp:Label ID="lblEditEndTime" runat="server" Text="End Time:" CssClass="control-label"></asp:Label>
+                        <asp:TextBox ID="txtEditEndTime" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                    <div class="form-group">
+                        <asp:Button ID="btnConfirmEdit" runat="server" OnClick="btnConfirmEdit_Click" Text="Update Class" CssClass="btn btn-primary btn-purple mx-2" />
+                        <asp:Button ID="btnDeleteClass" runat="server" OnClick="btnDeleteClass_Click" Text="Delete Class" CssClass="btn btn-primary btn-purple mx-2" />
+                    </div>
+                    <div>
+                        <asp:Label ID="lblEditResults" runat="server" Text="[Results]" CssClass="text-success"></asp:Label>
+                    </div>
+                </asp:Panel>
+            </div>
+        </div>
+        <div class="mt-3">
+            <asp:Button ID="btnBack" runat="server" OnClick="btnBack_Click" Text="Done!" CssClass="btn btn-primary btn-purple mx-2" />
+        </div>
     </div>
+    <style>
+
+        .label-margin {
+            margin-top: 10px; /* Adjust the value as needed */
+        }
+
+        .bg-purple {
+            background-color: rgb(108, 61, 145);
+        }
+        .card-header {
+            border-bottom: none; 
+        }
+
+        .btn-purple {
+            background-color: whitesmoke;
+            color: black;
+            border: none;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 12px 24px;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 0;
+            width: 200px;
+        }
+
+        .btn-purple:hover {
+            background-color: rgb(108, 61, 145);
+            color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-radius: 0;
+        }
+    </style>
 </asp:Content>

@@ -2,97 +2,63 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Add FAQ</title>
-    <style type="text/css">
-        .auto-style2 {
-            width: 98px;
+
+    <div class="container mt-4">
+        <div class="card bg-purple text-white mb-4" style="margin-top: 50px;">
+            <div class="card-header text-center">
+                <h5 class="mb-0">Add FAQ</h5>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lblModuleName" style="color: whitesmoke;">Module:</label>
+            <asp:Label ID="lblModuleName" runat="server" Text="[Module Name]" CssClass="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="txtQuestion" style="color: whitesmoke;">Question:</label>
+            <asp:TextBox ID="txtQuestion" runat="server" MaxLength="600" TextMode="MultiLine" CssClass="form-control" Rows="4" />
+        </div>
+        <div class="form-group">
+            <label for="txtAnswer" style="color: whitesmoke;">Answer:</label>
+            <asp:TextBox ID="txtAnswer" runat="server" MaxLength="600" TextMode="MultiLine" CssClass="form-control" Rows="4" />
+        </div>
+        <div class="form-group">
+            <asp:Label ID="lblErrors" runat="server" Text="[Errors]" CssClass="text-danger" />
+        </div>
+        <div class="form-group text-center">
+            <asp:Button ID="btnAddFAQ" runat="server" OnClick="btnAddFAQ_Click" Text="Add FAQ" CssClass="btn btn-primary btn-purple mx-2" />
+            <asp:Button ID="Back" runat="server" OnClick="Back_Click" Text="Back" CssClass="btn btn-primary btn-purple mx-2" />
+        </div>
+    </div>
+
+    <style>
+        .bg-purple {
+            background-color: rgb(108, 61, 145);
         }
-        .auto-style3 {
-            height: 23px;
-            width: 98px;
+        .card-header {
+            border-bottom: none; 
         }
-        .auto-style1 {
-            height: 23px;
+
+        .btn-purple {
+            background-color: whitesmoke;
+            color: black;
+            border: none;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 12px 24px;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 0;
+            width: 200px;
         }
-        .auto-style4 {
-            width: 537px;
-        }
-        .auto-style5 {
-            height: 23px;
-            width: 537px;
-        }
-        .auto-style8 {
-            width: 97px;
-        }
-        .auto-style6 {
-            width: 68px;
-        }
-        .auto-style7 {
-            width: 107px;
-        }
-        .auto-style9 {
-            height: 23px;
-            width: 97px;
+
+        .btn-purple:hover {
+            background-color: rgb(108, 61, 145);
+            color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-radius: 0;
         }
     </style>
-
-    <table style="width:100%;">
-        <tr>
-            <td colspan="5" class="auto-style1">Add FAQ<br />
-            </td>
-        </tr>
-        <tr>
-            <td class="auto-style8">&nbsp;</td>
-            <td class="auto-style4">&nbsp;</td>
-            <td class="auto-style6">&nbsp;</td>
-            <td class="auto-style7">&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style8">Module:</td>
-            <td class="auto-style4">
-                <asp:Label ID="lblModuleName" runat="server" Text="[Module Name]"></asp:Label>
-            </td>
-            <td class="auto-style6">&nbsp;</td>
-            <td class="auto-style7">&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style8">Question:</td>
-            <td class="auto-style4">
-                <asp:TextBox ID="txtQuestion" runat="server" Height="121px" MaxLength="600" TextMode="MultiLine" Width="382px"></asp:TextBox>
-            </td>
-            <td class="auto-style6">&nbsp;</td>
-            <td class="auto-style7">Answer:</td>
-            <td>
-                <asp:TextBox ID="txtAnswer" runat="server" Height="121px" MaxLength="600" TextMode="MultiLine" Width="382px"></asp:TextBox>
-            </td>
-        </tr>
-        <tr>
-            <td class="auto-style9">&nbsp;</td>
-            <td class="auto-style5">&nbsp;</td>
-            <td class="auto-style6">&nbsp;</td>
-            <td class="auto-style7">&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style8">&nbsp;</td>
-            <td class="auto-style4">
-                <asp:Label ID="lblErrors" runat="server" Text="[Errors]"></asp:Label>
-            </td>
-            <td class="auto-style6">&nbsp;</td>
-            <td class="auto-style7">&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="auto-style8">
-                <asp:Button ID="Back" runat="server" OnClick="Back_Click" Text="Back" />
-            </td>
-            <td class="auto-style4">
-                <asp:Button ID="btnAddFAQ" runat="server" OnClick="btnAddFAQ_Click" Text="Add FAQ" />
-            </td>
-            <td class="auto-style6">&nbsp;</td>
-            <td class="auto-style7">&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-    </table>
 </asp:Content>

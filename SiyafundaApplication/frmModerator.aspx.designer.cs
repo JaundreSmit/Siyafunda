@@ -24,6 +24,15 @@ namespace SiyafundaApplication
         protected global::System.Web.UI.WebControls.Panel pnlInProgress;
 
         /// <summary>
+        /// pnlInProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlInProgress;
+
+        /// <summary>
         /// txtSearchProgress control.
         /// </summary>
         /// <remarks>
