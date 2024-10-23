@@ -9,7 +9,10 @@
                 <h5 class="mb-0">Admin User Management</h5>
             </div>
         </div>
-
+        <p>
+            <asp:Button ID="btnPurge" runat="server" OnClick="btnPurge_Click" Text="Purge Non Existent Files" CssClass="btn btn-primary btn-purple" Width=100%/>
+            <asp:Label ID="lblResults" runat="server" Text="[Purge Results]" CssClass="text-danger"></asp:Label>
+        </p>
         <div class="card-body">
             <asp:GridView ID="UsersGridView" runat="server" AutoGenerateColumns="False" OnRowCommand="UsersGridView_RowCommand" CssClass="table table-striped">
                 <Columns>

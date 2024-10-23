@@ -43,13 +43,13 @@ namespace SiyafundaApplication
             lblProgressErrors.Visible = false;
 
             //Hide in progress controls:
-            dgvInProgress.Visible = false;
-            txtFeedback.Visible = false;
-            txtSearchProgress.Visible = false;
-            btnApprove.Visible = false;
-            btnReject.Visible = false;
-            btnInProgressSubmit.Visible = false;
-            LoadData();
+            pnlInProgress.Visible = true;
+            pnlRejectApprove.Visible = false;
+
+            if (!IsPostBack)
+            {
+                LoadData();
+            }
         }
 
         private void LoadData(string filter = null)
@@ -114,8 +114,6 @@ namespace SiyafundaApplication
                 dgvInProgress.Visible = true;
                 txtSearchProgress.Visible = true;
                 txtFeedback.Visible = false;
-                btnApprove.Visible = false;
-                btnReject.Visible = false;
                 btnInProgressSubmit.Visible = false;
             }
             catch (Exception ex)
@@ -140,15 +138,13 @@ namespace SiyafundaApplication
                 string query = @"
                 UPDATE [Res_to_status]
                 SET status_id = @StatusID,
-                user_id = @UserID,
                 feedback = @Feedback
                 WHERE resource_id = @ResourceID";
 
                 SqlCommand cmd = new SqlCommand(query, Con);
                 cmd.Parameters.AddWithValue("@StatusID", statusID);
-                cmd.Parameters.AddWithValue("@UserID", UserID); // The moderator's ID
                 cmd.Parameters.AddWithValue("@Feedback", txtFeedback.Text.Trim());
-                cmd.Parameters.AddWithValue("@ResourceID", SelectedResourceID);
+                cmd.Parameters.AddWithValue("@ResourceID", Convert.ToInt32(ViewState["SelectedResourceID"]));
 
                 // Execute the query
                 int rowsAffected = cmd.ExecuteNonQuery();
@@ -191,32 +187,23 @@ namespace SiyafundaApplication
         {
             // Make feedback controls visible
             txtFeedback.Visible = true;
-            btnApprove.Visible = true;
-            btnReject.Visible = true;
             btnInProgressSubmit.Visible = true;
 
             // Retrieve the selected resource ID from the GridView
-            if (dgvInProgress.SelectedDataKey != null)
+            if (dgvInProgress.SelectedValue != null)
             {
-                int selectedResourceID = Convert.ToInt32(dgvInProgress.SelectedDataKey.Value);
+                int selectedResourceID = Convert.ToInt32(dgvInProgress.SelectedValue);
 
                 // Assign the selected Resource ID to a field or use it as needed
                 SelectedResourceID = selectedResourceID;
+                pnlRejectApprove.Visible = true;
+                ViewState["SelectedResourceID"] = SelectedResourceID; //the view state is needed to ensure that the value is passed correctly
             }
-        }
-
-        protected void btnReject_Click(object sender, EventArgs e)
-        {
-            ApproveReject = 1; // 1 = Rejected
-        }
-
-        protected void btnApprove_Click(object sender, EventArgs e)
-        {
-            ApproveReject = 2; // 2 = Approved
         }
 
         protected void btnInProgressSubmit_Click(object sender, EventArgs e)
         {
+            ApproveReject = Convert.ToInt32(rbDecision.SelectedValue);
             if (txtFeedback.Text.Length > 0)
             {
                 UpdateResource(ApproveReject);
@@ -226,6 +213,17 @@ namespace SiyafundaApplication
         protected void btnBack_Click(object sender, EventArgs e)
         {
             Response.Redirect("frmDashboard.aspx");
+        }
+
+        public override void VerifyRenderingInServerForm(Control control)
+        {
+            // This method is required to avoid the 'Invalid postback or callback argument' error.
+        }
+
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            pnlRejectApprove.Visible = false;
+            txtSearchProgress.Focus();
         }
     }
 }
