@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -11,46 +10,45 @@ namespace SiyafundaApplication
 {
     public partial class frmEducator : System.Web.UI.Page
     {
-        // Define connection string method
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
         // Declare connection variable
         private SqlConnection Con;
 
         private int UserID = 0;
 
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
-                if (UserID == 7) // Not at least educator
+                if (Convert.ToInt32(Session["RoleID"]) == 7) // Not at least educator
                 {
-                    Response.Redirect("frmDashboard.aspx");
+                    SiyafundaFunctions.SafeRedirect("frmDashboard.aspx");
                 }
             }
             else
             {
-                Response.Redirect("frmLandingPage.aspx");
+                SiyafundaFunctions.SafeRedirect("frmLandingPage.aspx");
             }
 
             if (!IsPostBack)
             {
-                // Populate the RadioButtonList
-                PopulateStudentFilter();
+                // Populate the RadioButtonList asynchronously
+                await PopulateStudentFilterAsync();
             }
         }
 
-        private void PopulateStudentFilter()
+        private async Task<string> GetConnectionStringAsync()
+        {
+            return await SiyafundaFunctions.GetConnectionStringAsync();
+        }
+
+        private async Task PopulateStudentFilterAsync()
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                using (SqlConnection con = new SqlConnection(await GetConnectionStringAsync()))
                 {
-                    con.Open();
+                    await con.OpenAsync();
                     string moduleQuery;
 
                     // Query to get module titles, depending on the role
@@ -78,33 +76,32 @@ namespace SiyafundaApplication
                         }
 
                         // Execute the query and get the module title(s)
-                        SqlDataReader reader = cmd.ExecuteReader();
-
-                        // Clear the RadioButtonList before populating it
-                        rblStudentFilter.Items.Clear();
-
-                        if (reader.HasRows)
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            // Add option for unassigned students
-                            rblStudentFilter.Items.Add(new ListItem("Show unassigned students", "Unassigned"));
+                            // Clear the RadioButtonList before populating it
+                            rblStudentFilter.Items.Clear();
 
-                            // Add options for each module this educator or admin has access to
-                            while (reader.Read())
+                            if (reader.HasRows)
                             {
-                                string moduleTitle = reader["title"].ToString();
-                                rblStudentFilter.Items.Add(new ListItem("Show students for " + moduleTitle, "Assigned"));
+                                // Add option for unassigned students
+                                rblStudentFilter.Items.Add(new ListItem("Show unassigned students", "Unassigned"));
+
+                                // Add options for each module this educator or admin has access to
+                                while (await reader.ReadAsync())
+                                {
+                                    string moduleTitle = reader["title"].ToString();
+                                    rblStudentFilter.Items.Add(new ListItem("Show students for " + moduleTitle, "Assigned"));
+                                }
+
+                                rblStudentFilter.SelectedIndex = -1;
                             }
-
-                            rblStudentFilter.SelectedIndex = -1;
+                            else
+                            {
+                                // No module found
+                                lblStudentErrors.Text = "No modules found.";
+                                lblStudentErrors.Visible = true;
+                            }
                         }
-                        else
-                        {
-                            // No module found
-                            lblStudentErrors.Text = "No modules found.";
-                            lblStudentErrors.Visible = true;
-                        }
-
-                        reader.Close();
                     }
                 }
             }
@@ -122,22 +119,22 @@ namespace SiyafundaApplication
 
         protected void btnBack_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmDashboard.aspx");
+            SiyafundaFunctions.SafeRedirect("frmDashboard.aspx");
         }
 
         protected void btnUploadResources_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmUploadFiles.aspx");
+            SiyafundaFunctions.SafeRedirect("frmUploadFiles.aspx");
         }
 
-        protected void rblStudentFilter_SelectedIndexChanged(object sender, EventArgs e)
+        protected async void rblStudentFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Check which option is selected and load students accordingly
             string selectedValue = rblStudentFilter.SelectedValue;
 
             if (selectedValue == "Unassigned")
             {
-                LoadUnassignedStudents();
+                await LoadUnassignedStudentsAsync();
                 btnAssignStudent.Enabled = true;
                 btnRemoveStudent.Enabled = false;
             }
@@ -145,13 +142,13 @@ namespace SiyafundaApplication
             {
                 // Get the selected module title to filter students
                 string selectedModuleTitle = rblStudentFilter.SelectedItem.Text.Replace("Show students for ", "");
-                LoadStudentsForModule(selectedModuleTitle);
+                await LoadStudentsForModuleAsync(selectedModuleTitle);
                 btnAssignStudent.Enabled = false;
                 btnRemoveStudent.Enabled = true;
             }
         }
 
-        private void LoadUnassignedStudents()
+        private async Task LoadUnassignedStudentsAsync()
         {
             try
             {
@@ -166,28 +163,27 @@ namespace SiyafundaApplication
                             u.user_id NOT IN (SELECT user_id FROM Stu_To_Module)
                             AND u.role_id = 7"; // Only show students
 
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                using (SqlConnection con = new SqlConnection(await GetConnectionStringAsync()))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
 
-                        SqlDataReader reader = cmd.ExecuteReader();
-
-                        if (reader.HasRows)
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            DataTable dt = new DataTable();
-                            dt.Load(reader);
-                            dgvStudents.DataSource = dt;
-                            dgvStudents.DataBind();
+                            if (reader.HasRows)
+                            {
+                                DataTable dt = new DataTable();
+                                dt.Load(reader);
+                                dgvStudents.DataSource = dt;
+                                dgvStudents.DataBind();
+                            }
+                            else
+                            {
+                                lblStudentErrors.Text = "No unassigned students found.";
+                                lblStudentErrors.Visible = true;
+                            }
                         }
-                        else
-                        {
-                            lblStudentErrors.Text = "No unassigned students found.";
-                            lblStudentErrors.Visible = true;
-                        }
-
-                        reader.Close();
                     }
                 }
             }
@@ -203,7 +199,7 @@ namespace SiyafundaApplication
             }
         }
 
-        private void LoadStudentsForModule(string moduleTitle, string filter = null)
+        private async Task LoadStudentsForModuleAsync(string moduleTitle, string filter = null)
         {
             // Clear the existing data
             dgvStudents.DataSource = null; // Clear existing data source
@@ -230,12 +226,11 @@ namespace SiyafundaApplication
                                     m.title = @ModuleTitle
                                     AND u.role_id = 7 {filterCondition}";
 
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                using (SqlConnection con = new SqlConnection(await GetConnectionStringAsync()))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         cmd.Parameters.AddWithValue("@ModuleTitle", moduleTitle);
-                        cmd.Parameters.AddWithValue("@EducatorId", UserID);
 
                         // Add filter parameter if applicable
                         if (!string.IsNullOrEmpty(filter))
@@ -243,24 +238,23 @@ namespace SiyafundaApplication
                             cmd.Parameters.AddWithValue("@Filter", "%" + filter + "%");
                         }
 
-                        con.Open();
+                        await con.OpenAsync();
 
-                        SqlDataReader reader = cmd.ExecuteReader();
-
-                        if (reader.HasRows)
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            DataTable dt = new DataTable();
-                            dt.Load(reader);
-                            dgvStudents.DataSource = dt;
-                            dgvStudents.DataBind();
+                            if (reader.HasRows)
+                            {
+                                DataTable dt = new DataTable();
+                                dt.Load(reader);
+                                dgvStudents.DataSource = dt;
+                                dgvStudents.DataBind();
+                            }
+                            else
+                            {
+                                lblStudentErrors.Text = "No students found for the selected module.";
+                                lblStudentErrors.Visible = true;
+                            }
                         }
-                        else
-                        {
-                            lblStudentErrors.Text = "No students found for the selected module.";
-                            lblStudentErrors.Visible = true;
-                        }
-
-                        reader.Close();
                     }
                 }
             }
@@ -276,7 +270,7 @@ namespace SiyafundaApplication
             }
         }
 
-        protected void txtSearchStudents_TextChanged(object sender, EventArgs e)
+        protected async void txtSearchStudents_TextChanged(object sender, EventArgs e)
         {
             // Get the search term from the TextBox
             string searchTerm = txtSearchStudents.Text.Trim();
@@ -284,17 +278,16 @@ namespace SiyafundaApplication
             {
                 // Get the selected module title to filter students
                 string selectedModuleTitle = rblStudentFilter.SelectedItem.Text.Replace("Show students for ", "");
-                LoadStudentsForModule(selectedModuleTitle, searchTerm);
+                await LoadStudentsForModuleAsync(selectedModuleTitle, searchTerm);
             }
         }
 
         private int SelectedRow = -1;
 
-        //TODO not currently selecting a row correctly
-        protected void btnRemoveStudent_Click(object sender, EventArgs e)
+        protected async void btnRemoveStudent_Click(object sender, EventArgs e)
         {
             // Ensure a student is selected in the GridView (dgvStudents)
-            if (SelectedRow != null || SelectedRow > -1)
+            if (SelectedRow > -1)
             {
                 // Get the student ID from the selected row (assuming it's in the fourth column, which you might need to adjust)
                 int studentId = Convert.ToInt32(dgvStudents.SelectedRow.Cells[3].Text); // Adjust index if needed
@@ -303,7 +296,7 @@ namespace SiyafundaApplication
                 int moduleId = Convert.ToInt32(dgvStudents.SelectedRow.Cells[4].Text); // Adjust index if needed
 
                 // Call the method to remove the student
-                RemoveStudentFromModule(studentId, moduleId);
+                await RemoveStudentFromModuleAsync(studentId, moduleId);
             }
             else
             {
@@ -312,13 +305,13 @@ namespace SiyafundaApplication
             }
         }
 
-        private void RemoveStudentFromModule(int studentId, int moduleId)
+        private async Task RemoveStudentFromModuleAsync(int studentId, int moduleId)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                using (SqlConnection con = new SqlConnection(await GetConnectionStringAsync()))
                 {
-                    con.Open();
+                    await con.OpenAsync();
                     // Define the query to remove the student from the specific module
                     string query = @"
                                     DELETE FROM Stu_To_Module
@@ -331,7 +324,7 @@ namespace SiyafundaApplication
                         cmd.Parameters.AddWithValue("@ModuleId", moduleId);
 
                         // Execute the deletion
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
                         if (rowsAffected > 0)
                         {
@@ -339,7 +332,7 @@ namespace SiyafundaApplication
                             lblStudentErrors.Visible = true;
 
                             // Optionally reload the student list after removal
-                            LoadStudentsForModule(rblStudentFilter.SelectedItem.Text.Replace("Show students for ", ""));
+                            await LoadStudentsForModuleAsync(rblStudentFilter.SelectedItem.Text.Replace("Show students for ", ""));
                         }
                         else
                         {
@@ -363,7 +356,7 @@ namespace SiyafundaApplication
 
         protected void btnAddAnnouncement_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmAddAnnouncement.aspx");
+            SiyafundaFunctions.SafeRedirect("frmAddAnnouncement.aspx");
         }
 
         protected void dgvStudents_SelectedIndexChanged(object sender, EventArgs e)
@@ -373,7 +366,7 @@ namespace SiyafundaApplication
 
         protected void btnAddFaq_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmAddFAQ.aspx");
+            SiyafundaFunctions.SafeRedirect("frmAddFAQ.aspx");
         }
 
         protected void btnAssignStudent_Click(object sender, EventArgs e)

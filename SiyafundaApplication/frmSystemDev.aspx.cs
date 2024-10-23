@@ -23,10 +23,10 @@ namespace SiyafundaApplication
             lblAddModErrors.Visible = false;
             lblEditModErrors.Visible = false;
 
-            if (Session["UserID"] == null || Convert.ToInt32(Session["UserID"]) > 3)
+            if (Session["UserID"] == null || Convert.ToInt32(Session["RoleID"]) > 3)
             {
                 // Invalid permission level!
-                Response.Redirect("frmDashboard.aspx");
+                Response.Redirect("frmLandingPage.aspx");
             }
 
             if (!IsPostBack)
