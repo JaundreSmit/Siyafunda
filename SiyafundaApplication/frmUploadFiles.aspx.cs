@@ -10,20 +10,17 @@ namespace SiyafundaApplication
 {
     public partial class frmUploadFiles : System.Web.UI.Page
     {
-        private int UserID = 0;
-        private SqlConnection Con;
+        private async Task<string> GetConnectionStringAsync()
+        {
+            return await SiyafundaFunctions.GetConnectionStringAsync();
+        }
 
         protected async void Page_Load(object sender, EventArgs e)
         {
-            lblError.Visible = false;
-
-            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7)
-            {
-                UserID = Convert.ToInt32(Session["UserID"]);
-            }
-            else
+            if (Session["UserID"] == null || Convert.ToInt32(Session["RoleID"]) >= 7)
             {
                 SiyafundaFunctions.SafeRedirect("frmDashboard.aspx");
+                return;
             }
 
             if (!IsPostBack)
@@ -34,178 +31,103 @@ namespace SiyafundaApplication
 
         private async Task BindModulesAsync()
         {
-            try
+            int userId = Convert.ToInt32(Session["UserID"]);
+            using (var con = new SqlConnection(await GetConnectionStringAsync()))
             {
-                string query;
-                if (Convert.ToInt32(Session["RoleID"]) < 4)
-                {
-                    query = "SELECT module_id, title FROM [dbo].[Modules]";
-                }
-                else
-                {
-                    query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
-                }
+                string query = Convert.ToInt32(Session["RoleID"]) < 4
+                    ? "SELECT module_id, title FROM [dbo].[Modules]"
+                    : "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
 
-                using (Con = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
+                using (var cmd = new SqlCommand(query, con))
                 {
-                    SqlCommand cmd = new SqlCommand(query, Con);
-
                     if (Convert.ToInt32(Session["RoleID"]) >= 4)
                     {
-                        cmd.Parameters.AddWithValue("@UserID", UserID);
+                        cmd.Parameters.AddWithValue("@UserID", userId);
                     }
 
-                    await Con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                    if (reader.HasRows)
+                    await con.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        ModuleDropDown.DataSource = reader;
-                        ModuleDropDown.DataTextField = "title";
-                        ModuleDropDown.DataValueField = "module_id";
-                        ModuleDropDown.DataBind();
-                        ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
-                    }
-                    else
-                    {
-                        lblError.Text = "No modules found for the specified user.";
-                        lblError.Visible = true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                lblError.Text = "Error retrieving modules: " + ex.Message;
-                lblError.Visible = true;
-            }
-        }
-
-        private string AddWatermark(string mainImagePath, string watermarkImagePath, double markRatio)
-        {
-            using (var mainImage = System.Drawing.Image.FromFile(mainImagePath))
-            using (var watermarkImage = System.Drawing.Image.FromFile(watermarkImagePath))
-            {
-                using (var bitmap = new System.Drawing.Bitmap(mainImage.Width, mainImage.Height))
-                {
-                    using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
-                    {
-                        graphics.DrawImage(mainImage, 0, 0);
-                        var watermarkWidth = (int)(mainImage.Width * markRatio);
-                        var watermarkHeight = (int)(watermarkImage.Height * ((double)watermarkWidth / watermarkImage.Width));
-                        var watermarkPositionX = mainImage.Width - watermarkWidth - 10; // 10px from right
-                        var watermarkPositionY = mainImage.Height - watermarkHeight - 10; // 10px from bottom
-
-                        graphics.DrawImage(watermarkImage, watermarkPositionX, watermarkPositionY, watermarkWidth, watermarkHeight);
-                    }
-                    var watermarkedPath = Path.Combine(Path.GetDirectoryName(mainImagePath), "watermarked_" + Path.GetFileName(mainImagePath));
-                    bitmap.Save(watermarkedPath);
-                    return watermarkedPath;
-                }
-            }
-        }
-
-        private async Task UploadFileAsync()
-        {
-            if (FileUploadControl.HasFile)
-            {
-                int moduleId = int.Parse(ModuleDropDown.SelectedValue);
-                if (moduleId == 0)
-                {
-                    lblError.Text = "Please select a valid module.";
-                    lblError.Visible = true;
-                    return;
-                }
-
-                lblError.Visible = true;
-                string moduleDirectory = Server.MapPath($"~/UploadedFiles/{moduleId}/");
-                if (!Directory.Exists(moduleDirectory))
-                {
-                    Directory.CreateDirectory(moduleDirectory);
-                }
-
-                string fileName = FileUploadControl.FileName;
-                string filePath = Path.Combine(moduleDirectory, fileName);
-                string relativeFilePath = $"UploadedFiles/{moduleId}/{fileName}";
-                string fileType = Path.GetExtension(fileName).ToLower();
-                int fileSize = FileUploadControl.PostedFile.ContentLength;
-
-                try
-                {
-                    FileUploadControl.SaveAs(filePath); // Save the uploaded file
-
-                    if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png" || fileType == ".gif")
-                    {
-                        if (fileSize < 1048576) // Check if file size is less than 1 MB
+                        if (reader.HasRows)
                         {
-                            string watermarkImagePath = Server.MapPath("~/Assets/SiyafundaLogo.png"); // logo path
-                            string watermarkedImagePath = AddWatermark(filePath, watermarkImagePath, 0.25);
-
-                            // Overwrite the original file with the watermarked image
-                            File.Copy(watermarkedImagePath, filePath, true);
-
-                            lblError.Text = "File uploaded and watermarked successfully!";
-                        }
-                        else
-                        {
-                            lblError.Text = "Uploaded file is too large";
-                            return; // Exit if file size exceeds limit
+                            ModuleDropDown.DataSource = reader;
+                            ModuleDropDown.DataTextField = "title";
+                            ModuleDropDown.DataValueField = "module_id";
+                            ModuleDropDown.DataBind();
+                            ModuleDropDown.Items.Insert(0, new ListItem("Select Module", "0"));
                         }
                     }
-
-                    using (Con = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
-                    {
-                        // Insert into Resources
-                        string resourceQuery = @"INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
-                                         VALUES (@user_id, @module_id, @title, @description, @upload_date);
-                                         SELECT SCOPE_IDENTITY();";
-
-                        SqlCommand resourceCmd = new SqlCommand(resourceQuery, Con);
-                        resourceCmd.Parameters.AddWithValue("@user_id", UserID);
-                        resourceCmd.Parameters.AddWithValue("@module_id", moduleId);
-                        resourceCmd.Parameters.AddWithValue("@title", txtTitle.Text);
-                        resourceCmd.Parameters.AddWithValue("@description", txtDesc.Text);
-                        resourceCmd.Parameters.AddWithValue("@upload_date", DateTime.Now);
-
-                        await Con.OpenAsync();
-                        int resourceId = Convert.ToInt32(await resourceCmd.ExecuteScalarAsync());
-
-                        // Insert into Files
-                        string fileQuery = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
-                                     VALUES (@resource_id, @file_path, @file_type, @file_size)";
-
-                        SqlCommand fileCmd = new SqlCommand(fileQuery, Con);
-                        fileCmd.Parameters.AddWithValue("@resource_id", resourceId);
-                        fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath);
-                        fileCmd.Parameters.AddWithValue("@file_type", fileType);
-                        fileCmd.Parameters.AddWithValue("@file_size", fileSize);
-                        await fileCmd.ExecuteNonQueryAsync();
-
-                        // Insert into Res_to_status
-                        string statusQuery = @"INSERT INTO [dbo].[Res_to_status] (resource_id, status_id, feedback, user_id)
-                                       VALUES (@resource_id, @status_id, @feedback, @user_id)";
-
-                        SqlCommand statusCmd = new SqlCommand(statusQuery, Con);
-                        statusCmd.Parameters.AddWithValue("@resource_id", resourceId);
-                        statusCmd.Parameters.AddWithValue("@status_id", 3); // In progress
-                        statusCmd.Parameters.AddWithValue("@feedback", "Waiting for moderator approval");
-                        statusCmd.Parameters.AddWithValue("@user_id", UserID); // Add the user ID for context
-                        await statusCmd.ExecuteNonQueryAsync();
-                    }
                 }
-                catch (Exception ex)
-                {
-                    lblError.Text = "File upload failed: " + ex.Message;
-                }
-            }
-            else
-            {
-                lblError.Text = "Please select a file.";
             }
         }
 
         protected async void UploadButton_Click(object sender, EventArgs e)
         {
             await UploadFileAsync();
+        }
+
+        private async Task UploadFileAsync()
+        {
+            if (!FileUploadControl.HasFile || ModuleDropDown.SelectedValue == "0")
+            {
+                return;
+            }
+
+            int userId = Convert.ToInt32(Session["UserID"]);
+            int moduleId = int.Parse(ModuleDropDown.SelectedValue);
+            string fileName = Path.GetFileName(FileUploadControl.FileName);
+            string filePath = Path.Combine(Server.MapPath($"~/UploadedFiles/{moduleId}/"), fileName);
+            string relativePath = $"UploadedFiles/{moduleId}/{fileName}";
+            string fileType = Path.GetExtension(fileName).ToLower();
+            int fileSize = FileUploadControl.PostedFile.ContentLength;
+
+            using (var con = new SqlConnection(await GetConnectionStringAsync()))
+            {
+                const string resourceQuery = @"
+                    INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
+                    VALUES (@UserId, @ModuleId, @Title, @Description, @UploadDate);
+                    SELECT SCOPE_IDENTITY();";
+
+                using (var cmd = new SqlCommand(resourceQuery, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@ModuleId", moduleId);
+                    cmd.Parameters.AddWithValue("@Title", txtTitle.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Description", txtDesc.Text.Trim());
+                    cmd.Parameters.AddWithValue("@UploadDate", DateTime.Now);
+
+                    await con.OpenAsync();
+                    int resourceId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                    // Save the file
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                    FileUploadControl.SaveAs(filePath);
+
+                    if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png")
+                    {
+                        // Perform watermarking if needed
+                    }
+
+                    // Insert the file details into the Files table
+                    const string fileQuery = @"
+                        INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
+                        VALUES (@ResourceId, @FilePath, @FileType, @FileSize)";
+
+                    cmd.CommandText = fileQuery;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@ResourceId", resourceId);
+                    cmd.Parameters.AddWithValue("@FilePath", relativePath);
+                    cmd.Parameters.AddWithValue("@FileType", fileType);
+                    cmd.Parameters.AddWithValue("@FileSize", fileSize);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        protected void BackButton_Click(object sender, EventArgs e)
+        {
+            SiyafundaFunctions.SafeRedirect("frmEducator.aspx");
         }
     }
 }

@@ -47,11 +47,10 @@ namespace SiyafundaApplication
         {
             if (e.CommandName == "DeleteUser")
             {
-                int rowIndex = Convert.ToInt32(e.CommandArgument);
-                GridViewRow row = UsersGridView.Rows[rowIndex];
-
-                int userId = Convert.ToInt32(row.Cells[0].Text);
-                await DeleteUserAsync(userId);
+                if (int.TryParse(e.CommandArgument.ToString(), out int userId))
+                {
+                    await DeleteUserAsync(userId);
+                }
             }
         }
 

@@ -356,5 +356,11 @@ namespace SiyafundaApplication
             txtEditStartTime.Visible = false;
             ddlClass.Visible = false;
         }
+
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("frmDashboard.aspx", false);
+            Context.ApplicationInstance.CompleteRequest();
+        }
     }
 }

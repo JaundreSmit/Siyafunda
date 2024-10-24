@@ -1,23 +1,22 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace SiyafundaApplication
 {
     public partial class frmAddFAQ : System.Web.UI.Page
     {
-        // Declare the connection variable
-        private SqlConnection Con;
+        private async Task<string> GetConnectionStringAsync()
+        {
+            return await SiyafundaFunctions.GetConnectionStringAsync();
+        }
 
-        // Page load event
         protected async void Page_Load(object sender, EventArgs e)
         {
-            // Retrieve the connection string asynchronously from Azure Key Vault
-            string connectionString = await SiyafundaFunctions.GetConnectionStringAsync();
-            Con = new SqlConnection(connectionString);
-
-            // Redirect if user is not logged in or does not have the Educator role (RoleID = 6)
             if (Session["UserID"] == null || Convert.ToInt32(Session["RoleID"]) != 6)
             {
                 SiyafundaFunctions.SafeRedirect("frmEducator.aspx");
@@ -26,147 +25,74 @@ namespace SiyafundaApplication
 
             if (!IsPostBack)
             {
-                await LoadModuleAsync(); // Load module asynchronously
+                await LoadModuleAsync();
             }
-
-            lblErrors.Visible = false;
         }
 
-        // Asynchronously load the module for the educator
         private async Task LoadModuleAsync()
         {
-            try
+            int userId = Convert.ToInt32(Session["UserID"]);
+            using (var con = new SqlConnection(await GetConnectionStringAsync()))
             {
-                string query = @"
-                    SELECT title
-                    FROM Modules
-                    WHERE educator_id = @EducatorId";
-
-                using (SqlCommand cmd = new SqlCommand(query, Con))
+                const string query = "SELECT title FROM Modules WHERE educator_id = @EducatorId";
+                using (var cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@EducatorId", Convert.ToInt32(Session["UserID"]));
-                    Con.Open();
+                    cmd.Parameters.AddWithValue("@EducatorId", userId);
+                    await con.OpenAsync();
                     var result = await cmd.ExecuteScalarAsync();
-
                     if (result != null)
                     {
-                        lblModuleName.Text = result.ToString(); // Display the module title
-                    }
-                    else
-                    {
-                        lblErrors.Text = "No module found for this educator.";
-                        lblErrors.Visible = true;
+                        lblModuleName.Text = result.ToString();
                     }
                 }
             }
-            catch (SqlException ex)
-            {
-                lblErrors.Text = "An error occurred while loading the module: " + ex.Message;
-                lblErrors.Visible = true;
-            }
-            finally
-            {
-                Con.Close();
-            }
         }
 
-        // Asynchronously retrieve the ModuleID based on the module title
-        private async Task<int> GetModuleIdAsync(string moduleTitle)
-        {
-            int moduleId = 0;
-            try
-            {
-                string query = @"
-                    SELECT module_id
-                    FROM Modules
-                    WHERE title = @Title";
-
-                using (SqlCommand cmd = new SqlCommand(query, Con))
-                {
-                    cmd.Parameters.AddWithValue("@Title", moduleTitle);
-                    Con.Open();
-                    var result = await cmd.ExecuteScalarAsync();
-
-                    if (result != null)
-                    {
-                        moduleId = Convert.ToInt32(result);
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                lblErrors.Text = "An error occurred while retrieving the module ID: " + ex.Message;
-                lblErrors.Visible = true;
-            }
-            finally
-            {
-                Con.Close();
-            }
-
-            return moduleId;
-        }
-
-        // Handle Add FAQ button click
         protected async void btnAddFAQ_Click(object sender, EventArgs e)
         {
-            // Check if question and answer fields are filled
             if (string.IsNullOrWhiteSpace(txtQuestion.Text) || string.IsNullOrWhiteSpace(txtAnswer.Text))
             {
-                lblErrors.Text = "Please fill in both the question and the answer.";
-                lblErrors.Visible = true;
                 return;
             }
 
-            int userID = Convert.ToInt32(Session["UserID"]);
-            int module_id = await GetModuleIdAsync(lblModuleName.Text);
-            string question = txtQuestion.Text.Trim();
-            string answer = txtAnswer.Text.Trim();
+            int userId = Convert.ToInt32(Session["UserID"]);
+            int moduleId = await GetModuleIdAsync(lblModuleName.Text);
             DateTime dateTime = DateTime.Now;
 
-            try
+            using (var con = new SqlConnection(await GetConnectionStringAsync()))
             {
-                string insertQuery = @"
+                const string query = @"
                     INSERT INTO FAQs (question, answer, user_id, module_id, created_at)
                     VALUES (@Question, @Answer, @UserId, @ModuleId, @created_at)";
 
-                using (SqlCommand cmd = new SqlCommand(insertQuery, Con))
+                using (var cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@Question", question);
-                    cmd.Parameters.AddWithValue("@Answer", answer);
-                    cmd.Parameters.AddWithValue("@UserId", userID);
-                    cmd.Parameters.AddWithValue("@ModuleId", module_id);
+                    cmd.Parameters.AddWithValue("@Question", txtQuestion.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Answer", txtAnswer.Text.Trim());
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@ModuleId", moduleId);
                     cmd.Parameters.AddWithValue("@created_at", dateTime);
-
-                    Con.Open();
-                    int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-                    if (rowsAffected > 0)
-                    {
-                        lblErrors.Text = "FAQ added successfully.";
-                        lblErrors.Visible = true;
-                        // Optionally clear the fields after successful insert
-                        txtQuestion.Text = string.Empty;
-                        txtAnswer.Text = string.Empty;
-                    }
-                    else
-                    {
-                        lblErrors.Text = "Failed to add the FAQ.";
-                        lblErrors.Visible = true;
-                    }
+                    await con.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
                 }
-            }
-            catch (SqlException ex)
-            {
-                lblErrors.Text = "An error occurred while adding the FAQ: " + ex.Message;
-                lblErrors.Visible = true;
-            }
-            finally
-            {
-                Con.Close();
             }
         }
 
-        // Handle back button click
+        private async Task<int> GetModuleIdAsync(string moduleTitle)
+        {
+            using (var con = new SqlConnection(await GetConnectionStringAsync()))
+            {
+                const string query = "SELECT module_id FROM Modules WHERE title = @Title";
+                using (var cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Title", moduleTitle);
+                    await con.OpenAsync();
+                    var result = await cmd.ExecuteScalarAsync();
+                    return result != null ? Convert.ToInt32(result) : 0;
+                }
+            }
+        }
+
         protected void Back_Click(object sender, EventArgs e)
         {
             SiyafundaFunctions.SafeRedirect("frmEducator.aspx");

@@ -16,7 +16,7 @@ namespace SiyafundaApplication
         protected async Task<string> GetConnectionStringFromKeyVault()
         {
             string keyVaultName = System.Configuration.ConfigurationManager.AppSettings["KeyVaultName"];
-            string kvUri = "https://SiyafundVault.vault.azure.net/";
+            string kvUri = "https://siyafundvault.vault.azure.net/";
 
             // Create a secret client to connect to Azure Key Vault
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());

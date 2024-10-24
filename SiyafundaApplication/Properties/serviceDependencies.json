@@ -4,9 +4,15 @@
       "type": "secrets",
       "connectionId": "VaultUri"
     },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": "VaultUri",
+      "dynamicId": null
+    },
     "mssql1": {
       "type": "mssql",
-      "connectionId": "ConnectionStrings:SiyafundaDB"
+      "connectionId": "ConnectionStrings:SiyafundaDB",
+      "dynamicId": null
     }
   }
 }

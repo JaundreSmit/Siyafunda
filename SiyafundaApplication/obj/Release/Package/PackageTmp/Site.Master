@@ -6,7 +6,14 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - My ASP.NET Application</title>
+    <title><%: Page.Title %>- Siyafunda</title>
+
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-whatever-integrity" crossorigin="anonymous">
+
+    <!-- font import -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
 
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
@@ -15,53 +22,191 @@
     <webopt:bundlereference runat="server" path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
+   <style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; 
+    }
+
+    .custom-font {
+    font-family: 'Lato', sans-serif; 
+    }
+
+    .navbar {
+        background-color: rgb(108, 61, 145); 
+        width: 100%; 
+        position: fixed;
+        top: 0; 
+        right: 0px; 
+        z-index: 1000; 
+    }
+
+    .side-panel {
+        background-color: rgb(108, 61, 145); 
+        color: white;
+        height: 100%; 
+        padding: 20px;
+        position: fixed; 
+        width: 250px; 
+        top: 56px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: calc(100vh - 56px);
+    }
+
+    .content-wrapper {
+        margin-left: 250px; 
+        margin-top: 56px; 
+        flex: 1; 
+    }
+
+    .container.body-content {
+        padding: 0; 
+    }
+
+    .navbar-brand {
+        margin-left: 80px;
+    }
+
+     .navbar-nav.ms-auto {
+        margin-right: 40px; 
+    }
+
+     .card {
+        border: none; 
+        margin-top: 200px;
+        padding: 5px;
+    }
+
+     .card-title {
+        font-weight: bold;
+    }
+
+     .btn {
+        background-color: whitesmoke; 
+        color: black;
+        border: none;
+        font-weight: bold; 
+        padding: 12px 24px; 
+        text-transform: uppercase; 
+        transition: background-color 0.3s ease, transform 0.2s ease; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        border-radius: 0; 
+
+        width: 120px; 
+        height: 50px; 
+    
+    }
+     .btn:hover {
+        background-color: darkgray;
+        color: black; 
+        transform: translateY(-2px); 
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        border-radius: 0;
+    }
+     
+
+     footer {
+        background-color: #212121; 
+        padding: 20px 0;
+        text-align: left;
+        color: whitesmoke
+    }
+
+     .container-fluid {
+        display: flex; 
+        flex-direction: column; 
+        min-height: 100vh; 
+    }
+
+     .siyafunda-title {
+        font-family: 'Arial', sans-serif; /* Change to your desired font */
+        font-size: 24px; /* Adjust size as needed */
+        font-weight: bold; /* Adjust weight if needed */
+        color: #000; /* Change color as desired */
+    }
+
+     .custom-label {
+        color: whitesmoke; /* Change this to your desired color */
+    }
+
+
+</style>
+
+
+
 </head>
-<body>
+<body style="background-color: #212121;">
+
     <form runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
-                <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
-                <%--Framework Scripts--%>
+                <%-- To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
+                <%-- Framework Scripts --%>
                 <asp:ScriptReference Name="MsAjaxBundle" />
                 <asp:ScriptReference Name="jquery" />
                 <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
-                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
-                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
-                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
-                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
-                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
-                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
-                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
-                <asp:ScriptReference Name="WebFormsBundle" />
-                <%--Site Scripts--%>
+                <%-- Site Scripts --%>
             </Scripts>
         </asp:ScriptManager>
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Application name</a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/About">About</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contact</a></li>
+        <!-- Main Layout -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Side Panel Section -->
+                <div class="col-2 side-panel">                   
+                    <ul class="nav flex-column">
+                        <img src="/Content/Siyafunda.png" alt="Description of Image" class="img-fluid" style="margin-top: -60px; margin-bottom: 20px;" />
                     </ul>
+                   <p style="text-align: center;">&copy;
+                       <asp:Label ID="lblDate" runat="server" Text="[Date]"></asp:Label>
+                    </p>
+
+                    
+                </div>
+                <!-- Main Content Section -->
+                <div class="col content-wrapper">
+                    <!-- Full-width Navbar -->
+                    <nav class="navbar navbar-expand-sm navbar-dark">
+                        <span class="navbar-brand"></span>
+                        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav flex-grow-1">
+                              
+                            </ul>
+                            <ul class="navbar-nav ms-auto">
+                               <li class="nav-item"><a class="nav-link" runat="server" href="~/frmDashboard.aspx">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" runat="server" href="~/frmlandingpage.aspx">Login / Sign Up</a></li>
+                                <li class="nav-item"><a class="nav-link" runat="server" href="~/frmProfile.aspx">Profile</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+
+                    <!-- Page Content -->
+                    <div class="container body-content">
+                        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                        </asp:ContentPlaceHolder>
+                        
+                        <footer runat="server" id="footerControl" visible="true">
+                            <hr />
+                            <p>&copy; <%-- Framework Scripts --%>- Siyafunda</p>
+                        </footer>
+                    </div>
                 </div>
             </div>
-        </nav>
-        <div class="container body-content">
-            <asp:ContentPlaceHolder ID="MainContent" runat="server">
-            </asp:ContentPlaceHolder>
-            <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - My ASP.NET Application</p>
-            </footer>
         </div>
     </form>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-whatever-integrity" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha384-whatever-integrity" crossorigin="anonymous"></script>
+
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/Scripts/bootstrap.js") %>
     </asp:PlaceHolder>

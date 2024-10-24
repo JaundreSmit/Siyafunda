@@ -10,7 +10,7 @@ namespace SiyafundaApplication
 {
     public class SiyafundaFunctions
     {
-        private static string keyVaultUrl = "https://SiyafundVault.vault.azure.net/";
+        private static string keyVaultUrl = "https://siyafundvault.vault.azure.net/";
 
         public static async Task<string> GetSecretAsync(string secretName)
         {
