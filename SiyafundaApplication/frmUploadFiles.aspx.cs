@@ -10,17 +10,11 @@ namespace SiyafundaApplication
 {
     public partial class frmUploadFiles : System.Web.UI.Page
     {
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
         private int UserID = 0;
         private SqlConnection Con;
 
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
-            Con = new SqlConnection(getConnectionString());
             lblError.Visible = false;
 
             if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) < 7)
@@ -29,31 +23,31 @@ namespace SiyafundaApplication
             }
             else
             {
-                Response.Redirect("frmDashboard.aspx");
+                SiyafundaFunctions.SafeRedirect("frmDashboard.aspx");
             }
 
             if (!IsPostBack)
             {
-                BindModules();
+                await BindModulesAsync();
             }
         }
 
-        private void BindModules()
+        private async Task BindModulesAsync()
         {
-            using (Con)
+            try
             {
-                try
+                string query;
+                if (Convert.ToInt32(Session["RoleID"]) < 4)
                 {
-                    string query;
-                    if (Convert.ToInt32(Session["RoleID"]) < 4)
-                    {
-                        query = "SELECT module_id, title FROM [dbo].[Modules]";
-                    }
-                    else
-                    {
-                        query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
-                    }
+                    query = "SELECT module_id, title FROM [dbo].[Modules]";
+                }
+                else
+                {
+                    query = "SELECT module_id, title FROM [dbo].[Modules] WHERE educator_id = @UserID";
+                }
 
+                using (Con = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
+                {
                     SqlCommand cmd = new SqlCommand(query, Con);
 
                     if (Convert.ToInt32(Session["RoleID"]) >= 4)
@@ -61,8 +55,8 @@ namespace SiyafundaApplication
                         cmd.Parameters.AddWithValue("@UserID", UserID);
                     }
 
-                    Con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    await Con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
                     if (reader.HasRows)
                     {
@@ -78,15 +72,11 @@ namespace SiyafundaApplication
                         lblError.Visible = true;
                     }
                 }
-                catch (Exception ex)
-                {
-                    lblError.Text = "Error retrieving modules: " + ex.Message;
-                    lblError.Visible = true;
-                }
-                finally
-                {
-                    Con.Close();
-                }
+            }
+            catch (Exception ex)
+            {
+                lblError.Text = "Error retrieving modules: " + ex.Message;
+                lblError.Visible = true;
             }
         }
 
@@ -162,7 +152,7 @@ namespace SiyafundaApplication
                         }
                     }
 
-                    using (Con)
+                    using (Con = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
                     {
                         // Insert into Resources
                         string resourceQuery = @"INSERT INTO [dbo].[Resources] (user_id, module_id, title, description, upload_date)
@@ -176,8 +166,8 @@ namespace SiyafundaApplication
                         resourceCmd.Parameters.AddWithValue("@description", txtDesc.Text);
                         resourceCmd.Parameters.AddWithValue("@upload_date", DateTime.Now);
 
-                        Con.Open();
-                        int resourceId = Convert.ToInt32(resourceCmd.ExecuteScalar());
+                        await Con.OpenAsync();
+                        int resourceId = Convert.ToInt32(await resourceCmd.ExecuteScalarAsync());
 
                         // Insert into Files
                         string fileQuery = @"INSERT INTO [dbo].[Files] (resource_id, file_path, file_type, file_size)
@@ -188,7 +178,7 @@ namespace SiyafundaApplication
                         fileCmd.Parameters.AddWithValue("@file_path", relativeFilePath);
                         fileCmd.Parameters.AddWithValue("@file_type", fileType);
                         fileCmd.Parameters.AddWithValue("@file_size", fileSize);
-                        fileCmd.ExecuteNonQuery();
+                        await fileCmd.ExecuteNonQueryAsync();
 
                         // Insert into Res_to_status
                         string statusQuery = @"INSERT INTO [dbo].[Res_to_status] (resource_id, status_id, feedback, user_id)
@@ -199,7 +189,7 @@ namespace SiyafundaApplication
                         statusCmd.Parameters.AddWithValue("@status_id", 3); // In progress
                         statusCmd.Parameters.AddWithValue("@feedback", "Waiting for moderator approval");
                         statusCmd.Parameters.AddWithValue("@user_id", UserID); // Add the user ID for context
-                        statusCmd.ExecuteNonQuery();
+                        await statusCmd.ExecuteNonQueryAsync();
                     }
                 }
                 catch (Exception ex)

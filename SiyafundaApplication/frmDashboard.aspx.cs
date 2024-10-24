@@ -354,22 +354,34 @@ namespace SiyafundaApplication
             }
         }
 
-        protected void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected async void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Select")
             {
                 int resourceId = Convert.ToInt32(e.CommandArgument);
-                // Handle the selection logic for the resource
                 lblError.Text = $"Selected Resource ID: {resourceId}";
                 lblError.Visible = true;
             }
             else if (e.CommandName == "Download")
             {
                 int resourceId = Convert.ToInt32(e.CommandArgument);
-                // Handle the download logic for the resource
-                // For example, redirect to a download page or initiate a download
-                lblError.Text = $"Download Resource ID: {resourceId}";
-                lblError.Visible = true;
+
+                // Get the file path for the resource
+                string filePath = await GetFilePath(resourceId);
+
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    // Initiate file download
+                    Response.ContentType = "application/octet-stream";
+                    Response.AppendHeader("Content-Disposition", "attachment; filename=" + System.IO.Path.GetFileName(filePath));
+                    Response.TransmitFile(filePath);
+                    Response.End();
+                }
+                else
+                {
+                    lblError.Text = "File not found.";
+                    lblError.Visible = true;
+                }
             }
         }
 
@@ -395,7 +407,7 @@ namespace SiyafundaApplication
         protected void btnLogOut_Click(object sender, EventArgs e)
         {
             Session.Clear(); // Clear the session
-            Response.Redirect("frmLogin.aspx"); // Redirect to login page
+            SiyafundaFunctions.SafeRedirect("frmLogin.aspx"); // Redirect to login page
         }
 
         protected void btnEditTimeTable_Click(object sender, EventArgs e)

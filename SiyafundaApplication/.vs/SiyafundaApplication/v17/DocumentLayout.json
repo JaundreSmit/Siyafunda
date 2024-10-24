@@ -1,28 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\jaund\\onedrive\\programming\\siyafunda\\siyafundaapplication\\frmeducator.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmeducator.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\jaund\\onedrive\\programming\\siyafunda\\siyafundaapplication\\frmdashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmdashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\jaund\\onedrive\\programming\\siyafunda\\siyafundaapplication\\frmdashboard.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmdashboard.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\jaund\\onedrive\\programming\\siyafunda\\siyafundaapplication\\siyafundafunctions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:siyafundafunctions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|c:\\users\\jaund\\onedrive\\programming\\siyafunda\\siyafundaapplication\\frmeducator.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{12A5501B-7574-4E5C-B7B6-E21232B9DF28}|SiyafundaApplication.csproj|solutionrelative:frmeducator.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -30,7 +9,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -39,71 +18,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "frmDashboard.aspx.cs",
-              "DocumentMoniker": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmDashboard.aspx.cs",
-              "RelativeDocumentMoniker": "frmDashboard.aspx.cs",
-              "ToolTip": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmDashboard.aspx.cs",
-              "RelativeToolTip": "frmDashboard.aspx.cs",
-              "ViewState": "AgIAAJABAAAAAAAAAAAAwKwBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-23T23:48:36.456Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "frmDashboard.aspx",
-              "DocumentMoniker": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmDashboard.aspx",
-              "RelativeDocumentMoniker": "frmDashboard.aspx",
-              "ToolTip": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmDashboard.aspx",
-              "RelativeToolTip": "frmDashboard.aspx",
-              "LogicalView": "7651a702-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-10-23T23:48:33.312Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "frmEducator.aspx.cs",
-              "DocumentMoniker": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx.cs",
-              "RelativeDocumentMoniker": "frmEducator.aspx.cs",
-              "ToolTip": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx.cs",
-              "RelativeToolTip": "frmEducator.aspx.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAQwBUAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-23T23:12:25.131Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "frmEducator.aspx",
-              "DocumentMoniker": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx",
-              "RelativeDocumentMoniker": "frmEducator.aspx",
-              "ToolTip": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\frmEducator.aspx",
-              "RelativeToolTip": "frmEducator.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-10-23T23:12:17.951Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SiyafundaFunctions.cs",
-              "DocumentMoniker": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\SiyafundaFunctions.cs",
-              "RelativeDocumentMoniker": "SiyafundaFunctions.cs",
-              "ToolTip": "C:\\Users\\jaund\\OneDrive\\Programming\\Siyafunda\\SiyafundaApplication\\SiyafundaFunctions.cs",
-              "RelativeToolTip": "SiyafundaFunctions.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAQwB8AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-23T23:14:01.278Z",
-              "EditorCaption": ""
             }
           ]
         }
