@@ -103,10 +103,10 @@ namespace SiyafundaApplication
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                     FileUploadControl.SaveAs(filePath);
 
-                    if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png")
+                    /*if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png")
                     {
                         // Perform watermarking if needed
-                    }
+                    }*/
 
                     // Insert the file details into the Files table
                     const string fileQuery = @"

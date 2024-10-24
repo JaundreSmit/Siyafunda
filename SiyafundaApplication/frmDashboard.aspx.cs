@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace SiyafundaApplication
 {
@@ -226,12 +227,12 @@ namespace SiyafundaApplication
 
                         if (dt.Rows.Count == 0)
                         {
-                            lblAnnoucementsError.Text = "No announcements found.";
-                            lblAnnoucementsError.Visible = true;
+                            lblAnnouncementsError.Text = "No announcements found.";
+                            lblAnnouncementsError.Visible = true;
                         }
                         else
                         {
-                            lblAnnoucementsError.Visible = false;  // Hide error label if announcements are found
+                            lblAnnouncementsError.Visible = false;  // Hide error label if announcements are found
                             dgvAnnouncements.DataSource = dt;
                             dgvAnnouncements.DataBind();  // Bind the data to the control
                         }
@@ -242,13 +243,13 @@ namespace SiyafundaApplication
             }
             catch (SqlException ex)
             {
-                lblAnnoucementsError.Text = "An error occurred while retrieving announcements: " + ex.Message;
-                lblAnnoucementsError.Visible = true;
+                lblAnnouncementsError.Text = "An error occurred while retrieving announcements: " + ex.Message;
+                lblAnnouncementsError.Visible = true;
             }
             catch (Exception ex)
             {
-                lblAnnoucementsError.Text = "An unexpected error occurred: " + ex.Message;
-                lblAnnoucementsError.Visible = true;
+                lblAnnouncementsError.Text = "An unexpected error occurred: " + ex.Message;
+                lblAnnouncementsError.Visible = true;
             }
         }
 
@@ -354,24 +355,58 @@ namespace SiyafundaApplication
             }
         }
 
-        protected void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected async void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Select")
             {
                 int resourceId = Convert.ToInt32(e.CommandArgument);
-                // Handle the selection logic for the resource
                 lblError.Text = $"Selected Resource ID: {resourceId}";
                 lblError.Visible = true;
             }
             else if (e.CommandName == "Download")
             {
                 int resourceId = Convert.ToInt32(e.CommandArgument);
-                // Handle the download logic for the resource
-                // For example, redirect to a download page or initiate a download
-                lblError.Text = $"Download Resource ID: {resourceId}";
-                lblError.Visible = true;
+
+                try
+                {
+                    // Get the file path from the database
+                    string filePath = await GetFilePath(resourceId);
+
+                    // Ensure the file path is not empty
+                    if (!string.IsNullOrEmpty(filePath))
+                    {
+                        string fullPath = Server.MapPath("~/" + filePath);
+
+                        // Check if the file exists on the server
+                        if (File.Exists(fullPath))
+                        {
+                            // Serve the file to the client for download
+                            Response.ContentType = "application/octet-stream";
+                            Response.AppendHeader("Content-Disposition", "attachment; filename=" + Path.GetFileName(fullPath));
+                            Response.TransmitFile(fullPath);
+                            Response.End(); // End the response to prevent further output
+                        }
+                        else
+                        {
+                            lblError.Text = "File not found.";
+                            lblError.Visible = true;
+                        }
+                    }
+                    else
+                    {
+                        lblError.Text = "Invalid file path.";
+                        lblError.Visible = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lblError.Text = "An error occurred while downloading the file: " + ex.Message;
+                    lblError.Visible = true;
+                }
             }
         }
+
+
 
         private void ShowAllButtons()
         {
@@ -438,5 +473,6 @@ namespace SiyafundaApplication
         {
             SiyafundaFunctions.SafeRedirect("frmProfile.aspx");
         }
+
     }
 }

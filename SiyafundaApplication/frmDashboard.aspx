@@ -34,34 +34,34 @@
 
         <!-- Available Resources Section -->
         <h5 style="color: whitesmoke;">Available Resources:</h5>
-        <asp:Label ID="lblError" runat="server" Text="[Error Label]" CssClass="text-danger "></asp:Label>
+        <asp:Label ID="lblError" runat="server" Text="[Error Label]" CssClass="text-danger"></asp:Label>
         <asp:GridView ID="dgvAvailableFiles" runat="server" AutoGenerateColumns="False" OnRowCommand="dgvAvailableFiles_RowCommand" CssClass="table table-striped" Width="100%">
-    <Columns>
-        <asp:BoundField DataField="ModuleName" HeaderText="Module Name" />
-        
-        <asp:TemplateField HeaderText="Resource Title">
-            <ItemTemplate>
-                <asp:LinkButton ID="lnkResourceTitle" runat="server" 
-                                CommandName="Select" 
-                                CommandArgument='<%# Eval("ResourceID") %>' 
-                                Text='<%# Eval("ResourceTitle") %>' />
-            </ItemTemplate>
-        </asp:TemplateField>
+            <Columns>
+                <asp:BoundField DataField="ModuleName" HeaderText="Module Name" />
+                
+                <asp:TemplateField HeaderText="Resource Title">
+                    <ItemTemplate>
+                        <asp:LinkButton ID="lnkResourceTitle" runat="server" 
+                                        CommandName="Select" 
+                                        CommandArgument='<%# Eval("ResourceId") %>' 
+                                        Text='<%# Eval("ResourceTitle") %>' />
+                    </ItemTemplate>
+                </asp:TemplateField>
 
-        <asp:BoundField DataField="ResourceDescription" HeaderText="Description" />
-        <asp:BoundField DataField="UploadDate" HeaderText="Upload Date" />
-        <asp:BoundField DataField="FileSize" HeaderText="File Size" />
-        
-        <asp:TemplateField HeaderText="Actions">
-            <ItemTemplate>
-                <asp:LinkButton ID="btnDownload" runat="server" 
-                                CommandName="Download" 
-                                CommandArgument='<%# Eval("ResourceID") %>' 
-                                Text="Download" CssClass="btn btn-success" />
-            </ItemTemplate>
-        </asp:TemplateField>
-    </Columns>
-</asp:GridView>
+                <asp:BoundField DataField="ResourceDescription" HeaderText="Description" />
+                <asp:BoundField DataField="UploadDate" HeaderText="Upload Date" DataFormatString="{0:MM/dd/yyyy}" />
+                <asp:BoundField DataField="FileSize" HeaderText="File Size (KB)" />
+
+                <asp:TemplateField HeaderText="Actions">
+                    <ItemTemplate>
+                        <asp:LinkButton ID="btnDownload" runat="server" 
+                                        CommandName="Download" 
+                                        CommandArgument='<%# Eval("ResourceId") %>' 
+                                        Text="Download" CssClass="btn btn-success" />
+                    </ItemTemplate>
+                </asp:TemplateField>
+            </Columns>
+        </asp:GridView>
 
         <hr /> <!-- Horizontal line for separation -->
 
@@ -69,7 +69,7 @@
         <h5 style="color: whitesmoke;">Announcements</h5>
         <asp:GridView ID="dgvAnnouncements" runat="server" CssClass="table table-striped" Width="100%">
         </asp:GridView>
-        <asp:Label ID="lblAnnoucementsError" runat="server" Text="[Announcements Errors]" CssClass="text-danger"></asp:Label>
+        <asp:Label ID="lblAnnouncementsError" runat="server" Text="[Announcements Errors]" CssClass="text-danger"></asp:Label>
 
         <hr /> <!-- Horizontal line for separation -->
 
@@ -83,7 +83,6 @@
     </div>
 
     <style type="text/css">
-        
         .btn-purple {
             background-color: whitesmoke; 
             color: black; 
@@ -103,6 +102,5 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             border-radius: 0;
         }
-
     </style>
 </asp:Content>
