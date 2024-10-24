@@ -3,23 +3,24 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Threading.Tasks;
 
 namespace SiyafundaApplication
 {
     public partial class Dashboard : System.Web.UI.Page
     {
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
         private SqlConnection Con;
         private int UserID = 0;
         private int RoleID = 0;
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Method to retrieve the connection string from Azure Key Vault
+        protected async Task<string> GetConnectionStringFromKeyVault()
         {
-            Con = new SqlConnection(getConnectionString());
+            return await SiyafundaFunctions.GetConnectionStringAsync();
+        }
+
+        protected async void Page_Load(object sender, EventArgs e)
+        {
             lblError.Visible = false;
             btnEducators.Visible = false;
             btnModerators.Visible = false;
@@ -31,11 +32,13 @@ namespace SiyafundaApplication
             btnProfile.Visible = false;
             lblDate.Visible = true;
             lblTimeTableError.Visible = false;
+
             lblDate.Text = "Today is " + DateTime.Now.ToString("dddd, MMMM dd yyyy, hh:mm tt");
+
             if (Session["UserID"] != null)
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
-                LoadUserData(UserID);
+                await LoadUserData(UserID);
             }
             else
             {
@@ -45,7 +48,6 @@ namespace SiyafundaApplication
             }
 
             // Determine visibility of buttons based on user role
-
             if (Session["RoleID"] != null)
             {
                 RoleID = Convert.ToInt32(Session["RoleID"]);
@@ -78,48 +80,52 @@ namespace SiyafundaApplication
                 }
             }
 
-            ShowAllResources();
-            ShowAnnouncements();
-            loadTimeTable();
+            await ShowAllResources();
+            await ShowAnnouncements();
+            await LoadTimeTable();
         }
 
-        private void LoadUserData(int userId)
+        private async Task LoadUserData(int userId)
         {
-            string query = "SELECT Name, Surname, r.role_name FROM Users u INNER JOIN Roles r ON u.Role_id = r.role_id WHERE u.user_id = @UserId";
-
-            using (SqlCommand cmd = new SqlCommand(query, Con))
+            string connectionString = await GetConnectionStringFromKeyVault();
+            using (Con = new SqlConnection(connectionString))
             {
-                cmd.Parameters.AddWithValue("@UserId", userId);
-                Con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                string query = "SELECT Name, Surname, r.role_name FROM Users u INNER JOIN Roles r ON u.Role_id = r.role_id WHERE u.user_id = @UserId";
 
-                if (reader.Read())
+                using (SqlCommand cmd = new SqlCommand(query, Con))
                 {
-                    string name = reader["Name"].ToString();
-                    string surname = reader["Surname"].ToString();
-                    string roleName = reader["role_name"].ToString();
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    Con.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-                    lblWelcome.Text = $"Welcome, {name} {surname}";
-                    lblRole.Text = $"Signed in as: {roleName}";
-                    lblWelcome.Visible = true;
-                    lblRole.Visible = true;
-                    btnProfile.Visible = true;
+                    if (reader.Read())
+                    {
+                        string name = reader["Name"].ToString();
+                        string surname = reader["Surname"].ToString();
+                        string roleName = reader["role_name"].ToString();
+
+                        lblWelcome.Text = $"Welcome, {name} {surname}";
+                        lblRole.Text = $"Signed in as: {roleName}";
+                        lblWelcome.Visible = true;
+                        lblRole.Visible = true;
+                        btnProfile.Visible = true;
+                    }
+                    else
+                    {
+                        lblError.Text = "User not found.";
+                        lblError.Visible = true;
+                    }
+                    reader.Close();
                 }
-                else
-                {
-                    lblError.Text = "User not found.";
-                    lblError.Visible = true;
-                }
-                reader.Close();
             }
-
-            Con.Close();
         }
 
-        private void ShowAllResources(string filter = null)
+        private async Task ShowAllResources(string filter = null)
         {
+            string connectionString = await GetConnectionStringFromKeyVault();
             string query = @"
                 SELECT
+                    r.resource_id AS ResourceId,
                     m.title AS ModuleName,
                     r.title AS ResourceTitle,
                     r.description AS ResourceDescription,
@@ -140,9 +146,9 @@ namespace SiyafundaApplication
 
             try
             {
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                using (Con = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmd = new SqlCommand(query, Con))
                     {
                         // Add the filter parameter if a filter is provided
                         if (!string.IsNullOrEmpty(filter))
@@ -150,11 +156,9 @@ namespace SiyafundaApplication
                             cmd.Parameters.AddWithValue("@Filter", "%" + filter + "%");
                         }
 
-                        con.Open();
+                        Con.Open();
                         SqlDataReader reader = cmd.ExecuteReader();
 
-                        // Assuming dgvAvailableFiles is a DataGridView or similar control
-                        dgvAvailableFiles.DataSource = null; // Clear existing data
                         DataTable dt = new DataTable();
                         dt.Load(reader);
 
@@ -186,9 +190,9 @@ namespace SiyafundaApplication
             }
         }
 
-        private void ShowAnnouncements()
+        private async Task ShowAnnouncements()
         {
-            // Query to retrieve announcements based on user ID and module enrollment
+            string connectionString = await GetConnectionStringFromKeyVault();
             string query = @"
                             SELECT
                                 m.title AS ModuleName,
@@ -208,13 +212,13 @@ namespace SiyafundaApplication
 
             try
             {
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
+                using (Con = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmd = new SqlCommand(query, Con))
                     {
                         cmd.Parameters.AddWithValue("@UserId", UserID);  // Using the current UserID
 
-                        con.Open();
+                        Con.Open();
                         SqlDataReader reader = cmd.ExecuteReader();
 
                         DataTable dt = new DataTable();
@@ -228,8 +232,6 @@ namespace SiyafundaApplication
                         else
                         {
                             lblAnnoucementsError.Visible = false;  // Hide error label if announcements are found
-
-                            // Assuming dgvAnnouncements is a GridView, DataGridView, or similar control
                             dgvAnnouncements.DataSource = dt;
                             dgvAnnouncements.DataBind();  // Bind the data to the control
                         }
@@ -250,10 +252,11 @@ namespace SiyafundaApplication
             }
         }
 
-        private void loadTimeTable()
+        private async Task LoadTimeTable()
         {
+            string connectionString = await GetConnectionStringFromKeyVault();
             // Ensure a connection to the database is established
-            using (Con = new SqlConnection(getConnectionString()))
+            using (Con = new SqlConnection(connectionString))
             {
                 try
                 {
@@ -275,7 +278,7 @@ namespace SiyafundaApplication
                         // Execute the query and load the result into a DataTable
                         using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                         {
-                            System.Data.DataTable dt = new System.Data.DataTable();
+                            DataTable dt = new DataTable();
                             adapter.Fill(dt);
 
                             // Bind the result to the GridView (dgvTimeTable)
@@ -297,6 +300,91 @@ namespace SiyafundaApplication
             }
         }
 
+        private async Task<int> GetResourceId(string resourceTitle)
+        {
+            string connectionString = await GetConnectionStringFromKeyVault();
+            using (Con = new SqlConnection(connectionString))
+            {
+                string query = "SELECT resource_id FROM Resources WHERE title = @ResourceTitle";
+
+                using (SqlCommand cmd = new SqlCommand(query, Con))
+                {
+                    cmd.Parameters.AddWithValue("@ResourceTitle", resourceTitle);
+                    Con.Open();
+                    object result = await cmd.ExecuteScalarAsync(); // Execute asynchronously
+
+                    return result != null ? Convert.ToInt32(result) : -1; // Return resource ID or -1 if not found
+                }
+            }
+        }
+
+        private async Task<string> GetFilePath(int resourceId)
+        {
+            string connectionString = await GetConnectionStringFromKeyVault();
+            using (Con = new SqlConnection(connectionString))
+            {
+                string query = "SELECT file_path FROM Files WHERE resource_id = @ResourceId";
+
+                using (SqlCommand cmd = new SqlCommand(query, Con))
+                {
+                    cmd.Parameters.AddWithValue("@ResourceId", resourceId);
+                    Con.Open();
+                    object result = await cmd.ExecuteScalarAsync(); // Execute asynchronously
+
+                    return result != null ? result.ToString() : string.Empty; // Return file path or empty string if not found
+                }
+            }
+        }
+
+        private async Task<int> GetModuleId(string moduleTitle)
+        {
+            string connectionString = await GetConnectionStringFromKeyVault();
+            using (Con = new SqlConnection(connectionString))
+            {
+                string query = "SELECT module_id FROM Modules WHERE title = @ModuleTitle";
+
+                using (SqlCommand cmd = new SqlCommand(query, Con))
+                {
+                    cmd.Parameters.AddWithValue("@ModuleTitle", moduleTitle);
+                    Con.Open();
+                    object result = await cmd.ExecuteScalarAsync(); // Execute asynchronously
+
+                    return result != null ? Convert.ToInt32(result) : -1; // Return module ID or -1 if not found
+                }
+            }
+        }
+
+        protected async void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Select")
+            {
+                int resourceId = Convert.ToInt32(e.CommandArgument);
+                lblError.Text = $"Selected Resource ID: {resourceId}";
+                lblError.Visible = true;
+            }
+            else if (e.CommandName == "Download")
+            {
+                int resourceId = Convert.ToInt32(e.CommandArgument);
+
+                // Get the file path for the resource
+                string filePath = await GetFilePath(resourceId);
+
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    // Initiate file download
+                    Response.ContentType = "application/octet-stream";
+                    Response.AppendHeader("Content-Disposition", "attachment; filename=" + System.IO.Path.GetFileName(filePath));
+                    Response.TransmitFile(filePath);
+                    Response.End();
+                }
+                else
+                {
+                    lblError.Text = "File not found.";
+                    lblError.Visible = true;
+                }
+            }
+        }
+
         private void ShowAllButtons()
         {
             btnEducators.Visible = true;
@@ -307,8 +395,6 @@ namespace SiyafundaApplication
 
         private void ShowSystemDevButtons()
         {
-            btnEducators.Visible = true;
-            btnModerators.Visible = true;
             btnSystemDevs.Visible = true;
         }
 
@@ -318,34 +404,10 @@ namespace SiyafundaApplication
             btnModerators.Visible = true;
         }
 
-        protected void btnSystemAdmins_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("frmSystemAdmin.aspx");
-        }
-
-        protected void btnSystemDevs_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("frmSystemDev.aspx");
-        }
-
-        protected void btnModerators_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("frmModerator.aspx");
-        }
-
-        protected void btnEducators_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("frmEducator.aspx");
-        }
-
         protected void btnLogOut_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmLandingPage.aspx");
-        }
-
-        protected void btnProfile_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("frmProfile.aspx");
+            Session.Clear(); // Clear the session
+            SiyafundaFunctions.SafeRedirect("frmLogin.aspx"); // Redirect to login page
         }
 
         protected void btnEditTimeTable_Click(object sender, EventArgs e)
@@ -357,143 +419,29 @@ namespace SiyafundaApplication
             }
         }
 
-        protected void dgvAvailableFiles_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void btnEducators_Click(object sender, EventArgs e)
         {
-            if (e.CommandName == "Select")
-            {
-                // Get the row index of the clicked item
-                int rowIndex = Convert.ToInt32(e.CommandArgument);
-
-                // Get the selected row
-                GridViewRow selectedRow = dgvAvailableFiles.Rows[rowIndex];
-
-                // Retrieve the module name and resource title from the selected row
-                string moduleName = selectedRow.Cells[0].Text; // Assuming the Module Name is in the first column
-                string resourceTitle = ((LinkButton)selectedRow.FindControl("lnkResourceTitle")).Text; // Get the text of the LinkButton
-
-                int moduleId = 0;
-                int resourceId = 0;
-                string filePath = string.Empty;
-
-                // Get the module_id from the Modules table
-                string moduleQuery = "SELECT module_id FROM Modules WHERE title = @ModuleName";
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
-                {
-                    using (SqlCommand cmd = new SqlCommand(moduleQuery, con))
-                    {
-                        cmd.Parameters.AddWithValue("@ModuleName", moduleName);
-                        con.Open();
-                        object result = cmd.ExecuteScalar();
-                        if (result != null)
-                        {
-                            moduleId = Convert.ToInt32(result);
-                        }
-                    }
-                }
-
-                // Get the resource_id and file path from Resources and Files tables
-                string resourceQuery = "SELECT r.resource_id, f.file_path FROM Resources r " +
-                                       "INNER JOIN Files f ON r.resource_id = f.resource_id " +
-                                       "WHERE r.title = @ResourceTitle AND r.module_id = @ModuleId";
-                using (SqlConnection con = new SqlConnection(getConnectionString()))
-                {
-                    using (SqlCommand cmd = new SqlCommand(resourceQuery, con))
-                    {
-                        cmd.Parameters.AddWithValue("@ResourceTitle", resourceTitle);
-                        cmd.Parameters.AddWithValue("@ModuleId", moduleId);
-                        con.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                resourceId = reader.GetInt32(0); // resource_id
-                                filePath = reader.GetString(1); // file_path
-                            }
-                        }
-                    }
-                }
-
-                // Check if filePath is not empty and trigger download
-                if (!string.IsNullOrEmpty(filePath))
-                {
-                    Response.ContentType = "application/octet-stream";
-                    Response.AppendHeader("Content-Disposition", $"attachment; filename={System.IO.Path.GetFileName(filePath)}");
-                    Response.TransmitFile(Server.MapPath(filePath));
-                    Response.End();
-                }
-                else
-                {
-                    lblError.Text = "File not found.";
-                    lblError.Visible = true;
-                }
-            }
+            SiyafundaFunctions.SafeRedirect("frmEducator.aspx");
         }
 
-        private int GetModuleId(string moduleName)
+        protected void btnModerators_Click(object sender, EventArgs e)
         {
-            int moduleId = 0;
-            string query = "SELECT module_id FROM Modules WHERE title = @ModuleName";
-
-            using (SqlConnection con = new SqlConnection(getConnectionString()))
-            {
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@ModuleName", moduleName);
-                    con.Open();
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        moduleId = Convert.ToInt32(result);
-                    }
-                }
-            }
-
-            return moduleId;
+            SiyafundaFunctions.SafeRedirect("frmModerator.aspx");
         }
 
-        private int GetResourceId(string resourceTitle, int moduleId)
+        protected void btnSystemDevs_Click(object sender, EventArgs e)
         {
-            int resourceId = 0;
-            string query = "SELECT resource_id FROM Resources WHERE title = @ResourceTitle AND module_id = @ModuleId";
-
-            using (SqlConnection con = new SqlConnection(getConnectionString()))
-            {
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@ResourceTitle", resourceTitle);
-                    cmd.Parameters.AddWithValue("@ModuleId", moduleId);
-                    con.Open();
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        resourceId = Convert.ToInt32(result);
-                    }
-                }
-            }
-
-            return resourceId;
+            SiyafundaFunctions.SafeRedirect("frmSystemDev.aspx");
         }
 
-        private string GetFilePath(int resourceId)
+        protected void btnSystemAdmins_Click(object sender, EventArgs e)
         {
-            string filePath = string.Empty;
-            string query = "SELECT file_path FROM Files WHERE resource_id = @ResourceId";
+            SiyafundaFunctions.SafeRedirect("frmSystemAdmin.aspx");
+        }
 
-            using (SqlConnection con = new SqlConnection(getConnectionString()))
-            {
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@ResourceId", resourceId);
-                    con.Open();
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        filePath = result.ToString();
-                    }
-                }
-            }
-
-            return filePath;
+        protected void btnProfile_Click(object sender, EventArgs e)
+        {
+            SiyafundaFunctions.SafeRedirect("frmProfile.aspx");
         }
     }
 }

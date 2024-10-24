@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmDashboard.aspx.cs" Inherits="SiyafundaApplication.Dashboard" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/site.master" AutoEventWireup="true" CodeBehind="frmDashboard.aspx.cs" Inherits="SiyafundaApplication.Dashboard" Async="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <title>Dashboard</title>
@@ -36,21 +36,33 @@
         <h5 style="color: whitesmoke;">Available Resources:</h5>
         <asp:Label ID="lblError" runat="server" Text="[Error Label]" CssClass="text-danger "></asp:Label>
         <asp:GridView ID="dgvAvailableFiles" runat="server" AutoGenerateColumns="False" OnRowCommand="dgvAvailableFiles_RowCommand" CssClass="table table-striped" Width="100%">
-            <Columns>
-                <asp:BoundField DataField="ModuleName" HeaderText="Module Name" />
-                <asp:TemplateField HeaderText="Resource Title">
-                    <ItemTemplate>
-                            <asp:LinkButton ID="lnkResourceTitle" runat="server" 
-                            CommandName="Select" 
-                            CommandArgument='<%# Container.DataItemIndex %>' 
-                            Text='<%# Eval("ResourceTitle") %>' />
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:BoundField DataField="ResourceDescription" HeaderText="Description" />
-                <asp:BoundField DataField="UploadDate" HeaderText="Upload Date" />
-                <asp:BoundField DataField="FileSize" HeaderText="File Size" />
-            </Columns>
+    <Columns>
+        <asp:BoundField DataField="ModuleName" HeaderText="Module Name" />
+        
+        <asp:TemplateField HeaderText="Resource Title">
+            <ItemTemplate>
+                <asp:LinkButton ID="lnkResourceTitle" runat="server" 
+                                CommandName="Select" 
+                                CommandArgument='<%# Eval("ResourceID") %>' 
+                                Text='<%# Eval("ResourceTitle") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+
+        <asp:BoundField DataField="ResourceDescription" HeaderText="Description" />
+        <asp:BoundField DataField="UploadDate" HeaderText="Upload Date" />
+        <asp:BoundField DataField="FileSize" HeaderText="File Size" />
+        
+        <asp:TemplateField HeaderText="Actions">
+            <ItemTemplate>
+                <asp:LinkButton ID="btnDownload" runat="server" 
+                                CommandName="Download" 
+                                CommandArgument='<%# Eval("ResourceID") %>' 
+                                Text="Download" CssClass="btn btn-success" />
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
 </asp:GridView>
+
         <hr /> <!-- Horizontal line for separation -->
 
         <!-- Announcements Section -->

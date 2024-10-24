@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -7,59 +8,54 @@ namespace SiyafundaApplication
 {
     public partial class frmTimeTableEdit : System.Web.UI.Page
     {
-        // Define connection string method
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
         private SqlConnection Con;
-
         private int UserID = 0;
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Async method to get the connection string
+        protected async Task<string> getConnectionStringAsync()
         {
-            // Initialize connection using getConnectionString method
-            Con = new SqlConnection(getConnectionString());
-            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) == 7) //Only students can create time tables
+            // Assuming SiyafundaFunctions is a class with a method to get the connection string
+            return await SiyafundaFunctions.GetConnectionStringAsync();
+        }
+
+        protected async void Page_Load(object sender, EventArgs e)
+        {
+            // Initialize connection using async method
+            string connectionString = await getConnectionStringAsync();
+            Con = new SqlConnection(connectionString);
+
+            // Check user role for access
+            if (Session["UserID"] != null && Convert.ToInt32(Session["RoleID"]) == 7) // Only students can create time tables
             {
                 UserID = Convert.ToInt32(Session["UserID"]);
             }
             else
             {
-                // Redirect back to dashboard
+                // Redirect to the dashboard if user is not valid
                 Response.Redirect("frmDashboard.aspx");
             }
 
             if (!IsPostBack)
             {
-                loadModuleData(UserID);
+                await loadModuleDataAsync(UserID);
             }
 
-            //Hide edit controls
-            lblEditResults.Visible = false;
-            lblEditDay.Visible = false;
-            lblEditEndTime.Visible = false;
-            lblEditStartTime.Visible = false;
-            btnConfirmEdit.Visible = false;
-            btnDeleteClass.Visible = false;
-            txtEditEndTime.Visible = false;
-            txtEditStartTime.Visible = false;
-            ddlClass.Visible = false;
+            // Hide edit controls initially
+            HideEditControls();
         }
 
-        protected void loadModuleData(int Userid)
+        // Async method to load module data into dropdowns
+        protected async Task loadModuleDataAsync(int UserId)
         {
             try
             {
-                // Open SQL connection
-                Con.Open();
+                await Con.OpenAsync();
 
-                // 1. Populate ddlDayOfWeek with all day_name from DaysOfTheWeek table
+                // Populate ddlDayOfWeek with day names from DaysOfTheWeek table
                 string sqlDay = "SELECT day_id, day_name FROM DaysOfTheWeek";
                 using (SqlCommand cmd = new SqlCommand(sqlDay, Con))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         if (reader.HasRows)
                         {
@@ -76,17 +72,17 @@ namespace SiyafundaApplication
                     }
                 }
 
-                // 2. Populate ddlModule with module_name from the Modules table where user_id matches in Stu_To_Module table
+                // Populate ddlModule with module names from Modules table based on user
                 string sqlModule = @"
-            SELECT m.module_id, m.title AS module_name
-            FROM Stu_To_Module stm
-            INNER JOIN Modules m ON stm.module_id = m.module_id
-            WHERE stm.user_id = @UserId";
+                SELECT m.module_id, m.title AS module_name
+                FROM Stu_To_Module stm
+                INNER JOIN Modules m ON stm.module_id = m.module_id
+                WHERE stm.user_id = @UserId";
 
                 using (SqlCommand cmdModule = new SqlCommand(sqlModule, Con))
                 {
-                    cmdModule.Parameters.AddWithValue("@UserId", Userid);
-                    using (SqlDataReader readerModule = cmdModule.ExecuteReader())
+                    cmdModule.Parameters.AddWithValue("@UserId", UserId);
+                    using (SqlDataReader readerModule = await cmdModule.ExecuteReaderAsync())
                     {
                         if (readerModule.HasRows)
                         {
@@ -111,11 +107,11 @@ namespace SiyafundaApplication
             finally
             {
                 // Ensure the connection is closed even if an error occurs
-                Con.Close();
+                Con.Close(); // Use the synchronous Close() method
             }
         }
 
-        protected void btnAddClass_Click(object sender, EventArgs e)
+        protected async void btnAddClass_Click(object sender, EventArgs e)
         {
             try
             {
@@ -163,7 +159,7 @@ namespace SiyafundaApplication
                 }
 
                 // Open connection
-                Con.Open();
+                await Con.OpenAsync();
 
                 // Insert into the TimeTable
                 string sqlInsert = @"INSERT INTO TimeTable (user_id, module_id, day_id, class_start_time, class_end_time)
@@ -176,17 +172,10 @@ namespace SiyafundaApplication
                     cmdInsert.Parameters.AddWithValue("@StartTime", startTime);
                     cmdInsert.Parameters.AddWithValue("@EndTime", endTime);
 
-                    int rowsAffected = cmdInsert.ExecuteNonQuery();
+                    int rowsAffected = await cmdInsert.ExecuteNonQueryAsync();
 
                     // Display result
-                    if (rowsAffected > 0)
-                    {
-                        lblResult.Text = "Class added successfully!";
-                    }
-                    else
-                    {
-                        lblResult.Text = "Failed to add class.";
-                    }
+                    lblResult.Text = rowsAffected > 0 ? "Class added successfully!" : "Failed to add class.";
                     lblResult.Visible = true;
                 }
             }
@@ -198,15 +187,15 @@ namespace SiyafundaApplication
             finally
             {
                 // Close the connection
-                Con.Close();
+                Con.Close(); // Use the synchronous Close() method
             }
         }
 
-        private void LoadTimeTableForEdit()
+        private async Task LoadTimeTableForEditAsync()
         {
             try
             {
-                Con.Open();
+                await Con.OpenAsync();
 
                 // SQL query to retrieve the timetable data for editing, ordered by day and start time
                 string sql = @"
@@ -221,15 +210,15 @@ namespace SiyafundaApplication
                 {
                     cmd.Parameters.AddWithValue("@UserID", UserID);
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         if (reader.HasRows)
                         {
                             ddlClass.Items.Clear();  // Clear previous items in the dropdown
 
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
-                                // Create formatted string for each class (e.g. Monday - Math 101 - 10:00 - 11:00)
+                                // Create formatted string for each class
                                 string classInfo = $"{reader["day_name"]} - {reader["module_name"]} - {reader["class_start_time"]} - {reader["class_end_time"]}";
 
                                 // Add class information to the dropdown
@@ -251,11 +240,11 @@ namespace SiyafundaApplication
             }
             finally
             {
-                Con.Close();
+                Con.Close(); // Use the synchronous Close() method
             }
         }
 
-        protected void btnConfirmEdit_Click(object sender, EventArgs e)
+        protected async void btnConfirmEdit_Click(object sender, EventArgs e)
         {
             try
             {
@@ -285,31 +274,22 @@ namespace SiyafundaApplication
                     return;
                 }
 
-                Con.Open();
+                await Con.OpenAsync();
 
                 // Update the class details in the TimeTable
                 string sqlUpdate = @"UPDATE TimeTable
                              SET day_id = @DayId, class_start_time = @StartTime, class_end_time = @EndTime
                              WHERE time_table_id = @ClassId AND user_id = @UserId";
-
                 using (SqlCommand cmdUpdate = new SqlCommand(sqlUpdate, Con))
                 {
                     cmdUpdate.Parameters.AddWithValue("@ClassId", classId);
+                    cmdUpdate.Parameters.AddWithValue("@UserId", UserID);
                     cmdUpdate.Parameters.AddWithValue("@DayId", dayId);
                     cmdUpdate.Parameters.AddWithValue("@StartTime", startTime);
                     cmdUpdate.Parameters.AddWithValue("@EndTime", endTime);
-                    cmdUpdate.Parameters.AddWithValue("@UserId", UserID);
 
-                    int rowsAffected = cmdUpdate.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        lblEditResults.Text = "Class updated successfully!";
-                    }
-                    else
-                    {
-                        lblEditResults.Text = "Failed to update class.";
-                    }
+                    int rowsAffected = await cmdUpdate.ExecuteNonQueryAsync();
+                    lblEditResults.Text = rowsAffected > 0 ? "Class updated successfully!" : "Failed to update class.";
                     lblEditResults.Visible = true;
                 }
             }
@@ -320,39 +300,36 @@ namespace SiyafundaApplication
             }
             finally
             {
-                Con.Close();
+                Con.Close(); // Use the synchronous Close() method
             }
         }
 
-        protected void btnDeleteClass_Click(object sender, EventArgs e)
+        protected async void btnDeleteClass_Click(object sender, EventArgs e)
         {
             try
             {
-                // Get the selected class ID
                 int classId = Convert.ToInt32(ddlClass.SelectedValue);
 
-                Con.Open();
+                // Ensure a class is selected for deletion
+                if (classId <= 0)
+                {
+                    lblEditResults.Text = "Please select a class to delete.";
+                    lblEditResults.Visible = true;
+                    return;
+                }
 
-                // SQL query to delete the selected class
+                await Con.OpenAsync();
+
+                // Delete the selected class from the TimeTable
                 string sqlDelete = @"DELETE FROM TimeTable WHERE time_table_id = @ClassId AND user_id = @UserId";
-
                 using (SqlCommand cmdDelete = new SqlCommand(sqlDelete, Con))
                 {
                     cmdDelete.Parameters.AddWithValue("@ClassId", classId);
                     cmdDelete.Parameters.AddWithValue("@UserId", UserID);
 
-                    int rowsAffected = cmdDelete.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        lblEditResults.Text = "Class deleted successfully!";
-                        lblEditResults.Visible = true;
-                    }
-                    else
-                    {
-                        lblEditResults.Text = "Failed to delete class.";
-                        lblEditResults.Visible = true;
-                    }
+                    int rowsAffected = await cmdDelete.ExecuteNonQueryAsync();
+                    lblEditResults.Text = rowsAffected > 0 ? "Class deleted successfully!" : "Failed to delete class.";
+                    lblEditResults.Visible = true;
                 }
             }
             catch (Exception ex)
@@ -362,28 +339,22 @@ namespace SiyafundaApplication
             }
             finally
             {
-                Con.Close();
+                Con.Close(); // Use the synchronous Close() method
             }
         }
 
-        protected void btnBack_Click(object sender, EventArgs e)
+        // Method to hide edit controls
+        private void HideEditControls()
         {
-            // Redirect back to dashboard
-            Response.Redirect("frmDashboard.aspx");
-        }
-
-        protected void ddlClass_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //show edit controls
-            lblEditResults.Visible = true;
-            lblEditDay.Visible = true;
-            lblEditEndTime.Visible = true;
-            lblEditStartTime.Visible = true;
-            btnConfirmEdit.Visible = true;
-            btnDeleteClass.Visible = true;
-            txtEditEndTime.Visible = true;
-            txtEditStartTime.Visible = true;
-            ddlClass.Visible = true;
+            lblEditResults.Visible = false;
+            lblEditDay.Visible = false;
+            lblEditEndTime.Visible = false;
+            lblEditStartTime.Visible = false;
+            btnConfirmEdit.Visible = false;
+            btnDeleteClass.Visible = false;
+            txtEditEndTime.Visible = false;
+            txtEditStartTime.Visible = false;
+            ddlClass.Visible = false;
         }
     }
 }

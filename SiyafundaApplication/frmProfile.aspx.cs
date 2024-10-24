@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Data;
-using System.Xml;
+using System.Threading.Tasks;
 
-namespace SiyafundaApplication  //TODO User_id (ex. row 27) needs to contain logged-in user's ID
+namespace SiyafundaApplication
 {
     public partial class Profile : System.Web.UI.Page
     {
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
         private int userId = 0;
         private int userRole = 0;
 
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
             lblErrors.Visible = false;
-            // Check if the session contains the user ID
+
             if (Session["UserID"] != null && int.TryParse(Session["UserID"].ToString(), out userId))
             {
                 userRole = Convert.ToInt32(Session["RoleID"]);
-                // Check if the user ID is within a valid range
+
                 if (userRole < 2 || userRole > 7)
                 {
                     Response.Redirect("frmLandingPage.aspx");
@@ -31,74 +26,75 @@ namespace SiyafundaApplication  //TODO User_id (ex. row 27) needs to contain log
             }
             else
             {
-                // Redirect if no valid session exists
                 Response.Redirect("frmLandingPage.aspx");
                 return;
             }
 
             if (!IsPostBack)
             {
-                LoadUserProfile();
-                LoadUserModules();
+                await LoadUserProfileAsync();
+                await LoadUserModulesAsync();
             }
         }
 
-        private void LoadUserProfile()
+        private async Task LoadUserProfileAsync()
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
-                string query = @"SELECT u.Name, u.Surname, u.Email, u.Password, r.role_name
-                                 FROM [dbo].[Users] u
-                                 INNER JOIN [dbo].[Roles] r ON u.Role_id = r.role_id
-                                 WHERE u.user_id = @user_id";
+                string query = @"
+                    SELECT u.Name, u.Surname, u.Email, u.Password, r.role_name
+                    FROM [dbo].[Users] u
+                    INNER JOIN [dbo].[Roles] r ON u.Role_id = r.role_id
+                    WHERE u.user_id = @user_id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@user_id", userId);
 
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                await conn.OpenAsync();
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
                 if (reader.Read())
                 {
                     RoleLabel.Text = reader["role_name"].ToString();
-                    // Pre-fill textboxes for editing
                     NameTextBox.Text = reader["Name"].ToString();
                     SurnameTextBox.Text = reader["Surname"].ToString();
                     EmailTextBox.Text = reader["Email"].ToString();
                     PasswordTextBox.Text = reader["Password"].ToString();
                 }
                 reader.Close();
+                // Close the reader
             }
         }
 
-        private void LoadUserModules()
+        private async Task LoadUserModulesAsync()
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
-                string query = @"SELECT m.title, m.description
-                                 FROM [dbo].[Modules] m
-                                 INNER JOIN [dbo].[Stu_To_Module] stm ON m.module_id = stm.module_id
-                                 WHERE stm.user_id = @user_id";
+                string query = @"
+                    SELECT m.title, m.description
+                    FROM [dbo].[Modules] m
+                    INNER JOIN [dbo].[Stu_To_Module] stm ON m.module_id = stm.module_id
+                    WHERE stm.user_id = @user_id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@user_id", userId);
 
-                conn.Open();
+                await conn.OpenAsync();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-
+                await Task.Run(() => da.Fill(dt)); // Run Fill in a task for async
                 ModulesGridView.DataSource = dt;
                 ModulesGridView.DataBind();
             }
         }
 
-        protected void SaveButton_Click(object sender, EventArgs e)
+        protected async void SaveButton_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(await SiyafundaFunctions.GetConnectionStringAsync()))
             {
-                string query = @"UPDATE [dbo].[Users]
-                                 SET Name = @Name, Surname = @Surname, Email = @Email, Password = @Password
-                                 WHERE user_id = @user_id";
+                string query = @"
+                    UPDATE [dbo].[Users]
+                    SET Name = @Name, Surname = @Surname, Email = @Email, Password = @Password
+                    WHERE user_id = @user_id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Name", NameTextBox.Text);
@@ -107,12 +103,12 @@ namespace SiyafundaApplication  //TODO User_id (ex. row 27) needs to contain log
                 cmd.Parameters.AddWithValue("@Password", PasswordTextBox.Text);
                 cmd.Parameters.AddWithValue("@user_id", userId);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
             }
 
             // Reload the profile after saving
-            LoadUserProfile();
+            await LoadUserProfileAsync();
             lblErrors.Text = "Profile updated successfully.";
             lblErrors.Visible = true;
         }

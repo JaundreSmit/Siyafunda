@@ -6,7 +6,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - Siyafunda</title>
+    <title><%: Page.Title %>- Siyafunda</title>
 
     <!-- Include Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-whatever-integrity" crossorigin="anonymous">
@@ -161,7 +161,10 @@
                     <ul class="nav flex-column">
                         <img src="/Content/Siyafunda.png" alt="Description of Image" class="img-fluid" style="margin-top: -60px; margin-bottom: 20px;" />
                     </ul>
-                    <p style="text-align: center;">&copy; <%: DateTime.Now.Year %> - Siyafunda</p>
+                   <p style="text-align: center;">&copy;
+                       <asp:Label ID="lblDate" runat="server" Text="[Date]"></asp:Label>
+                    </p>
+
                     
                 </div>
                 <!-- Main Content Section -->
@@ -192,7 +195,7 @@
                         
                         <footer runat="server" id="footerControl" visible="true">
                             <hr />
-                            <p>&copy; <%: DateTime.Now.Year %> - Siyafunda</p>
+                            <p>&copy; <%-- Framework Scripts --%>- Siyafunda</p>
                         </footer>
                     </div>
                 </div>

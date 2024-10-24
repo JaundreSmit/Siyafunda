@@ -1,34 +1,46 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Web;
+using System.Threading.Tasks;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using System.Web.UI;
 
 namespace SiyafundaApplication
 {
     public partial class frmLogin : System.Web.UI.Page
     {
-        // Define connection string method
-        protected string getConnectionString()
-        {
-            return @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SiyafundaDB.mdf;Integrated Security=True";
-        }
-
         // Declare connection variable
         private SqlConnection Con;
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Method to retrieve the connection string from Azure Key Vault
+        protected async Task<string> GetConnectionStringFromKeyVault()
         {
-            Con = new SqlConnection(getConnectionString());
+            string keyVaultName = System.Configuration.ConfigurationManager.AppSettings["KeyVaultName"];
+            string kvUri = "https://SiyafundVault.vault.azure.net/";
+
+            // Create a secret client to connect to Azure Key Vault
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+
+            // Retrieve the connection string secret from Key Vault
+            KeyVaultSecret secret = await client.GetSecretAsync("ConnectionStrings--SiyafundaDB");
+            return secret.Value;
+        }
+
+        protected async void Page_Load(object sender, EventArgs e)
+        {
             lblError.Visible = false;
+
+            // Get the connection string from Azure Key Vault
+            string connectionString = await GetConnectionStringFromKeyVault();
+            Con = new SqlConnection(connectionString);
         }
 
         // Handle login button click event
-        protected void LoginButton_Click(object sender, EventArgs e)
+        protected async void LoginButton_Click(object sender, EventArgs e)
         {
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Text;
 
-            // Basic validation
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 lblError.Text = "Please enter both username/email and password.";
@@ -36,7 +48,6 @@ namespace SiyafundaApplication
                 return;
             }
 
-            // Query to validate user credentials
             string query = "SELECT user_id, Role_id FROM [dbo].[Users] WHERE (Username = @Username OR Email = @Username) AND Password = @Password";
 
             try
@@ -56,16 +67,15 @@ namespace SiyafundaApplication
                         int userId = Convert.ToInt32(reader["user_id"]);
                         int roleId = Convert.ToInt32(reader["Role_id"]);
 
-                        // Store UserID and RoleID in session
                         Session["UserID"] = userId;
                         Session["RoleID"] = roleId;
 
-                        // Redirect to another page upon successful login (e.g., dashboard)
-                        Response.Redirect("frmDashboard.aspx");
+                        // Redirect to the dashboard without ending the response
+                        Response.Redirect("frmDashboard.aspx", false);
+                        Context.ApplicationInstance.CompleteRequest(); // Avoid ThreadAbortException
                     }
                     else
                     {
-                        // Invalid login attempt
                         lblError.Text = "Invalid username or password.";
                         lblError.Visible = true;
                     }
@@ -73,7 +83,6 @@ namespace SiyafundaApplication
             }
             catch (Exception ex)
             {
-                // Error handling
                 lblError.Text = "Error: " + ex.Message;
                 lblError.Visible = true;
             }
@@ -85,7 +94,9 @@ namespace SiyafundaApplication
 
         protected void btnBack_Click(object sender, EventArgs e)
         {
-            Response.Redirect("frmLandingPage.aspx");
+            // Redirect to the landing page without ending the response
+            Response.Redirect("frmLandingPage.aspx", false);
+            Context.ApplicationInstance.CompleteRequest(); // Avoid ThreadAbortException
         }
     }
 }
